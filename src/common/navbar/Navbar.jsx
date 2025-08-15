@@ -20,9 +20,8 @@ const SERVICES = [
 const NAV_LINKS = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "Forum", path: "/forum", authOnly: true },
+    // { name: "Forum", path: "/forum", authOnly: true },
     { name: "Attorneys", path: "/attorneys" },
-    { name: "ADR/ODR", path: "/adr-odr" },
     { name: "Blog", path: "/blog" },
     { name: "Resources", path: "/resources" },
 ];
@@ -225,8 +224,8 @@ const Navbar = () => {
     const filteredLinks = NAV_LINKS.filter((link) => !link.authOnly || user);
 
     return (
-        <section className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 shadow-sm">
-            <div className="navbar container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="bg-zinc-800 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 shadow-sm">
+            <div className="navbar container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Logo & Mobile Menu */}
                 <div className="navbar-start">
                     {/* Mobile Hamburger Menu */}
