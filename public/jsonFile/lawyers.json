@@ -118,7 +118,7 @@
         "languages":["English", "Bengali"],
         "specialization":["Corporate Law", "Family Law"],
         "experience":"10 years",
-        "bar_id":"BAR123456",
+        "bar_id":"BAR123996",
         "fee":"2500 BDT",
         "description":"Sajjad Hossain is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
         "court":"Dhaka District Court",
@@ -127,74 +127,21 @@
     },
     {
         
-        "name":"Br. Anik Rahman",
-        "email":"anikrahman@gmail.com",
+        "name":"Adv Nazrul",
+        "email":"nazrul@gmail.com",
         "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
+        "address":"Barisal, Bangladesh",
         "image":"https://example.com/images/lawyers/anik_rahman.jpg",
         "gender":"Male",
         "languages":["English", "Bengali"],
         "specialization":["Corporate Law", "Litigation", "Family Law"],
         "experience":"10 years",
-        "bar_id":"BAR123456",
-        "fee":"1500 BDT",
-        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "bar_id":"BAR113156",
+        "fee":"4500 BDT",
+        "description":"Adv Nazrul is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
         "court":"Dhaka District Court",
-        "rating":4.8
-
-    },
-    {
-        
-        "name":"Br. Anik Rahman",
-        "email":"anikrahman@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
-        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        "experience":"10 years",
-        "bar_id":"BAR123456",
-        "fee":"1500 BDT",
-        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.8
-
-    },
-    {
-        
-        "name":"Br. Anik Rahman",
-        "email":"anikrahman@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
-        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        "experience":"10 years",
-        "bar_id":"BAR123456",
-        "fee":"1500 BDT",
-        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.8
-
-    },
-    {
-        
-        "name":"Br. Anik Rahman",
-        "email":"anikrahman@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
-        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        "experience":"10 years",
-        "bar_id":"BAR123456",
-        "fee":"1500 BDT",
-        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.8
+        "rating":4.5
 
     }
+   
 ]
