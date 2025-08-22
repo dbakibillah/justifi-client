@@ -1,0 +1,200 @@
+[
+    {
+        
+        "name":"Br. Anik Rahman",
+        "email":"anikrahman@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"5000 BDT",
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.8
+
+    },
+    {
+        
+        "name":"Br. Ashraf Rahman",
+        "email":"ashraf@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation"],
+        "experience":"10 years",
+        "bar_id":"BAR123467",
+        "fee":"7500 BDT",
+        "description":"Ashraf Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Supreme Court of Bangladesh",
+        "rating":4.5
+
+    },
+    {
+        
+        "name":"Br. Saleh Mohammad Arefin",
+        "email":"sarefin@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Segunbagicha,Paltan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR120001",
+        "fee":"9500 BDT",
+        "description":"Br. Saleh Mohammad Arefin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Supreme Court of Bangladesh",
+        "rating":4.6
+
+    },
+    {
+        
+        "name":"Adv Rozina parvin",
+        "email":"advparvin@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Banani, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123403",
+        "fee":"4500 BDT",
+        "description":"Adv Rozina parvin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.5
+
+    },
+    {
+        
+        "name":"Mahamud Wazed",
+        "email":"mwazed@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Wari, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123012",
+        "fee":"6500 BDT",
+        "description":"Mahamud Wazed is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.7
+
+    },
+    {
+        
+        "name":"Shanjid Siddiqui",
+        "email":"sanjid@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Banani, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123296",
+        "fee":"5000 BDT",
+        "description":"Shanjid Siddiqui is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.7
+
+    },
+    {
+        
+        "name":"Sajjad Hossain",
+        "email":"sajjad@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Badda, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"2500 BDT",
+        "description":"Sajjad Hossain is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.5
+
+    },
+    {
+        
+        "name":"Br. Anik Rahman",
+        "email":"anikrahman@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"1500 BDT",
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.8
+
+    },
+    {
+        
+        "name":"Br. Anik Rahman",
+        "email":"anikrahman@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"1500 BDT",
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.8
+
+    },
+    {
+        
+        "name":"Br. Anik Rahman",
+        "email":"anikrahman@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"1500 BDT",
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.8
+
+    },
+    {
+        
+        "name":"Br. Anik Rahman",
+        "email":"anikrahman@gmail.com",
+        "phone":"+880 1234567890",
+        "address":"Gulshan, Dhaka, Bangladesh",
+        "image":"https://example.com/images/lawyers/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["Corporate Law", "Litigation", "Family Law"],
+        "experience":"10 years",
+        "bar_id":"BAR123456",
+        "fee":"1500 BDT",
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court":"Dhaka District Court",
+        "rating":4.8
+
+    }
+]
