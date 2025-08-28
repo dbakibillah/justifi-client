@@ -1,8 +1,17 @@
+import Banner from "./components/Banner";
+import Banner2 from "./components/Banner2";
+import Banner3 from "./components/Banner3";
+
+
+
 const Home = () => {
     return (
-        <section>
-            <h1 className="text-3xl font-bold underline">Home</h1>
-        </section>
+        <div>
+            <Banner />
+            <Banner2 />
+            <Banner3 />
+
+        </div>
     );
 };
 
