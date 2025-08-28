@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Br Anik Rahman",
+        "email": "anik.rahman@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Gulshan, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/5xhLpPG3/anikbhai.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["mediator", "mediation trainer","lawyer"],
+        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "qualification" : "LLB, LLM from Cardiff University",
+        "profession":"Lawyer"
+
+    },
+    {
+        "name": "Farhan Anan Himu",
+        "email": "himu@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Banani, Dhaka, Bangladesh",
+        "image": "https://example.com/images/arbitrators/anik_rahman.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["mediator", "mediation trainer","Teacher"],
+        "description":"Farhan Anan Himu is one of the best faculty member in United International University. He has been working as a teacher for over 8 years.",
+        "qualification" : "MSc from Cardiff University",
+        "profession":"Teacher"
+
+    },
+    {
+        "name": "Tahmid Pronoy",
+        "email": "tahmid@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Badda, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/5gdWxs7Q/tahmid.jpg",
+        "gender":"Male",
+        "languages":["English", "Bengali","Urdu"],
+        "specialization":["mediator", "mediation trainer","Business consultant"],
+        "description":"Tahmid Pronoy is a good businessman in his locality. He has been working as a business consultant for over 5 years.",
+        "qualification" : "BBA from UIU",
+        "profession":"Businessman"
+
+    },
+    {
+        "name": "Mamun Mollah",
+        "email": "mamun@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Gulshan, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/fVphLntr/mamun.png",
+        "gender":"Male",
+        "languages":["English", "Bengali"],
+        "specialization":["mediator", "mediation trainer"],
+        "description":"Mamun Molla is a custom officer of Bangladesh. He has been working as a custom officer for over 7 years.",
+        "qualification" : "MSc from Cardiff University",
+        "profession":"Custom Officer"
+
+    }
+]
