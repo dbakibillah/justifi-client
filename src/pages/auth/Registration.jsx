@@ -1,34 +1,37 @@
+
 import { motion } from "framer-motion";
 import { useContext, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import {
+    FaArrowRight,
     FaEnvelope,
-    FaExclamationCircle,
     FaEye,
     FaEyeSlash,
     FaGoogle,
     FaLock,
-    FaSpinner
+    FaSpinner,
+    FaUser
 } from "react-icons/fa";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import { AuthContext } from "../../providers/AuthProviders";
 
-const Login = () => {
-    const axiosPublic = useAxiosPublic();
-    const [showPassword, setShowPassword] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
+const Registration = () => {
+    const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
+    const img_hosting_api = `https://api.imgbb.com/1/upload?key=${img_hosting_key}`;
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const { signInUser, setUser, googleSignIn } = useContext(AuthContext);
-    const location = useLocation();
+    const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
+    const { createUser, setUser, updateUserProfile, googleSignIn } =
+        useContext(AuthContext);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleGoogleSignIn = () => {
         setIsSubmitting(true);
@@ -45,24 +48,25 @@ const Login = () => {
 
                 try {
                     const response = await axiosPublic.get(
-                        `user?email=${user.email}`
+                        `/user?email=${user.email}`
                     );
                     if (response.data.exists) {
                         await Swal.fire({
                             title: "Welcome back!",
                             text: "You are already registered.",
-                            icon: "success",
+                            icon: "info",
                             background: "#f8fafc",
-                            confirmButtonColor: "#3b82f6",
+                            confirmButtonColor: "#10b981",
                         });
+                        navigate("/");
                     } else {
-                        await axiosPublic.post("users", newUser);
+                        await axiosPublic.post("/users", newUser);
                         await Swal.fire({
                             title: "Registration Complete!",
                             text: "You've successfully registered with Google!",
                             icon: "success",
                             background: "#f8fafc",
-                            confirmButtonColor: "#3b82f6",
+                            confirmButtonColor: "#10b981",
                         });
                     }
                     navigate(location.state?.from?.pathname || "/", {
@@ -75,7 +79,7 @@ const Login = () => {
                         title: "Something went wrong!",
                         text: error.message,
                         background: "#f8fafc",
-                        confirmButtonColor: "#3b82f6",
+                        confirmButtonColor: "#10b981",
                     });
                 }
             })
@@ -85,7 +89,7 @@ const Login = () => {
                     text: err.message,
                     icon: "error",
                     background: "#f8fafc",
-                    confirmButtonColor: "#3b82f6",
+                    confirmButtonColor: "#10b981",
                 });
             })
             .finally(() => {
@@ -93,50 +97,86 @@ const Login = () => {
             });
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         setIsSubmitting(true);
-        const { email, password } = data;
+        const { name, email, password } = data;
 
-        signInUser(email, password)
-            .then((result) => {
-                setUser(result.user);
-                const redirectPath = location.state || "/";
-                navigate(redirectPath, { replace: true });
-                Swal.fire({
-                    title: "Login Successful!",
-                    text: "You are now logged in.",
-                    icon: "success",
+        try {
+            const response = await axiosPublic.get(`/user?email=${email}`);
+            if (response.data.exists) {
+                await Swal.fire({
+                    title: "Already Registered!",
+                    text: "Please log in instead.",
+                    icon: "info",
                     background: "#f8fafc",
-                    confirmButtonColor: "#3b82f6",
+                    confirmButtonColor: "#10b981",
                 });
-            })
-            .catch((err) => {
-                Swal.fire({
-                    title: "Login Failed",
-                    text: err.message,
+                navigate("/login");
+                return;
+            }
+
+            const result = await createUser(email, password);
+            setUser(result.user);
+
+            const formData = new FormData();
+            formData.append("image", data.photo[0]);
+            const imgResponse = await axiosPublic.post(
+                img_hosting_api,
+                formData
+            );
+
+            if (!imgResponse.data.success) {
+                await Swal.fire({
                     icon: "error",
+                    title: "Image Upload Failed",
+                    text: "Please try again.",
                     background: "#f8fafc",
-                    confirmButtonColor: "#3b82f6",
+                    confirmButtonColor: "#10b981",
                 });
-            })
-            .finally(() => {
-                setIsSubmitting(false);
+                return;
+            }
+
+            const updateUser = {
+                displayName: name,
+                photoURL: imgResponse.data.data.display_url,
+            };
+            await updateUserProfile(updateUser);
+
+            const newUser = { name, email, photo: updateUser.photoURL };
+            await axiosPublic.post("/users", newUser);
+
+            await Swal.fire({
+                title: "Registration Successful!",
+                text: "Your wellness journey begins now.",
+                icon: "success",
+                background: "#f8fafc",
+                confirmButtonColor: "#10b981",
             });
+            navigate("/");
+        } catch (error) {
+            console.error("Error during registration:", error);
+            await Swal.fire({
+                icon: "error",
+                title: "Registration Failed",
+                text: error.message,
+                background: "#f8fafc",
+                confirmButtonColor: "#10b981",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white p-4">
             <Helmet>
-                <title>Login | justiFi</title>
+                <title>Registration | justiFi</title>
             </Helmet>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{
-                    duration: 0.8,
-                    ease: [0.2, 0.8, 0.2, 1],
-                }}
+                transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
                 className="w-full max-w-md"
             >
                 <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6 border border-green-100 relative overflow-hidden">
@@ -144,32 +184,70 @@ const Login = () => {
                         onSubmit={handleSubmit(onSubmit)}
                         className="space-y-5"
                     >
-                        {/* Email Field */}
+                        {/* Name Field */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{
-                                delay: 0.4,
+                                delay: 0.5,
                                 type: "spring",
                                 stiffness: 100,
                             }}
                             className="space-y-2"
                         >
                             <label className="text-sm font-medium text-gray-700">
-                                Email
+                                Full Name
                             </label>
                             <div className="relative">
                                 <input
-                                    {...register("email", {
-                                        required: "Email is required",
-                                        pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: "Invalid email address",
-                                        },
+                                    type="text"
+                                    placeholder="Your name"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-400 focus:ring-1 focus:ring-green-200 transition outline-none pl-10"
+                                    {...register("name", {
+                                        required: "Name is required",
                                     })}
+                                />
+                                <div className="absolute left-3 top-3.5 text-gray-400">
+                                    <FaUser className="h-5 w-5" />
+                                </div>
+                            </div>
+                            {errors.name && (
+                                <motion.p
+                                    initial={{ opacity: 0, y: -5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="text-red-500 text-xs mt-1 flex items-center"
+                                >
+                                    {errors.name.message}
+                                </motion.p>
+                            )}
+                        </motion.div>
+
+                        {/* Email Field */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{
+                                delay: 0.6,
+                                type: "spring",
+                                stiffness: 100,
+                            }}
+                            className="space-y-2"
+                        >
+                            <label className="text-sm font-medium text-gray-700">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <input
                                     type="email"
                                     placeholder="your@email.com"
                                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-400 focus:ring-1 focus:ring-green-200 transition outline-none pl-10"
+                                    {...register("email", {
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^\S+@\S+$/i,
+                                            message: "Invalid email format",
+                                        },
+                                    })}
                                 />
                                 <div className="absolute left-3 top-3.5 text-gray-400">
                                     <FaEnvelope className="h-5 w-5" />
@@ -181,8 +259,41 @@ const Login = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="text-red-500 text-xs mt-1 flex items-center"
                                 >
-                                    <FaExclamationCircle className="h-4 w-4 mr-1" />
                                     {errors.email.message}
+                                </motion.p>
+                            )}
+                        </motion.div>
+
+                        {/* Photo Field */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{
+                                delay: 0.7,
+                                type: "spring",
+                                stiffness: 100,
+                            }}
+                            className="space-y-2"
+                        >
+                            <label className="text-sm font-medium text-gray-700">
+                                Profile Photo
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="file"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-400 focus:ring-1 focus:ring-green-200 transition outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 file:cursor-pointer"
+                                    {...register("photo", {
+                                        required: "Photo is required",
+                                    })}
+                                />
+                            </div>
+                            {errors.photo && (
+                                <motion.p
+                                    initial={{ opacity: 0, y: -5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="text-red-500 text-xs mt-1 flex items-center"
+                                >
+                                    {errors.photo.message}
                                 </motion.p>
                             )}
                         </motion.div>
@@ -192,25 +303,20 @@ const Login = () => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{
-                                delay: 0.5,
+                                delay: 0.8,
                                 type: "spring",
                                 stiffness: 100,
                             }}
                             className="space-y-2"
                         >
-                            <div className="flex justify-between items-center">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Password
-                                </label>
-                                <Link
-                                    to="/forgot-password"
-                                    className="text-xs text-green-600 hover:underline"
-                                >
-                                    Forgot password?
-                                </Link>
-                            </div>
+                            <label className="text-sm font-medium text-gray-700">
+                                Password
+                            </label>
                             <div className="relative">
                                 <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-400 focus:ring-1 focus:ring-green-200 transition outline-none pl-10 pr-10"
                                     {...register("password", {
                                         required: "Password is required",
                                         minLength: {
@@ -218,10 +324,12 @@ const Login = () => {
                                             message:
                                                 "Minimum 6 characters required",
                                         },
+                                        pattern: {
+                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                                            message:
+                                                "Must include uppercase, lowercase, number & special character",
+                                        },
                                     })}
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-400 focus:ring-1 focus:ring-green-200 transition outline-none pl-10 pr-10"
                                 />
                                 <div className="absolute left-3 top-3.5 text-gray-400">
                                     <FaLock className="h-5 w-5" />
@@ -256,18 +364,17 @@ const Login = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="text-red-500 text-xs mt-1 flex items-center"
                                 >
-                                    <FaExclamationCircle className="h-4 w-4 mr-1" />
                                     {errors.password.message}
                                 </motion.p>
                             )}
                         </motion.div>
 
-                        {/* Login Button */}
+                        {/* Register Button */}
                         <motion.button
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                delay: 0.6,
+                                delay: 0.9,
                                 type: "spring",
                                 stiffness: 200,
                             }}
@@ -292,10 +399,13 @@ const Login = () => {
                                     className="flex items-center"
                                 >
                                     <FaSpinner className="h-5 w-5 mr-2" />
-                                    Signing in...
+                                    Creating Account...
                                 </motion.div>
                             ) : (
-                                "Sign In"
+                                <>
+                                    Begin Journey{" "}
+                                    <FaArrowRight className="ml-2" />
+                                </>
                             )}
                         </motion.button>
 
@@ -303,7 +413,7 @@ const Login = () => {
                         <motion.div
                             initial={{ opacity: 0, scaleX: 0 }}
                             animate={{ opacity: 1, scaleX: 1 }}
-                            transition={{ delay: 0.7, duration: 0.5 }}
+                            transition={{ delay: 1, duration: 0.5 }}
                             className="relative my-6"
                         >
                             <div className="absolute inset-0 flex items-center">
@@ -316,12 +426,12 @@ const Login = () => {
                             </div>
                         </motion.div>
 
-                        {/* Google Sign-in */}
+                        {/* Google Button */}
                         <motion.button
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                delay: 0.8,
+                                delay: 1.1,
                                 type: "spring",
                                 stiffness: 200,
                             }}
@@ -344,15 +454,15 @@ const Login = () => {
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.9, duration: 0.6 }}
+                        transition={{ delay: 1.2, duration: 0.6 }}
                         className="text-center text-sm text-gray-500"
                     >
-                        Don't have an account?{" "}
+                        Already part of our community?{" "}
                         <Link
-                            to="/register"
+                            to="/login"
                             className="text-green-600 font-medium hover:underline hover:text-green-700 transition"
                         >
-                            Create one
+                            Sign in
                         </Link>
                     </motion.p>
                 </div>
@@ -361,4 +471,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Registration;

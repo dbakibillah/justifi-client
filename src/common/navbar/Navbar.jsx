@@ -231,12 +231,6 @@ const GuestActions = memo(() => (
         >
             Login
         </Link>
-        <Link
-            to="/register"
-            className="px-5 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg"
-        >
-            Sign Up
-        </Link>
     </div>
 ));
 
