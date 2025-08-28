@@ -1,7 +1,7 @@
 import React from "react";
 import { getAllLawyers } from "../../data/lawyers";
 
-import LawyerCard from "./LawyerCard";
+import LawyerCard from "./components/LawyerCard";
 
 export default function Lawyer() {
   const lawyers = getAllLawyers();
