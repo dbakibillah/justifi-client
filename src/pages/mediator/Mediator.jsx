@@ -1,7 +1,5 @@
-import React from "react";
 import { getAllMediators } from "../../data/mediators";
-
-import MediatorCard from "./MediatorCard";
+import MediatorCard from "./components/MediatorCard";
 
 export default function Mediator() {
   const mediator = getAllMediators();
