@@ -1,155 +1,189 @@
 [
     {
-        
-        "name":"Br. Anik Rahman",
-        "email":"anikrahman@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
-        "image":"hhttps://i.ibb.co.com/5xhLpPG3/anikbhai.jpg",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        
-        "bar_id":"BAR123456",
-        "fee":"5000 BDT",
-        "description":"Anik Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.8,
-        "qualification" : "LLB, LLM from Cardiff University"
-
+        "_id": "68b1f9466f935e7160390c28",
+        "name": "Adv Rozina Parvin",
+        "email": "advparvin@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Banani, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/60w99DPF/paru.png",
+        "gender": "Female",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Family Law"
+        ],
+        "bar_id": "BAR123403",
+        "fee": "4500 BDT",
+        "description": "Adv Rozina Parvin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. She has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.5,
+        "qualification": "LLB, LLM from University of Dhaka"
     },
     {
-        
-        "name":"Br. Ashraf Rahman",
-        "email":"ashraf@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Gulshan, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/RGryxfh0/brashraf.png",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation"],
-        
-        "bar_id":"BAR123467",
-        "fee":"7500 BDT",
-        "description":"Ashraf Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Supreme Court of Bangladesh",
-        "rating":4.5,
-        "qualification" : "LLB, LLM from University of London"
-
+        "_id": "68b1f9466f935e7160390c29",
+        "name": "Br. Ashraf Rahman",
+        "email": "ashraf@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Gulshan, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/RGryxfh0/brashraf.png",
+        "gender": "Male",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Litigation"
+        ],
+        "bar_id": "BAR123467",
+        "fee": "7500 BDT",
+        "description": "Ashraf Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court": "Supreme Court of Bangladesh",
+        "rating": 4.5,
+        "qualification": "LLB, LLM from University of London"
     },
     {
-        
-        "name":"Br. Saleh Mohammad Arefin",
-        "email":"sarefin@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Segunbagicha,Paltan, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/Z6154Pnp/brshumit.png",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        
-        "bar_id":"BAR120001",
-        "fee":"9500 BDT",
-        "description":"Br. Saleh Mohammad Arefin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Supreme Court of Bangladesh",
-        "rating":4.6,
-        "qualification" : "LLB, LLM from University of London"
-
+        "_id": "68b1f9466f935e7160390c30",
+        "name": "Br. Saleh Mohammad Arefin",
+        "email": "sarefin@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Segunbagicha,Paltan, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/Z6154Pnp/brshumit.png",
+        "gender": "Male",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Litigation",
+            "Family Law"
+        ],
+        "bar_id": "BAR120001",
+        "fee": "9500 BDT",
+        "description": "Br. Saleh Mohammad Arefin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court": "Supreme Court of Bangladesh",
+        "rating": 4.6,
+        "qualification": "LLB, LLM from University of London"
     },
     {
-        
-        "name":"Adv Rozina parvin",
-        "email":"advparvin@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Banani, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/60w99DPF/paru.png",
-        "gender":"Female",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Family Law"],
-        
-        "bar_id":"BAR123403",
-        "fee":"4500 BDT",
-        "description":"Adv Rozina parvin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. She has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.5,
-        "qualification" : "LLB, LLM from University of Dhaka"
-
+        "_id": "68b1f9466f935e7160390c31",
+        "name": "Adv Rozina Parvin",
+        "email": "advparvin@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Banani, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/60w99DPF/paru.png",
+        "gender": "Female",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Family Law"
+        ],
+        "bar_id": "BAR123403",
+        "fee": "4500 BDT",
+        "description": "Adv Rozina Parvin is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. She has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.5,
+        "qualification": "LLB, LLM from University of Dhaka"
     },
     {
-        
-        "name":"Mahamud Wazed",
-        "email":"mwazed@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Wari, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/23vRscbh/brwajed.png",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        
-        "bar_id":"BAR123012",
-        "fee":"6500 BDT",
-        "description":"Mahamud Wazed is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.7,
-        "qualification" : "LLB, LLM from University of Dhaka"
-
+        "_id": "68b1f9466f935e7160390c32",
+        "name": "Mahamud Wazed",
+        "email": "mwazed@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Wari, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/23vRscbh/brwajed.png",
+        "gender": "Male",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Litigation",
+            "Family Law"
+        ],
+        "bar_id": "BAR123012",
+        "fee": "6500 BDT",
+        "description": "Mahamud Wazed is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.7,
+        "qualification": "LLB, LLM from University of Dhaka"
     },
     {
-        
-        "name":"Shanjid Siddiqui",
-        "email":"sanjid@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Banani, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/0yJ19tYz/brsanjid.png",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Family Law"],
-        
-        "bar_id":"BAR123296",
-        "fee":"5000 BDT",
-        "description":"Shanjid Siddiqui is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.7,
-        "qualification" : "LLB, LLM from University of London"
-
+        "_id": "68b1f9466f935e7160390c33",
+        "name": "Shanjid Siddiqui",
+        "email": "sanjid@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Banani, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/0yJ19tYz/brsanjid.png",
+        "gender": "Male",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Family Law"
+        ],
+        "bar_id": "BAR123296",
+        "fee": "5000 BDT",
+        "description": "Shanjid Siddiqui is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.7,
+        "qualification": "LLB, LLM from University of London"
     },
     {
-        
-        "name":"Sajjad Hossain",
-        "email":"sajjad@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Badda, Dhaka, Bangladesh",
-        "image":"https://i.ibb.co.com/1fTP64yY/sajjad.png",
-        "gender":"Male",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Family Law"],
-        
-        "bar_id":"BAR123996",
-        "fee":"2500 BDT",
-        "description":"Sajjad Hossain is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.5,
-        "qualification" : "LLB, LLM from Jahangirnagar University"
-
+        "_id": "68b1f9466f935e7160390c34",
+        "name": "Sajjad Hossain",
+        "email": "sajjad@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Badda, Dhaka, Bangladesh",
+        "image": "https://i.ibb.co.com/1fTP64yY/sajjad.png",
+        "gender": "Male",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Family Law"
+        ],
+        "bar_id": "BAR123996",
+        "fee": "2500 BDT",
+        "description": "Sajjad Hossain is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.5,
+        "qualification": "LLB, LLM from Jahangirnagar University"
     },
     {
-        
-        "name":"Br Mimo Bintay Mostofa",
-        "email":"mimo@gmail.com",
-        "phone":"+880 1234567890",
-        "address":"Banani, Bangladesh",
-        "image":"https://i.ibb.co.com/FkhTM7mm/mimo1.png",
-        "gender":"Female",
-        "languages":["English", "Bengali"],
-        "specialization":["Corporate Law", "Litigation", "Family Law"],
-        
-        "bar_id":"BAR113156",
-        "fee":"4500 BDT",
-        "description":"Br Mimo Bintay Mostofa is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. She has represented numerous multinational corporations in Bangladesh.",
-        "court":"Dhaka District Court",
-        "rating":4.5,
-        "qualification" : "LLB, LLM from University of Dhaka"
-
+        "_id": "68b1f9466f935e7160390c35",
+        "name": "Br Mimo Bintay Mostofa",
+        "email": "mimo@gmail.com",
+        "phone": "+880 1234567890",
+        "address": "Banani, Bangladesh",
+        "image": "https://i.ibb.co.com/FkhTM7mm/mimo1.png",
+        "gender": "Female",
+        "languages": [
+            "English",
+            "Bengali"
+        ],
+        "specialization": [
+            "Corporate Law",
+            "Litigation",
+            "Family Law"
+        ],
+        "bar_id": "BAR113156",
+        "fee": "4500 BDT",
+        "description": "Br Mimo Bintay Mostofa is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. She has represented numerous multinational corporations in Bangladesh.",
+        "court": "Dhaka District Court",
+        "rating": 4.5,
+        "qualification": "LLB, LLM from University of Dhaka"
     }
-   
 ]

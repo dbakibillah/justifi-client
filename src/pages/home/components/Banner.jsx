@@ -16,6 +16,7 @@ const Banner = () => {
                         <img
                             src="https://i.ibb.co.com/fzC4pYdY/Lawyer-Png-Images-Free-Download-on-Freepik-removebg-preview.png"
                             alt="Professional Attorney"
+                            loading="lazy"
                             className="w-full max-w-md lg:max-w-lg h-auto object-contain drop-shadow-2xl relative z-10"
                         />
                         {/* Decorative elements around image */}
