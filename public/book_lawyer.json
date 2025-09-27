@@ -3,7 +3,8 @@
         "user": {
             "name": "John Doe",
             "email": "HdCm0@example.com",
-            "phone": "1234567890"
+            "phone": "1234567890",
+            "img": "https://i.ibb.co/0yJ19tYz/brsanjid.png"
         },
         "booking": {
             "problemDescription": "Need legal advice regarding a contract dispute.",
@@ -13,7 +14,8 @@
         "lawyer": {
             "name": "Jane Smith",
             "email": "K4CtG@example.com",
-            "specialization": "Contract Law"
+            "specialization": "Contract Law",
+            "img": "https://i.ibb.co/0yJ19tYz/brsanjid.png"
         },
         "payment": {
             "paymentId": "pay_123456789",

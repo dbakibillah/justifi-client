@@ -16,6 +16,7 @@ import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
 import LawyerDetails from "./pages/lawyers/LawyerDetails";
 import BookLawyer from "./pages/lawyers/BookLawyer";
+import { ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -53,5 +54,6 @@ createRoot(document.getElementById("root")).render(
                 </Routes>
             </QueryClientProvider>
         </AuthProvider>
+        <ToastContainer />
     </BrowserRouter>
 );
