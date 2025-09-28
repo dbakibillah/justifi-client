@@ -19,6 +19,7 @@ import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import Dashboard from "./dashboard/Dashboard";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
+import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,10 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="lawyer-profile"
                             element={<LawyerProfile />}
+                        />
+                        <Route
+                            path="appointments"
+                            element={<LawyerAppointments />}
                         />
                     </Route>
                 </Routes>

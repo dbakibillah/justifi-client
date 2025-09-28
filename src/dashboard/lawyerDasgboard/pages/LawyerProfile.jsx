@@ -1,270 +1,884 @@
-import React, { useState } from "react";
-import { Mail, Phone, MapPin, Award, Users, Briefcase, Pencil, CheckCircle, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import {
+    FaAward,
+    FaBriefcase,
+    FaChartLine,
+    FaEdit,
+    FaEnvelope,
+    FaGavel,
+    FaLanguage,
+    FaMapMarkerAlt,
+    FaMoneyBillWave,
+    FaPhone,
+    FaSave,
+    FaStar,
+    FaTimes,
+    FaTrash,
+    FaUniversity,
+    FaUser,
+    FaUserTie,
+} from "react-icons/fa";
+import { HiOutlineAcademicCap, HiOutlineDocumentText } from "react-icons/hi";
+import { MdVerified, MdWork } from "react-icons/md";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useUserData from "../../../hooks/useUserData";
 
-const lawyerData = {
-  _id: "68d854b4414019472298945f",
-  name: "Br. Ashraf Rahman",
-  email: "ashraf@gmail.com",
-  phone: "+880 1234567890",
-  address: "Gulshan, Dhaka, Bangladesh",
-  image: "https://i.ibb.co.com/RGryxfh0/brashraf.png",
-  gender: "Male",
-  languages: ["English", "Bengali"],
-  specialization: ["Corporate Law", "Litigation"],
-  bar_id: "BAR123467",
-  fee: 7500,
-  description:
-    "Ashraf Rahman is a seasoned corporate lawyer with over 10 years of experience in handling complex business transactions and legal compliance issues. He has represented numerous multinational corporations in Bangladesh.",
-  court: "Supreme Court of Bangladesh",
-  experience: 10,
-  successRate: 92,
-  casesHandled: 150,
-  rating: 4.5,
-  qualification: "LLB, LLM from University of London",
-  testimonials: [
-    { client: "A. Rahman", feedback: "Highly professional and reliable." },
-    { client: "B. Karim", feedback: "Helped our company with corporate compliance seamlessly." },
-    { client: "C. Sultana", feedback: "Excellent litigation support and guidance." },
-  ],
-  recentCases: [
-    "MNC Tax Compliance – Won",
-    "Corporate Merger Advisory – Settled",
-    "Litigation in Labor Law – Won",
-  ],
-  awards: ["Top Corporate Lawyer 2023", "Excellence in Litigation 2022"],
-  publications: ["Corporate Law Guide 2021", "Bangladesh Business Law Review 2020"],
-  caseStudies: [
-    {
-      title: "MNC Tax Compliance Case",
-      description: "Provided comprehensive legal guidance to a multinational corporation on tax compliance, resulting in full regulatory approval without penalties.",
-      outcome: "Success",
-      year: 2023
-    },
-    {
-      title: "Corporate Merger Advisory",
-      description: "Advised two large corporations on merger procedures, contracts, and compliance issues.",
-      outcome: "Settled",
-      year: 2022
-    },
-    {
-      title: "Labor Law Litigation",
-      description: "Represented a leading company in a labor law dispute, successfully defending against claims and securing favorable verdict.",
-      outcome: "Success",
-      year: 2021
+const LawyerProfile = () => {
+    const { currentUser } = useUserData();
+    const axiosSecure = useAxiosSecure();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editSection, setEditSection] = useState(null);
+    const [newLanguage, setNewLanguage] = useState("");
+    const [newSpecialization, setNewSpecialization] = useState("");
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        reset,
+        setValue,
+    } = useForm();
+
+    const {
+        data: lawyer = {},
+        isLoading,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ["lawyerProfile", currentUser?.email],
+        queryFn: async () => {
+            const response = await axiosSecure.get(
+                `/lawyerProfile?email=${currentUser?.email}`
+            );
+            return response.data;
+        },
+        enabled: !!currentUser?.email,
+    });
+
+    const startEditing = useCallback(
+        (section) => {
+            setEditSection(section);
+            setIsEditing(true);
+            if (lawyer) {
+                reset(lawyer);
+            }
+        },
+        [lawyer, reset]
+    );
+
+    const cancelEditing = useCallback(() => {
+        setIsEditing(false);
+        setEditSection(null);
+        reset();
+    }, [reset]);
+
+    const onUpdateProfile = async (data) => {
+        try {
+            // Remove _id from data to prevent immutable field error
+            const { _id, ...updateData } = data;
+
+            const response = await axiosSecure.patch(
+                `/lawyerProfile/${lawyer._id}`,
+                updateData
+            );
+
+            if (response.data.success) {
+                toast.success("Profile updated successfully");
+                await refetch();
+                cancelEditing();
+            } else {
+                toast.error(response.data.error || "Failed to update profile");
+            }
+        } catch (error) {
+            console.error("Profile update error:", error);
+            toast.error(
+                error.response?.data?.error || "Failed to update profile"
+            );
+        }
+    };
+
+    const updateField = useCallback(
+        async (field, value) => {
+            try {
+                const response = await axiosSecure.patch(
+                    `/lawyerProfile/${lawyer._id}`,
+                    { [field]: value }
+                );
+
+                if (response.data.success) {
+                    toast.success("Update successful");
+                    await refetch();
+                } else {
+                    toast.error(response.data.error || "Update failed");
+                }
+            } catch (error) {
+                console.error(`Field update error:`, error);
+                toast.error(error.response?.data?.error || "Update failed");
+            }
+        },
+        [lawyer, axiosSecure, refetch]
+    );
+
+    const addLanguage = useCallback(() => {
+        if (newLanguage && !lawyer.languages?.includes(newLanguage)) {
+            const updatedLanguages = [...(lawyer.languages || []), newLanguage];
+            updateField("languages", updatedLanguages);
+            setNewLanguage("");
+        }
+    }, [newLanguage, lawyer, updateField]);
+
+    const removeLanguage = useCallback(
+        (languageToRemove) => {
+            const updatedLanguages = (lawyer.languages || []).filter(
+                (lang) => lang !== languageToRemove
+            );
+            updateField("languages", updatedLanguages);
+        },
+        [lawyer, updateField]
+    );
+
+    const addSpecialization = useCallback(() => {
+        if (
+            newSpecialization &&
+            !lawyer.specialization?.includes(newSpecialization)
+        ) {
+            const updatedSpecializations = [
+                ...(lawyer.specialization || []),
+                newSpecialization,
+            ];
+            updateField("specialization", updatedSpecializations);
+            setNewSpecialization("");
+        }
+    }, [newSpecialization, lawyer, updateField]);
+
+    const removeSpecialization = useCallback(
+        (specToRemove) => {
+            const updatedSpecializations = (lawyer.specialization || []).filter(
+                (spec) => spec !== specToRemove
+            );
+            updateField("specialization", updatedSpecializations);
+        },
+        [lawyer, updateField]
+    );
+
+    // Professional Stat Card Component
+    const StatCard = useCallback(
+        ({ icon: Icon, label, value, color = "blue" }) => (
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">
+                            {label}
+                        </p>
+                        <p className={`text-2xl font-bold text-gray-900`}>
+                            {value}
+                        </p>
+                    </div>
+                    <div
+                        className={`p-3 rounded-lg ${
+                            color === "blue"
+                                ? "bg-blue-50 border-blue-100"
+                                : color === "green"
+                                ? "bg-green-50 border-green-100"
+                                : "bg-purple-50 border-purple-100"
+                        } border`}
+                    >
+                        <Icon
+                            className={`text-lg ${
+                                color === "blue"
+                                    ? "text-blue-600"
+                                    : color === "green"
+                                    ? "text-green-600"
+                                    : "text-purple-600"
+                            }`}
+                        />
+                    </div>
+                </div>
+            </div>
+        ),
+        []
+    );
+
+    // Professional Section Component
+    const ProfileSection = useCallback(
+        ({ title, icon: Icon, children, editable = false, section = null }) => (
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-gray-50 border border-gray-200">
+                            <Icon className="text-lg text-gray-700" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                            {title}
+                        </h3>
+                    </div>
+                    {editable && !isEditing && (
+                        <button
+                            onClick={() => startEditing(section)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200"
+                        >
+                            <FaEdit className="text-sm" />
+                            Edit
+                        </button>
+                    )}
+                </div>
+                <div className="p-6">{children}</div>
+            </div>
+        ),
+        [isEditing, startEditing]
+    );
+
+    // Form Field Component
+    const FormField = useCallback(
+        ({
+            label,
+            icon: Icon,
+            name,
+            type = "text",
+            required = false,
+            placeholder,
+            validation = {},
+            children,
+            ...props
+        }) => (
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {label}
+                    {required && <span className="text-red-500 ml-1">*</span>}
+                </label>
+                {children || (
+                    <div className="relative">
+                        {Icon && (
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Icon className="h-5 w-5 text-gray-400" />
+                            </div>
+                        )}
+                        <input
+                            type={type}
+                            {...register(name, {
+                                required: required
+                                    ? `${label} is required`
+                                    : false,
+                                ...validation,
+                            })}
+                            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
+                                Icon ? "pl-10" : ""
+                            } ${
+                                errors[name]
+                                    ? "border-red-300"
+                                    : "border-gray-300"
+                            }`}
+                            placeholder={placeholder}
+                            {...props}
+                        />
+                    </div>
+                )}
+                {errors[name] && (
+                    <p className="text-red-500 text-sm mt-1">
+                        {errors[name].message}
+                    </p>
+                )}
+            </div>
+        ),
+        [register, errors]
+    );
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600 font-medium">
+                        Loading profile...
+                    </p>
+                </div>
+            </div>
+        );
     }
-  ]
+
+    if (error || !lawyer || !lawyer._id) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center max-w-md mx-auto p-8">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FaUser className="text-2xl text-red-600" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                        Profile Not Found
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                        Unable to load lawyer profile information.
+                    </p>
+                    <button
+                        onClick={() => refetch()}
+                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">
+                                Professional Profile
+                            </h1>
+                            <p className="text-gray-600 mt-2">
+                                Manage your professional information and
+                                credentials
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                            <MdVerified className="text-blue-600 text-lg" />
+                            <span className="text-sm font-medium text-blue-800">
+                                Verified Attorney
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid lg:grid-cols-4 gap-6">
+                    {/* Left Column - Profile Overview */}
+                    <div className="lg:col-span-1 space-y-6">
+                        {/* Profile Card */}
+                        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                            <div className="p-6 text-center border-b border-gray-200">
+                                <div className="relative inline-block mb-4">
+                                    <img
+                                        src={
+                                            lawyer.image ||
+                                            "/default-avatar.png"
+                                        }
+                                        alt={lawyer.name}
+                                        className="w-24 h-24 rounded-full object-cover border-4 border-gray-100 mx-auto"
+                                    />
+                                    <div className="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-full">
+                                        <MdVerified className="text-sm" />
+                                    </div>
+                                </div>
+                                <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                                    {lawyer.name}
+                                </h2>
+                                <p className="text-gray-600 text-sm mb-3">
+                                    {lawyer.specialization?.[0] ||
+                                        "Legal Professional"}
+                                </p>
+
+                                <div className="flex items-center justify-center gap-1 mb-4">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FaStar
+                                            key={star}
+                                            className={`text-sm ${
+                                                star <=
+                                                Math.floor(lawyer.rating || 0)
+                                                    ? "text-yellow-400"
+                                                    : "text-gray-300"
+                                            }`}
+                                        />
+                                    ))}
+                                    <span className="text-sm text-gray-600 ml-2">
+                                        ({lawyer.rating || 0})
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="p-4 space-y-3">
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">
+                                        Bar ID
+                                    </span>
+                                    <span className="font-medium text-gray-900">
+                                        {lawyer.bar_id || "N/A"}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">
+                                        Status
+                                    </span>
+                                    <span className="font-medium text-green-600">
+                                        Active
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">
+                                        Member Since
+                                    </span>
+                                    <span className="font-medium text-gray-900">
+                                        2023
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Stats Overview */}
+                        <div className="space-y-4">
+                            <StatCard
+                                icon={MdWork}
+                                label="Experience"
+                                value={`${lawyer.experience || 0} years`}
+                                color="blue"
+                            />
+                            <StatCard
+                                icon={FaChartLine}
+                                label="Success Rate"
+                                value={`${lawyer.successRate || 0}%`}
+                                color="green"
+                            />
+                            <StatCard
+                                icon={FaGavel}
+                                label="Cases Handled"
+                                value={lawyer.casesHandled || 0}
+                                color="purple"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Right Column - Detailed Information */}
+                    <div className="lg:col-span-3 space-y-6">
+                        {/* Personal Information */}
+                        <ProfileSection
+                            title="Personal Information"
+                            icon={FaUserTie}
+                            editable
+                            section="personal"
+                        >
+                            {editSection === "personal" && isEditing ? (
+                                <form
+                                    onSubmit={handleSubmit(onUpdateProfile)}
+                                    className="space-y-6"
+                                >
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <FormField
+                                            label="Full Name"
+                                            icon={FaUser}
+                                            name="name"
+                                            required
+                                            placeholder="Enter full name"
+                                        />
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Email Address
+                                            </label>
+                                            <div className="relative">
+                                                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                                                <input
+                                                    type="email"
+                                                    value={lawyer.email}
+                                                    disabled
+                                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                                                />
+                                            </div>
+                                        </div>
+                                        <FormField
+                                            label="Phone Number"
+                                            icon={FaPhone}
+                                            name="phone"
+                                            required
+                                            placeholder="Enter phone number"
+                                        />
+                                        <FormField
+                                            label="Gender"
+                                            icon={FaUser}
+                                            name="gender"
+                                        >
+                                            <select
+                                                {...register("gender")}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                <option value="">
+                                                    Select Gender
+                                                </option>
+                                                <option value="Male">
+                                                    Male
+                                                </option>
+                                                <option value="Female">
+                                                    Female
+                                                </option>
+                                                <option value="Other">
+                                                    Other
+                                                </option>
+                                            </select>
+                                        </FormField>
+                                    </div>
+                                    <FormField
+                                        label="Office Address"
+                                        icon={FaMapMarkerAlt}
+                                        name="address"
+                                        placeholder="Enter office address"
+                                    />
+                                    <div className="flex gap-3 pt-4 border-t border-gray-200">
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            <FaSave className="text-sm" />
+                                            {isSubmitting
+                                                ? "Saving..."
+                                                : "Save Changes"}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={cancelEditing}
+                                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center gap-2"
+                                        >
+                                            <FaTimes className="text-sm" />
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Full Name
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.name}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Email
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.email}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Phone
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.phone || "Not provided"}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Gender
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.gender || "Not provided"}
+                                        </p>
+                                    </div>
+                                    <div className="md:col-span-2 space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Office Address
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.address || "Not provided"}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </ProfileSection>
+
+                        {/* Professional Details */}
+                        <ProfileSection
+                            title="Professional Details"
+                            icon={FaAward}
+                            editable
+                            section="professional"
+                        >
+                            {editSection === "professional" && isEditing ? (
+                                <form
+                                    onSubmit={handleSubmit(onUpdateProfile)}
+                                    className="space-y-6"
+                                >
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <FormField
+                                            label="Consultation Fee (BDT)"
+                                            icon={FaMoneyBillWave}
+                                            name="fee"
+                                            type="number"
+                                            required
+                                        />
+                                        <FormField
+                                            label="Practicing Court"
+                                            icon={FaUniversity}
+                                            name="court"
+                                            placeholder="Enter practicing court"
+                                        />
+                                        <FormField
+                                            label="Experience (Years)"
+                                            icon={MdWork}
+                                            name="experience"
+                                            type="number"
+                                        />
+                                        <FormField
+                                            label="Success Rate (%)"
+                                            icon={FaChartLine}
+                                            name="successRate"
+                                            type="number"
+                                        />
+                                    </div>
+                                    <FormField
+                                        label="Qualifications"
+                                        icon={HiOutlineAcademicCap}
+                                        name="qualification"
+                                        placeholder="Enter qualifications"
+                                    />
+                                    <div className="flex gap-3 pt-4 border-t border-gray-200">
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            <FaSave className="text-sm" />
+                                            {isSubmitting
+                                                ? "Saving..."
+                                                : "Save Changes"}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={cancelEditing}
+                                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center gap-2"
+                                        >
+                                            <FaTimes className="text-sm" />
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Consultation Fee
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            ৳{lawyer.fee || 0}/hour
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Practicing Court
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.court || "Not provided"}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Experience
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.experience || 0} years
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Success Rate
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.successRate || 0}%
+                                        </p>
+                                    </div>
+                                    <div className="md:col-span-2 space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">
+                                            Qualifications
+                                        </label>
+                                        <p className="text-gray-900 font-medium">
+                                            {lawyer.qualification ||
+                                                "Not provided"}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </ProfileSection>
+
+                        {/* Two Column Layout */}
+                        <div className="grid lg:grid-cols-2 gap-6">
+                            {/* Specializations */}
+                            <ProfileSection
+                                title="Areas of Specialization"
+                                icon={FaBriefcase}
+                                editable
+                                section="specialization"
+                            >
+                                <div className="space-y-4">
+                                    <div className="flex flex-wrap gap-2">
+                                        {lawyer.specialization?.map((spec) => (
+                                            <span
+                                                key={spec}
+                                                className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full border border-blue-200"
+                                            >
+                                                {spec}
+                                                {editSection ===
+                                                    "specialization" && (
+                                                    <button
+                                                        onClick={() =>
+                                                            removeSpecialization(
+                                                                spec
+                                                            )
+                                                        }
+                                                        className="text-blue-500 hover:text-blue-700 transition-colors"
+                                                    >
+                                                        <FaTrash className="text-xs" />
+                                                    </button>
+                                                )}
+                                            </span>
+                                        ))}
+                                        {(!lawyer.specialization ||
+                                            lawyer.specialization.length ===
+                                                0) && (
+                                            <span className="text-gray-500 text-sm">
+                                                No specializations added
+                                            </span>
+                                        )}
+                                    </div>
+                                    {editSection === "specialization" && (
+                                        <div className="flex gap-2 pt-2">
+                                            <input
+                                                type="text"
+                                                value={newSpecialization}
+                                                onChange={(e) =>
+                                                    setNewSpecialization(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Add specialization..."
+                                                className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                            <button
+                                                onClick={addSpecialization}
+                                                disabled={
+                                                    !newSpecialization.trim()
+                                                }
+                                                className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </ProfileSection>
+
+                            {/* Languages */}
+                            <ProfileSection
+                                title="Languages Spoken"
+                                icon={FaLanguage}
+                                editable
+                                section="languages"
+                            >
+                                <div className="space-y-4">
+                                    <div className="flex flex-wrap gap-2">
+                                        {lawyer.languages?.map((language) => (
+                                            <span
+                                                key={language}
+                                                className="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 text-sm font-medium rounded-full border border-green-200"
+                                            >
+                                                {language}
+                                                {editSection ===
+                                                    "languages" && (
+                                                    <button
+                                                        onClick={() =>
+                                                            removeLanguage(
+                                                                language
+                                                            )
+                                                        }
+                                                        className="text-green-500 hover:text-green-700 transition-colors"
+                                                    >
+                                                        <FaTrash className="text-xs" />
+                                                    </button>
+                                                )}
+                                            </span>
+                                        ))}
+                                        {(!lawyer.languages ||
+                                            lawyer.languages.length === 0) && (
+                                            <span className="text-gray-500 text-sm">
+                                                No languages added
+                                            </span>
+                                        )}
+                                    </div>
+                                    {editSection === "languages" && (
+                                        <div className="flex gap-2 pt-2">
+                                            <input
+                                                type="text"
+                                                value={newLanguage}
+                                                onChange={(e) =>
+                                                    setNewLanguage(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Add language..."
+                                                className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                            <button
+                                                onClick={addLanguage}
+                                                disabled={!newLanguage.trim()}
+                                                className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </ProfileSection>
+                        </div>
+
+                        {/* Professional Bio */}
+                        <ProfileSection
+                            title="Professional Biography"
+                            icon={HiOutlineDocumentText}
+                            editable
+                            section="description"
+                        >
+                            {editSection === "description" && isEditing ? (
+                                <form
+                                    onSubmit={handleSubmit(onUpdateProfile)}
+                                    className="space-y-4"
+                                >
+                                    <textarea
+                                        {...register("description")}
+                                        rows={6}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                        placeholder="Describe your professional background, expertise, and achievements..."
+                                    />
+                                    <div className="flex gap-3 pt-2">
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            <FaSave className="text-sm" />
+                                            {isSubmitting
+                                                ? "Saving..."
+                                                : "Save Biography"}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={cancelEditing}
+                                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center gap-2"
+                                        >
+                                            <FaTimes className="text-sm" />
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className="prose prose-sm max-w-none">
+                                    <p className="text-gray-700 leading-relaxed">
+                                        {lawyer.description ||
+                                            "No professional biography provided."}
+                                    </p>
+                                </div>
+                            )}
+                        </ProfileSection>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-function StarRating({ rating }) {
-  const fullStars = Math.floor(rating);
-  const half = rating - fullStars >= 0.5;
-  const arr = Array.from({ length: 5 }).map((_, i) => {
-    if (i < fullStars) return "full";
-    if (i === fullStars && half) return "half";
-    return "empty";
-  });
-
-  return (
-    <div className="flex items-center space-x-1">
-      {arr.map((s, i) => (
-        <Star key={i} className={`w-4 h-4 ${s === "full" ? "text-yellow-500" : "text-gray-300"}`} />
-      ))}
-      <span className="text-sm text-gray-700">{rating.toFixed(1)}</span>
-    </div>
-  );
-}
-
-export default function LawyerProfile() {
-  const [lawyer, setLawyer] = useState(lawyerData);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(lawyerData);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSave = () => {
-    setLawyer(formData);
-    setIsEditing(false);
-  };
-
-  return (
-    <section className="max-w-7xl mx-auto p-8">
-      <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
-        {/* Header */}
-        <div className="flex justify-between items-center px-8 py-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-          <h1 className="text-2xl font-bold tracking-wide">Lawyer Profile</h1>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-blue-700 font-medium shadow hover:bg-gray-100"
-          >
-            <Pencil size={16} /> {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
-        </div>
-
-        <div className="md:flex">
-          {/* Left Column */}
-          <div className="md:w-1/3 bg-gray-50 p-8 flex flex-col items-center text-center border-r border-gray-200">
-            <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg ring-4 ring-white">
-              <img
-                src={lawyer.image}
-                alt={lawyer.name}
-                onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/300x300?text=Profile")}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <h2 className="mt-5 text-2xl font-bold text-gray-800">{lawyer.name}</h2>
-            <p className="text-sm text-gray-600 mt-1">{lawyer.qualification}</p>
-            <div className="mt-3">
-              <StarRating rating={lawyer.rating} />
-            </div>
-
-            <div className="mt-5 w-full space-y-3">
-              <a
-                href={`mailto:${lawyer.email}`}
-                className="block w-full text-center px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700"
-              >
-                <Mail className="inline mr-2" size={16} /> Message
-              </a>
-              <a
-                href={`tel:${lawyer.phone}`}
-                className="block w-full text-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100"
-              >
-                <Phone className="inline mr-2" size={16} /> Call
-              </a>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="md:w-2/3 p-8 space-y-8">
-            {isEditing ? (
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Phone</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Description</label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={4}
-                    className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  onClick={handleSave}
-                  className="flex items-center gap-2 px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow"
-                >
-                  <CheckCircle size={18} /> Save Changes
-                </button>
-              </div>
-            ) : (
-              <>
-                {/* About Section */}
-                <h3 className="text-xl font-bold text-gray-800">About</h3>
-                <p className="mt-3 text-gray-700 leading-relaxed">{lawyer.description}</p>
-
-                {/* Testimonials */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mt-6">Client Testimonials</h4>
-                  <ul className="mt-3 space-y-3">
-                    {lawyer.testimonials.map((t, idx) => (
-                      <li key={idx} className="bg-gray-50 p-4 rounded-lg border">
-                        <p className="text-sm text-gray-700">"{t.feedback}"</p>
-                        <p className="text-xs text-gray-500 mt-1">- {t.client}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Recent Cases */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mt-6">Recent Cases</h4>
-                  <ul className="mt-3 space-y-1 list-disc list-inside text-gray-700">
-                    {lawyer.recentCases.map((c, idx) => (
-                      <li key={idx}>{c}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Case Studies */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mt-6">Case Studies</h4>
-                  <ul className="mt-3 space-y-4">
-                    {lawyer.caseStudies.map((caseItem, idx) => (
-                      <li key={idx} className="bg-gray-50 p-4 rounded-lg border">
-                        <h5 className="font-bold text-gray-800">{caseItem.title} ({caseItem.year})</h5>
-                        <p className="text-sm text-gray-700 mt-1">{caseItem.description}</p>
-                        <p className={`text-sm mt-1 font-semibold ${caseItem.outcome === 'Success' ? 'text-green-600' : 'text-yellow-600'}`}>Outcome: {caseItem.outcome}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Awards */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mt-6">Awards & Recognitions</h4>
-                  <ul className="mt-3 space-y-1 list-disc list-inside text-gray-700">
-                    {lawyer.awards.map((a, idx) => (
-                      <li key={idx}>{a}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Publications */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mt-6">Publications</h4>
-                  <ul className="mt-3 space-y-1 list-disc list-inside text-gray-700">
-                    {lawyer.publications.map((p, idx) => (
-                      <li key={idx}>{p}</li>
-                    ))}
-                  </ul>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+export default LawyerProfile;

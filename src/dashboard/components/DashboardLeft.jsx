@@ -13,9 +13,10 @@ import {
 import useUserData from "../../hooks/useUserData";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Loading from "../../common/loading/Loading";
 
 const DashboardLeft = () => {
-    const { userRole } = useUserData();
+    const { userRole, currentUser, isLoading } = useUserData();
     const location = useLocation();
     const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,13 +30,13 @@ const DashboardLeft = () => {
     useEffect(() => {
         if (location.pathname === "/dashboard") {
             const profileRoutes = {
-                user: "/dashboard", // Keep user on dashboard
+                user: "/dashboard",
                 lawyer: "/dashboard/lawyer-profile",
-                arbitrator: "/arbitrator-profile", 
-                mediator: "/mediator-profile",
-                admin: "/all-users" // Redirect admin to all-users
+                arbitrator: "/dashboard/arbitrator-profile",
+                mediator: "/dashboard/mediator-profile",
+                admin: "/dashboard/all-users",
             };
-            
+
             const redirectPath = profileRoutes[userRole] || "/dashboard";
             if (redirectPath !== location.pathname) {
                 navigate(redirectPath, { replace: true });
@@ -57,7 +58,7 @@ const DashboardLeft = () => {
     const userLinks = [
         {
             name: "Dashboard",
-            path: "/dashboard",
+            path: "/dashboard/user-profile",
             icon: <FaDashcube className="text-lg" />,
         },
     ];
@@ -70,7 +71,7 @@ const DashboardLeft = () => {
         },
         {
             name: "Appointments",
-            path: "/appointments",
+            path: "/dashboard/appointments",
             icon: <FaGavel className="text-lg" />,
         },
     ];
@@ -78,12 +79,12 @@ const DashboardLeft = () => {
     const arbitratorLinks = [
         {
             name: "Profile",
-            path: "/arbitrator-profile",
+            path: "/dashboard/arbitrator-profile",
             icon: <FaUser className="text-lg" />,
         },
         {
             name: "Cases",
-            path: "/cases",
+            path: "/dashboard/cases",
             icon: <FaBalanceScale className="text-lg" />,
         },
     ];
@@ -152,27 +153,34 @@ const DashboardLeft = () => {
         if (location.pathname === "/dashboard" && path === "/dashboard") {
             return userRole === "user"; // Only active for regular users
         }
-        
+
         // For profile pages, also consider if we were redirected from dashboard
         const profileRoutes = {
             lawyer: "/lawyer-profile",
             arbitrator: "/arbitrator-profile",
             mediator: "/mediator-profile",
-            admin: "/all-users"
+            admin: "/all-users",
         };
-        
+
         // If current path matches, or if we're on a profile route and it matches the user's profile
-        return location.pathname === path || 
-               (location.pathname === profileRoutes[userRole] && path === profileRoutes[userRole]);
+        return (
+            location.pathname === path ||
+            (location.pathname === profileRoutes[userRole] &&
+                path === profileRoutes[userRole])
+        );
     };
 
     // Set active item based on current route
     useEffect(() => {
-        const currentItem = menuItems.find(item => isActiveLink(item.path));
+        const currentItem = menuItems.find((item) => isActiveLink(item.path));
         if (currentItem) {
             setActiveItem(currentItem.name);
         }
     }, [location.pathname, menuItems]);
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <div
@@ -243,12 +251,18 @@ const DashboardLeft = () => {
             {/* Footer */}
             <div className="absolute bottom-0 w-full p-4 border-t border-teal-700">
                 <div className="flex items-center space-x-3 mb-4 p-3 rounded-lg hover:bg-teal-700 transition-colors duration-200">
-                    <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center">
-                        <span className="font-bold text-white">U</span>
-                    </div>
+                    <figure className="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center">
+                        <img
+                            className="w-11 h-11 rounded-full"
+                            src={currentUser.photo}
+                            alt=""
+                        />
+                    </figure>
                     {!isCollapsed && (
                         <div>
-                            <p className="text-sm font-medium">User Name</p>
+                            <p className="text-sm font-medium">
+                                {currentUser.name}
+                            </p>
                             <p className="text-xs text-teal-200">
                                 {getRoleDisplayName(userRole)}
                             </p>
