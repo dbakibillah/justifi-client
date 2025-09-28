@@ -1,22 +1,24 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { ToastContainer } from "react-toastify";
 import "./index.css";
 import Arbitrator from "./pages/arbitrator/Arbitrator";
+import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
 import Login from "./pages/auth/Login";
 import Registration from "./pages/auth/Registration";
 import Blog from "./pages/blog/Blog";
 import BlogDetails from "./pages/blog/components/BlogDetails";
 import Home from "./pages/Home/Home";
+import BookLawyer from "./pages/lawyers/BookLawyer";
 import Lawyer from "./pages/lawyers/Lawyer";
+import LawyerDetails from "./pages/lawyers/LawyerDetails";
+import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
-import MediatorDetails from "./pages/mediator/components/MediatorDetails";
-import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
-import LawyerDetails from "./pages/lawyers/LawyerDetails";
-import BookLawyer from "./pages/lawyers/BookLawyer";
-import { ToastContainer } from "react-toastify";
+import Dashboard from "./dashboard/Dashboard";
+import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,14 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="/mediators/:mediatorsobj"
                             element={<MediatorDetails />}
+                        />
+                    </Route>
+
+                    <Route path="/dashboard" element={<Dashboard />}>
+                        <Route index element={<Dashboard />} />
+                        <Route
+                            path="lawyer-profile"
+                            element={<LawyerProfile />}
                         />
                     </Route>
                 </Routes>

@@ -24,7 +24,11 @@ export default function LawyerDetails() {
                         {lawyer.court}
                     </p>
                     <p className="text-gray-600 mb-6">{lawyer.description}</p>
-                    <Link to={`/book-lawyer/${lawyer._id}`} state={{ lawyer }} className="border-2 border-[#a58a51] px-6 py-3 font-semibold hover:bg-[#a58a51] hover:text-white transition">
+                    <Link
+                        to={`/book-lawyer/${lawyer._id}`}
+                        state={{ lawyer }}
+                        className="border-2 border-[#a58a51] px-6 py-3 font-semibold hover:bg-[#a58a51] hover:text-white transition"
+                    >
                         Book Appointment
                     </Link>
                 </div>
