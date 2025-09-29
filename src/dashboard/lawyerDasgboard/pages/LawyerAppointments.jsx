@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import {
     FaCalendarAlt,
     FaCalendarCheck,
@@ -11,6 +10,7 @@ import {
     FaFileAlt,
     FaFilter,
     FaHourglassHalf,
+    FaLink,
     FaPhone,
     FaSearch,
     FaTimesCircle,
@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import { HiOutlineClipboardCheck, HiOutlineUserGroup } from "react-icons/hi";
 import { MdOutlineCancel, MdPendingActions } from "react-icons/md";
+import { toast } from "react-toastify";
 import Loading from "../../../common/loading/Loading";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUserData from "../../../hooks/useUserData";
@@ -29,6 +30,11 @@ const LawyerAppointments = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [meetingLink, setMeetingLink] = useState("");
+    const [cancellationNote, setCancellationNote] = useState("");
+    const [processingAction, setProcessingAction] = useState(false);
 
     const {
         data: myAppointments = [],
@@ -45,7 +51,6 @@ const LawyerAppointments = () => {
         enabled: !!currentUser?.email,
     });
 
-    // Filter appointments based on status and search term
     const filteredAppointments = myAppointments.filter((appointment) => {
         const matchesStatus =
             selectedStatus === "all" || appointment.status === selectedStatus;
@@ -59,31 +64,112 @@ const LawyerAppointments = () => {
         return matchesStatus && matchesSearch;
     });
 
-    // Update appointment status
-    const updateAppointmentStatus = async (appointmentId, newStatus) => {
+    // Open confirmation modal
+    const openConfirmModal = (appointment) => {
+        setSelectedAppointment(appointment);
+        setMeetingLink("");
+        setShowConfirmModal(true);
+    };
+
+    // Open cancellation modal
+    const openCancelModal = (appointment) => {
+        setSelectedAppointment(appointment);
+        setCancellationNote("");
+        setShowCancelModal(true);
+    };
+
+    // Update appointment status with additional data
+    const updateAppointmentStatus = async (newStatus, additionalData = {}) => {
+        if (!selectedAppointment) return;
+
+        setProcessingAction(true);
         try {
+            const updateData = {
+                status: newStatus,
+                updatedAt: new Date().toISOString(),
+                ...additionalData,
+            };
+
             const res = await axiosSecure.patch(
-                `/appointments/${appointmentId}`,
-                {
-                    status: newStatus,
-                    updatedAt: new Date().toISOString(),
-                }
+                `/appointments/${selectedAppointment._id}`,
+                updateData
             );
 
-            if (res.data.success && res.data.modifiedCount > 0) {
+            if (res.data.success) {
                 toast.success(`Appointment ${newStatus} successfully!`);
                 refetch();
-                setShowDetailsModal(false);
+                closeAllModals();
             } else {
                 toast.error("Failed to update appointment status");
+                console.error("Update failed:", res.data);
             }
         } catch (error) {
             toast.error("Failed to update appointment status");
             console.error("Update error:", error);
+            console.error("Error response:", error.response?.data);
+        } finally {
+            setProcessingAction(false);
         }
     };
 
-    // Get status badge color and icon
+    // Confirm appointment with meeting link
+    const handleConfirmAppointment = () => {
+        if (!meetingLink.trim()) {
+            toast.error("Please provide a meeting link");
+            return;
+        }
+
+        // Basic URL validation
+        if (
+            !meetingLink.startsWith("http://") &&
+            !meetingLink.startsWith("https://")
+        ) {
+            toast.error(
+                "Please enter a valid meeting link starting with http:// or https://"
+            );
+            return;
+        }
+
+        updateAppointmentStatus("confirmed", {
+            meetingLink: meetingLink.trim(),
+            booking: {
+                ...selectedAppointment.booking,
+                meetingLink: meetingLink.trim(),
+            },
+        });
+    };
+
+    const handleCancelAppointment = () => {
+        if (!cancellationNote.trim()) {
+            toast.error("Please provide a cancellation reason");
+            return;
+        }
+
+        updateAppointmentStatus("cancelled", {
+            cancellationNote: cancellationNote.trim(),
+            booking: {
+                ...selectedAppointment.booking,
+                cancellationNote: cancellationNote.trim(),
+            },
+        });
+    };
+
+    const handleCompleteAppointment = (appointmentId) => {
+        setSelectedAppointment(
+            myAppointments.find((app) => app._id === appointmentId)
+        );
+        updateAppointmentStatus("completed");
+    };
+
+    const closeAllModals = () => {
+        setShowDetailsModal(false);
+        setShowConfirmModal(false);
+        setShowCancelModal(false);
+        setSelectedAppointment(null);
+        setMeetingLink("");
+        setCancellationNote("");
+    };
+
     const getStatusInfo = (status) => {
         const statusConfig = {
             confirmed: {
@@ -116,7 +202,6 @@ const LawyerAppointments = () => {
         );
     };
 
-    // Format date for display
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString("en-US", {
             weekday: "long",
@@ -156,7 +241,6 @@ const LawyerAppointments = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 py-8">
             <div className="max-w-7xl mx-auto px-4">
-                {/* Header */}
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-sm mb-6">
                         <FaCalendarCheck className="w-5 h-5 text-blue-600" />
@@ -434,9 +518,8 @@ const LawyerAppointments = () => {
                                                 <>
                                                     <button
                                                         onClick={() =>
-                                                            updateAppointmentStatus(
-                                                                appointment._id,
-                                                                "confirmed"
+                                                            openConfirmModal(
+                                                                appointment
                                                             )
                                                         }
                                                         className="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-xl hover:from-emerald-600 hover:to-green-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-3 cursor-pointer"
@@ -446,9 +529,8 @@ const LawyerAppointments = () => {
                                                     </button>
                                                     <button
                                                         onClick={() =>
-                                                            updateAppointmentStatus(
-                                                                appointment._id,
-                                                                "cancelled"
+                                                            openCancelModal(
+                                                                appointment
                                                             )
                                                         }
                                                         className="border border-red-500 text-red-600 px-8 py-3 rounded-xl hover:bg-red-50 transition-all duration-300 font-semibold flex items-center gap-3 cursor-pointer"
@@ -462,9 +544,8 @@ const LawyerAppointments = () => {
                                                 "confirmed" && (
                                                 <button
                                                     onClick={() =>
-                                                        updateAppointmentStatus(
-                                                            appointment._id,
-                                                            "completed"
+                                                        handleCompleteAppointment(
+                                                            appointment._id
                                                         )
                                                     }
                                                     className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-8 py-3 rounded-xl hover:from-blue-600 hover:to-cyan-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-3 cursor-pointer"
@@ -506,7 +587,7 @@ const LawyerAppointments = () => {
                                     Appointment Details
                                 </h3>
                                 <button
-                                    onClick={() => setShowDetailsModal(false)}
+                                    onClick={closeAllModals}
                                     className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
                                 >
                                     ×
@@ -592,6 +673,37 @@ const LawyerAppointments = () => {
                                 </div>
                             </div>
 
+                            {/* Meeting Link (if confirmed) */}
+                            {selectedAppointment.meetingLink && (
+                                <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6">
+                                    <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <FaLink className="text-emerald-500" />
+                                        Meeting Link
+                                    </h4>
+                                    <a
+                                        href={selectedAppointment.meetingLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 break-all font-medium underline"
+                                    >
+                                        {selectedAppointment.meetingLink}
+                                    </a>
+                                </div>
+                            )}
+
+                            {/* Cancellation Note (if cancelled) */}
+                            {selectedAppointment.cancellationNote && (
+                                <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6">
+                                    <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <FaTimesCircle className="text-red-500" />
+                                        Cancellation Reason
+                                    </h4>
+                                    <p className="text-gray-700">
+                                        {selectedAppointment.cancellationNote}
+                                    </p>
+                                </div>
+                            )}
+
                             {/* Problem Description */}
                             <div>
                                 <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -625,6 +737,160 @@ const LawyerAppointments = () => {
                                         ).toLocaleString()}
                                     </p>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Confirm Appointment Modal */}
+            {showConfirmModal && selectedAppointment && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl">
+                        <div className="p-8 border-b border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-2xl font-bold text-gray-900">
+                                    Confirm Appointment
+                                </h3>
+                                <button
+                                    onClick={closeAllModals}
+                                    className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-8 space-y-6">
+                            <div className="text-center">
+                                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <FaCheckCircle className="text-3xl text-emerald-600" />
+                                </div>
+                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                    Confirm Appointment with{" "}
+                                    {selectedAppointment.user.name}
+                                </h4>
+                                <p className="text-gray-600">
+                                    Please provide the meeting link for the
+                                    consultation.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Meeting Link *
+                                </label>
+                                <div className="relative">
+                                    <FaLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="url"
+                                        value={meetingLink}
+                                        onChange={(e) =>
+                                            setMeetingLink(e.target.value)
+                                        }
+                                        placeholder="https://meet.google.com/..."
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        required
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Enter a valid meeting link (Google Meet,
+                                    Zoom, etc.)
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    onClick={closeAllModals}
+                                    className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-semibold"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleConfirmAppointment}
+                                    disabled={
+                                        processingAction || !meetingLink.trim()
+                                    }
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl hover:from-emerald-600 hover:to-green-700 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {processingAction
+                                        ? "Confirming..."
+                                        : "Confirm Appointment"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Cancel Appointment Modal */}
+            {showCancelModal && selectedAppointment && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl">
+                        <div className="p-8 border-b border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-2xl font-bold text-gray-900">
+                                    Decline Appointment
+                                </h3>
+                                <button
+                                    onClick={closeAllModals}
+                                    className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-8 space-y-6">
+                            <div className="text-center">
+                                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <MdOutlineCancel className="text-3xl text-red-600" />
+                                </div>
+                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                    Decline Appointment with{" "}
+                                    {selectedAppointment.user.name}
+                                </h4>
+                                <p className="text-gray-600">
+                                    Please provide a reason for declining this
+                                    appointment.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Cancellation Reason *
+                                </label>
+                                <textarea
+                                    value={cancellationNote}
+                                    onChange={(e) =>
+                                        setCancellationNote(e.target.value)
+                                    }
+                                    placeholder="Please provide a reason for declining this appointment..."
+                                    rows="4"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                                    required
+                                />
+                            </div>
+
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    onClick={closeAllModals}
+                                    className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-semibold"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCancelAppointment}
+                                    disabled={
+                                        processingAction ||
+                                        !cancellationNote.trim()
+                                    }
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {processingAction
+                                        ? "Declining..."
+                                        : "Decline Appointment"}
+                                </button>
                             </div>
                         </div>
                     </div>
