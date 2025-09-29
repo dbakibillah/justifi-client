@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import {
     FaAward,
     FaBriefcase,
@@ -23,6 +22,8 @@ import {
 } from "react-icons/fa";
 import { HiOutlineAcademicCap, HiOutlineDocumentText } from "react-icons/hi";
 import { MdVerified, MdWork } from "react-icons/md";
+import { toast } from "react-toastify";
+import Loading from "../../../common/loading/Loading";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUserData from "../../../hooks/useUserData";
 
@@ -128,6 +129,9 @@ const LawyerProfile = () => {
             updateField("languages", updatedLanguages);
             setNewLanguage("");
         }
+        // Collapse the edit field after adding
+        setIsEditing(false);
+        setEditSection(null);
     }, [newLanguage, lawyer, updateField]);
 
     const removeLanguage = useCallback(
@@ -136,6 +140,9 @@ const LawyerProfile = () => {
                 (lang) => lang !== languageToRemove
             );
             updateField("languages", updatedLanguages);
+            // Collapse the edit field after deleting
+            setIsEditing(false);
+            setEditSection(null);
         },
         [lawyer, updateField]
     );
@@ -152,6 +159,9 @@ const LawyerProfile = () => {
             updateField("specialization", updatedSpecializations);
             setNewSpecialization("");
         }
+        // Collapse the edit field after adding
+        setIsEditing(false);
+        setEditSection(null);
     }, [newSpecialization, lawyer, updateField]);
 
     const removeSpecialization = useCallback(
@@ -160,6 +170,9 @@ const LawyerProfile = () => {
                 (spec) => spec !== specToRemove
             );
             updateField("specialization", updatedSpecializations);
+            // Collapse the edit field after deleting
+            setIsEditing(false);
+            setEditSection(null);
         },
         [lawyer, updateField]
     );
@@ -287,16 +300,7 @@ const LawyerProfile = () => {
     );
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600 font-medium">
-                        Loading profile...
-                    </p>
-                </div>
-            </div>
-        );
+        return <Loading />;
     }
 
     if (error || !lawyer || !lawyer._id) {
@@ -615,12 +619,7 @@ const LawyerProfile = () => {
                                             name="experience"
                                             type="number"
                                         />
-                                        <FormField
-                                            label="Success Rate (%)"
-                                            icon={FaChartLine}
-                                            name="successRate"
-                                            type="number"
-                                        />
+                                        {/* Success Rate removed from editable form but kept in display view */}
                                     </div>
                                     <FormField
                                         label="Qualifications"
