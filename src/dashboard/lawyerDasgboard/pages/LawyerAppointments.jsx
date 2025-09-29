@@ -258,10 +258,10 @@ const LawyerAppointments = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 mb-12">
                     <StatCard
                         icon={HiOutlineUserGroup}
-                        label="Total Appointments"
+                        label="Total"
                         value={myAppointments.length}
                         color="text-gray-900"
                         gradient="from-blue-500 to-purple-600"
@@ -297,6 +297,17 @@ const LawyerAppointments = () => {
                         }
                         color="text-blue-600"
                         gradient="from-blue-500 to-cyan-500"
+                    />
+                    <StatCard
+                        icon={FaTimesCircle}
+                        label="Cancelled"
+                        value={
+                            myAppointments.filter(
+                                (a) => a.status === "cancelled"
+                            ).length
+                        }
+                        color="text-red-600"
+                        gradient="from-red-500 to-pink-500"
                     />
                 </div>
 
