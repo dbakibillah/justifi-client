@@ -30,7 +30,7 @@ const DashboardLeft = () => {
     useEffect(() => {
         if (location.pathname === "/dashboard") {
             const profileRoutes = {
-                user: "/dashboard",
+                user: "/dashboard/user-profile",
                 lawyer: "/dashboard/lawyer-profile",
                 arbitrator: "/dashboard/arbitrator-profile",
                 mediator: "/dashboard/mediator-profile",
@@ -57,10 +57,15 @@ const DashboardLeft = () => {
 
     const userLinks = [
         {
-            name: "Dashboard",
+            name: "Profile",
             path: "/dashboard/user-profile",
             icon: <FaDashcube className="text-lg" />,
         },
+        {
+            name: "My Appointments",
+            path: "/dashboard/my-appointments",
+            icon: <FaGavel className="text-lg" />,
+        }
     ];
 
     const lawyerLinks = [

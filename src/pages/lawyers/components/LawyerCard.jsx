@@ -1,74 +1,70 @@
-import { Link } from "react-router";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaBriefcase, FaMapMarkerAlt, FaStar } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const LawyerCard = ({ lawyer }) => {
     const rating = lawyer.rating || 4;
     const experience = lawyer.experience || "5+ Years";
 
     return (
-        <div className="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden group">
-            {/* Left: Image */}
-            <div className="relative md:w-1/3 h-56 md:h-auto">
+        <div className="group bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
+            {/* Lawyer Image */}
+            <div className="relative h-48 overflow-hidden">
                 <img
                     src={lawyer.image}
                     alt={lawyer.name}
-                    className="w-full h-full object-cover md:rounded-l-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
 
-            {/* Right: Content */}
-            <div className="flex flex-col justify-between p-6 md:w-2/3 text-left">
-                {/* Name + Specialization */}
-                <div>
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-700 transition duration-300">
+            {/* Content */}
+            <div className="p-5">
+                {/* Name and Specialization */}
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
                         {lawyer.name}
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 line-clamp-1">
                         {lawyer.specialization?.join(", ")}
                     </p>
-                    <p className="text-sm text-gray-500 mt-1">{lawyer.court}</p>
                 </div>
 
-                {/* Experience + Rating + Fee */}
-                <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700">
-                        Experience:{" "}
-                        <span className="text-blue-700 font-semibold">{experience}</span>
-                    </p>
-                    <div className="flex items-center gap-1 mt-2">
-                        {[...Array(5)].map((_, i) =>
-                            i < rating ? (
-                                <FaStar key={i} className="text-yellow-500 text-sm" />
-                            ) : (
-                                <FaRegStar key={i} className="text-gray-400 text-sm" />
-                            )
-                        )}
-                        <span className="ml-2 text-sm text-gray-600">{rating}.0</span>
+                {/* Key Details */}
+                <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                        <FaBriefcase className="mr-2 text-gray-400" />
+                        <span>{experience} experience</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-700 mt-2">
-                        Consultation Fee:{" "}
-                        <span className="text-blue-700 font-semibold">{lawyer.fee}</span>
-                    </p>
+                    {lawyer.court && (
+                        <div className="flex items-center text-sm text-gray-600">
+                            <FaMapMarkerAlt className="mr-2 text-gray-400" />
+                            <span className="line-clamp-1">{lawyer.court}</span>
+                        </div>
+                    )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-wrap gap-3 mt-5">
-                    <Link
-                        to={`/lawyers/${lawyer._id}`}
-                        state={{ lawyer }}
-                        className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-sm px-5 py-2 rounded-full shadow-md transition duration-300"
-                    >
-                        View Profile
-                    </Link>
-                    <Link
-                        to={`/lawyers/${lawyer._id}/appointment`}
-                        state={{ lawyer }}
-                        className="bg-green-600 hover:bg-green-700 text-white font-medium text-sm px-5 py-2 rounded-full shadow-md transition duration-300"
-                    >
-                        Book Appointment
-                    </Link>
+                {/* Rating and Fee */}
+                <div className="flex items-center justify-between mb-4 text-sm">
+                    <div className="flex items-center space-x-1">
+                        <FaStar className="text-amber-500" />
+                        <span className="font-medium text-gray-900">
+                            {rating}
+                        </span>
+                        <span className="text-gray-500">/5</span>
+                    </div>
+                    <div className="text-gray-900 font-semibold">
+                        {lawyer.fee}
+                    </div>
                 </div>
+
+                {/* View Profile Button */}
+                <Link
+                    to={`/lawyers/${lawyer._id}`}
+                    state={{ lawyer }}
+                    className="w-full bg-gray-900 hover:bg-black text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                    View Profile
+                </Link>
             </div>
         </div>
     );

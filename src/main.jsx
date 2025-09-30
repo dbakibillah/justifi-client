@@ -20,6 +20,8 @@ import Root from "./routes/Root";
 import Dashboard from "./dashboard/Dashboard";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
+import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +66,11 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="appointments"
                             element={<LawyerAppointments />}
+                        />
+                        <Route path="user-profile" element={<UserProfile />} />
+                        <Route
+                            path="my-appointments"
+                            element={<UserAppointments />}
                         />
                     </Route>
                 </Routes>
