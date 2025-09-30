@@ -1,0 +1,36 @@
+[
+    {
+        "id": "arb_001",
+        "title": "Understanding Arbitration Clauses",
+        "desputeNature": "Contract Dispute",
+        "plaintiff": [
+            {
+                "name": "Alice Johnson",
+                "email": "lK0yZ@example.com",
+                "phone": "+1 (123) 456-7890",
+                "address": "123 Main St, Anytown, USA"
+            }
+        ],
+        "defendant": [
+            {
+                "name": "Bob Smith",
+                "email": "K4CtG@example.com",
+                "phone": "+1 (987) 654-3210",
+                "address": "456 Elm St, Anytown, USA"
+            }
+        ],
+        "arbitrator": [
+            {
+                "name": "Dr. Emily Brown",
+                "email": "K4CtG@example.com",
+                "phone": "+1 (555) 123-4567",
+                "address": "789 Oak St, Anytown, USA",
+                "img": "https://i.ibb.co/0yJ19tYz/brsanjid.png"
+            }
+        ],
+        "status": "pending",
+        "progress": 25,
+        "createdAt": "2023-08-01T10:00:00Z",
+        "updatedAt": "2023-08-01T10:00:00Z"
+    }
+]
