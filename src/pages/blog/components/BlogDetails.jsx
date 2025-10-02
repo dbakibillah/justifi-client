@@ -32,7 +32,7 @@ export default function BlogDetails() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary to-secondary text-white rounded-2xl shadow-elegant p-10 mb-12">
+        <section className="bg-gradient-to-r from-[#123154] to-[#2d5a8c] text-white rounded-2xl shadow-elegant p-10 mb-12">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-2/3 mb-8 md:mb-0">
               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -58,8 +58,8 @@ export default function BlogDetails() {
         {/* Introduction */}
         <div className="bg-white rounded-2xl shadow-card p-10 mb-10 transition-all duration-300 hover:shadow-elegant">
           <div className="flex items-center mb-6">
-            <FaLandmark className="text-primary text-2xl mr-4" />
-            <h2 className="text-3xl font-bold text-primary">
+            <FaLandmark className="text-[#1A365D] text-2xl mr-4" />
+            <h2 className="text-3xl font-bold text-[#1A365D]">
               Understanding {blog.title}
             </h2>
           </div>
@@ -71,8 +71,8 @@ export default function BlogDetails() {
         {/* Legal Information */}
         <div className="bg-white rounded-2xl shadow-card p-10 mb-10 transition-all duration-300 hover:shadow-elegant">
           <div className="flex items-center mb-8">
-            <FaGavel className="text-primary text-2xl mr-4" />
-            <h2 className="text-3xl font-bold text-primary">
+            <FaGavel className="text-[#1A365D] text-2xl mr-4" />
+            <h2 className="text-3xl font-bold text-[#1A365D]">
               Legal Framework & Acts
             </h2>
           </div>
@@ -83,12 +83,12 @@ export default function BlogDetails() {
                 return (
                   <div
                     key={blog._id}
-                    className={`border-l-4 border-purple-500 bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl transition-all duration-300 hover:translate-x-1`}
+                    className={`border-l-4 border-[#2D5A8C] bg-gradient-to-r from-blue-50 to-white py-6 px-2 rounded-xl transition-all duration-300 hover:translate-x-1`}
                   >
                     <div className="flex items-start">
                       <div className="w-10 h-10 bg-opacity-20 rounded-lg flex items-center justify-center mr-4 mt-1"></div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-purple-600 mb-2">
+                        <h3 className="text-xl font-semibold text-[#2D5A8C] mb-2">
                           {act.actname}
                         </h3>
                         <p className="text-gray-700 leading-relaxed">
@@ -112,8 +112,8 @@ export default function BlogDetails() {
         {/* Misunderstandings Section */}
         <div className="bg-white rounded-2xl shadow-card p-10 mb-10 transition-all duration-300 hover:shadow-elegant">
           <div className="flex items-center mb-8">
-            <FaExclamationTriangle className="text-primary text-2xl mr-4" />
-            <h2 className="text-3xl font-bold text-primary">
+            <FaExclamationTriangle className="text-[#1A365D] text-2xl mr-4" />
+            <h2 className="text-3xl font-bold text-[#1A365D]">
               Common Misunderstandings
             </h2>
           </div>
@@ -125,8 +125,8 @@ export default function BlogDetails() {
         {/* Awareness Section */}
         <div className="bg-white rounded-2xl shadow-card p-10 mb-10 transition-all duration-300 hover:shadow-elegant">
           <div className="flex items-center mb-8">
-            <FaLightbulb className="text-primary text-2xl mr-4" />
-            <h2 className="text-3xl font-bold text-primary">
+            <FaLightbulb className="text-[#1A365D] text-2xl mr-4" />
+            <h2 className="text-3xl font-bold text-[#1A365D]">
               Importance of Legal Awareness
             </h2>
           </div>
@@ -134,7 +134,7 @@ export default function BlogDetails() {
             {blog.awarness}
           </p>
 
-          <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 rounded-2xl shadow-elegant mt-6">
+          <div className="bg-gradient-to-r from-[#123154] to-[#2d5a8c] text-white p-8 rounded-2xl shadow-elegant mt-6">
             <div className="flex items-start">
               <FaQuoteLeft className="text-white/30 text-4xl mr-4 mt-1" />
               <div>
