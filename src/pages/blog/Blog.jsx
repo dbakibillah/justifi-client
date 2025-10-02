@@ -1,9 +1,17 @@
-import { getAllBlogs } from "../../data/blogs"; // Function fetching/returning blogs
-
+import { useQuery } from "@tanstack/react-query";
+import { FaSadTear, FaSearch } from "react-icons/fa";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 import BlogCard from "./components/BlogCard";
 
 export default function Blog() {
-  const blogs = getAllBlogs();
+  const axiosPublic = useAxiosPublic();
+  const { data: blogs = [] } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const res = await axiosPublic.get("/blog");
+      return res.data;
+    },
+  });
 
   return (
     <div className="bg-gray-100">
