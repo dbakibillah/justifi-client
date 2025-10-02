@@ -9,7 +9,7 @@ export default function BlogCard({ blog }) {
     }
   };
   return (
-    <Link to={`/blog/${blog.id}`}>
+    <Link to={`/blog/${blog._id}`} state={{ blog }}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative">
           <img
