@@ -1,19 +1,19 @@
+import { useEffect, useState } from "react";
 import {
-    FaDashcube,
-    FaUser,
     FaBalanceScale,
-    FaHandshake,
-    FaUsers,
-    FaGavel,
-    FaChevronRight,
     FaChevronLeft,
-    FaHome,
+    FaChevronRight,
+    FaDashcube,
+    FaGavel,
+    FaHandshake,
     FaHeart,
+    FaHome,
+    FaUser,
+    FaUsers,
 } from "react-icons/fa";
-import useUserData from "../../hooks/useUserData";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../common/loading/Loading";
+import useUserData from "../../hooks/useUserData";
 
 const DashboardLeft = () => {
     const { userRole, currentUser, isLoading } = useUserData();
@@ -65,7 +65,7 @@ const DashboardLeft = () => {
             name: "My Appointments",
             path: "/dashboard/my-appointments",
             icon: <FaGavel className="text-lg" />,
-        }
+        },
     ];
 
     const lawyerLinks = [
