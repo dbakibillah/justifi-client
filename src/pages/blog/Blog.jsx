@@ -14,7 +14,6 @@ export default function Blog() {
 
     return (
         <div className="bg-gray-100">
-            {/* Blog Section */}
             <section className="max-w-7xl mx-auto px-6 py-12">
                 <h2 className="text-2xl font-bold text-center mb-10">Blogs</h2>
 

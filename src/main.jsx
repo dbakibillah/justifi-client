@@ -22,6 +22,7 @@ import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
+import Arbitration from "./pages/arbitration/Arbitration";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ createRoot(document.getElementById("root")).render(
                             path="/mediators/:mediatorsobj"
                             element={<MediatorDetails />}
                         />
+                        <Route path="/arbitration" element={<Arbitration />} />
                     </Route>
 
                     <Route path="/dashboard" element={<Dashboard />}>
