@@ -1,0 +1,120 @@
+{
+  "arbitrations": [
+    {
+      "arbitration_id": "ARB-2025-001",
+      "title": "TechCorp vs SoftSolutions",
+      "category": "Commercial",
+      "nature_of_dispute": "Breach of software development contract",
+      "suit_value": 500000,
+      "submitting_date": "2025-09-15",
+      "status": "Ongoing",
+      "plaintiffs": [
+        {
+          "name": "Mehedi Hasan",
+          "email": "mehedi@example.com",
+          "phone": "+8801712345678",
+          "address": "Dhaka, Bangladesh",
+          "occupation": "Software Engineer",
+
+          
+          "representative": {
+            "name": "Adv. Rahman",
+            "email": "advrahhman@gmail.com",
+            "phone": "+8801912345678",
+            "designation": "Lawyer"
+          }
+        }
+      ],
+
+      "defendants": [
+        {
+          "name": "ABC Software Ltd.",
+          "email": "contact@abcsoft.com",
+          "phone": "+8801812345678",
+          "address": "Chittagong, Bangladesh",
+          "occupation": "Software Company",
+ 
+          "representative": {
+            "name": "John Smith",
+            "email":"xyz@gmail.com",
+            "phone": "+8801912345678",
+            "designation": "CEO"
+          }
+        }
+      ],
+
+
+      "arbitrators": [
+        {
+          "arbitrator_id": "A001",
+          "name": "Justice Mahmud",
+          "role": "Presiding Arbitrator",
+          "email": "mahmud@adrpanel.com",
+          "phone" : "+8801912345678"
+        },
+
+        {
+          "arbitrator_id": "A002",
+          "name": "Dr. Sara Khan",
+          "role": "Plaintiff-Arbitrator",
+          "email":"xyzsara@gmail.com",
+          "phone" : "+8801712345678"
+          
+        },
+
+        {
+          "arbitrator_id": "A003",
+          "name": "Justice Rahman",
+          "role": "Defendant-Arbitrator",
+          "email": "rahman@adrpanel.com",
+          "phone" : "+8801912345678"
+        }
+      ],
+
+      "hearings": [
+        {
+          "hearing_id": "H001",
+          "date": "2025-10-10",
+          "status": "Completed",
+          "review" : "/uploads/evidence/E001.pdf",
+          "reviewed_by": "Justice Mahmud",
+          "notes": "Procedural hearing. Next hearing scheduled for evidence submission."
+        },
+        {
+          "hearing_id": "H002",
+          "date": "2025-11-10",
+          "status": "Completed",
+          "review" : "/uploads/evidence/E002.pdf",
+          "reviewed_by": "Justice Mahmud",
+          "notes": "Procedural hearing. Next hearing scheduled for evidence submission."
+        }
+      ],
+
+      "evidence": [
+        {
+          "evidence_id": "E001",
+          "submitted_by": "Plaintiff",
+          "submitted_email":"xyz@gmail.com",
+          "description": "Software License Agreement Copy",
+          "file_url": "/uploads/evidence/E001.pdf",
+          "date_submitted": "2025-09-20"
+        },
+        {
+          "evidence_id": "E002",
+          "submitted_by": "Respondent",
+          "submitted_email":"abc@gmail.com",
+          "description": "Email communications between parties",
+          "file_url": "/uploads/evidence/E002.pdf",
+          "date_submitted": "2025-09-25"
+        }
+      ],
+
+      "award": {
+        "award_id": "W6001",
+        "date": null,
+        "decision": null,
+        "status": "Pending"
+      }
+    }
+  ]
+}
