@@ -51,8 +51,11 @@ createRoot(document.getElementById("root")).render(
               path="/mediators/:mediatorsobj"
               element={<MediatorDetails />}
             />
-            <Route path="/arbitration" element={<ArbitrationProcess />} />
-            {/* <Route path="/arbitration" element={<Arbitration />} /> */}
+            <Route
+              path="/arbitration-process"
+              element={<ArbitrationProcess />}
+            />
+            <Route path="/arbitration" element={<Arbitration />} />
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>
