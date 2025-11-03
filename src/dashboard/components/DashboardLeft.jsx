@@ -66,6 +66,11 @@ const DashboardLeft = () => {
             path: "/dashboard/my-appointments",
             icon: <FaGavel className="text-lg" />,
         },
+        {
+            name: "My Arbitrations",
+            path: "/dashboard/my-arbitrations",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
     ];
 
     const lawyerLinks = [
@@ -79,6 +84,11 @@ const DashboardLeft = () => {
             path: "/dashboard/appointments",
             icon: <FaGavel className="text-lg" />,
         },
+        {
+            name: "Arbitrations",
+            path: "/dashboard/arbitrations",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
     ];
 
     const arbitratorLinks = [
@@ -90,6 +100,11 @@ const DashboardLeft = () => {
         {
             name: "Cases",
             path: "/dashboard/cases",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
+        {
+            name: "Arbitrations",
+            path: "/dashboard/arbitrations",
             icon: <FaBalanceScale className="text-lg" />,
         },
     ];
