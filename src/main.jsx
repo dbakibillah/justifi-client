@@ -23,15 +23,11 @@ import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointm
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import Arbitration from "./pages/arbitration/Arbitration";
-<<<<<<< HEAD
-=======
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
->>>>>>> polash
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-<<<<<<< HEAD
     <BrowserRouter>
         <AuthProvider>
             <QueryClientProvider client={queryClient}>
@@ -61,6 +57,10 @@ createRoot(document.getElementById("root")).render(
                             path="/mediators/:mediatorsobj"
                             element={<MediatorDetails />}
                         />
+                        <Route
+                            path="/arbitration-process"
+                            element={<ArbitrationProcess />}
+                        />
                         <Route path="/arbitration" element={<Arbitration />} />
                     </Route>
 
@@ -85,48 +85,4 @@ createRoot(document.getElementById("root")).render(
         </AuthProvider>
         <ToastContainer />
     </BrowserRouter>
-=======
-  <BrowserRouter>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route path="/" element={<Root />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Registration />} />
-            <Route path="/lawyers" element={<Lawyer />} />
-            <Route path="lawyers/:lawyerId" element={<LawyerDetails />} />
-            <Route path="/book-lawyer/:lawyerId" element={<BookLawyer />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:blogId" element={<BlogDetails />} />
-            <Route path="/arbitrators" element={<Arbitrator />} />
-            <Route
-              path="/arbitrators/:arbitratorID"
-              element={<ArbitratorDetails />}
-            />
-            <Route path="/mediators" element={<Mediator />} />
-            <Route
-              path="/mediators/:mediatorsobj"
-              element={<MediatorDetails />}
-            />
-            <Route
-              path="/arbitration-process"
-              element={<ArbitrationProcess />}
-            />
-            <Route path="/arbitration" element={<Arbitration />} />
-          </Route>
-
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route index element={<Dashboard />} />
-            <Route path="lawyer-profile" element={<LawyerProfile />} />
-            <Route path="appointments" element={<LawyerAppointments />} />
-            <Route path="user-profile" element={<UserProfile />} />
-            <Route path="my-appointments" element={<UserAppointments />} />
-          </Route>
-        </Routes>
-      </QueryClientProvider>
-    </AuthProvider>
-    <ToastContainer />
-  </BrowserRouter>
->>>>>>> polash
 );
