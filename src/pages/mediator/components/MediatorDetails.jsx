@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router";
 import { MdOutlineWork } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlineLanguage } from "react-icons/md";
 
 export default function MediatorDetails() {
   const location = useLocation();
@@ -29,6 +30,12 @@ export default function MediatorDetails() {
                 <FaLocationDot />
               </strong>{" "}
               {mediator.address}
+            </p>
+            <p className="flex  items-center gap-1">
+              <strong>
+                <MdOutlineLanguage />
+              </strong>{" "}
+              {mediator.languages.join(", ")}
             </p>
           </div>
         </div>
