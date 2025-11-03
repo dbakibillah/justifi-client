@@ -66,6 +66,11 @@ const DashboardLeft = () => {
             path: "/dashboard/my-appointments",
             icon: <FaGavel className="text-lg" />,
         },
+        {
+            name: "My Arbitrations",
+            path: "/dashboard/my-arbitrations",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
     ];
 
     const lawyerLinks = [
@@ -78,6 +83,11 @@ const DashboardLeft = () => {
             name: "Appointments",
             path: "/dashboard/appointments",
             icon: <FaGavel className="text-lg" />,
+        },
+        {
+            name: "Arbitrations",
+            path: "/dashboard/arbitrations",
+            icon: <FaBalanceScale className="text-lg" />,
         },
     ];
 
@@ -92,17 +102,22 @@ const DashboardLeft = () => {
             path: "/dashboard/cases",
             icon: <FaBalanceScale className="text-lg" />,
         },
+        {
+            name: "Arbitrations",
+            path: "/dashboard/arbitrations",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
     ];
 
     const mediatorLinks = [
         {
             name: "Profile",
-            path: "/mediator-profile",
+            path: "/dashboard/mediator-profile",
             icon: <FaUser className="text-lg" />,
         },
         {
             name: "Sessions",
-            path: "/sessions",
+            path: "/dashboard/sessions",
             icon: <FaHandshake className="text-lg" />,
         },
     ];
@@ -110,22 +125,22 @@ const DashboardLeft = () => {
     const adminLinks = [
         {
             name: "All Users",
-            path: "/all-users",
+            path: "/dashboard/all-users",
             icon: <FaUsers className="text-lg" />,
         },
         {
             name: "All Lawyers",
-            path: "/all-lawyers",
+            path: "/dashboard/all-lawyers",
             icon: <FaGavel className="text-lg" />,
         },
         {
             name: "All Arbitrators",
-            path: "/all-arbitrators",
+            path: "/dashboard/all-arbitrators",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
             name: "All Mediators",
-            path: "/all-mediators",
+            path: "/dashboard/all-mediators",
             icon: <FaHandshake className="text-lg" />,
         },
     ];
@@ -152,30 +167,8 @@ const DashboardLeft = () => {
         setActiveItem(name);
     };
 
-    // Enhanced active link detection
-    const isActiveLink = (path) => {
-        // Special case for dashboard redirection
-        if (location.pathname === "/dashboard" && path === "/dashboard") {
-            return userRole === "user"; // Only active for regular users
-        }
+    const isActiveLink = (path) => location.pathname === path;
 
-        // For profile pages, also consider if we were redirected from dashboard
-        const profileRoutes = {
-            lawyer: "/lawyer-profile",
-            arbitrator: "/arbitrator-profile",
-            mediator: "/mediator-profile",
-            admin: "/all-users",
-        };
-
-        // If current path matches, or if we're on a profile route and it matches the user's profile
-        return (
-            location.pathname === path ||
-            (location.pathname === profileRoutes[userRole] &&
-                path === profileRoutes[userRole])
-        );
-    };
-
-    // Set active item based on current route
     useEffect(() => {
         const currentItem = menuItems.find((item) => isActiveLink(item.path));
         if (currentItem) {
@@ -286,7 +279,6 @@ const DashboardLeft = () => {
                 </Link>
             </div>
 
-            {/* Decorative Elements */}
             {!isCollapsed && (
                 <>
                     <div className="absolute top-1/4 -left-2 w-4 h-4 bg-teal-500 rounded-full opacity-50"></div>
