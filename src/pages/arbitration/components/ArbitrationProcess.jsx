@@ -20,25 +20,13 @@ function ArbitrationProcess() {
       details: {
         title: "Case Submission & Agreement",
         description:
-          "Complete the online submission form with details of your dispute. Both parties sign the arbitration agreement electronically.",
-        tags: ["Online Forms", "E-Signature", "Document Upload"],
+          "Complete the online submission form with details of your dispute, plaintiff information and defendant information. After completing the agreements, both parties sign the arbitration agreement electronically.",
+        tags: ["Online Forms", "Valid Information"],
       },
     },
+
     {
       number: 2,
-      icon: FaUserTie,
-      title: "Arbitrator Selection",
-      description:
-        "Choose from our panel of qualified, experienced arbitrators.",
-      details: {
-        title: "Panel Selection & Appointment",
-        description:
-          "Review arbitrator profiles and select your preferred neutral. Our system facilitates the appointment process.",
-        tags: ["Arbitrator Profiles", "Selection Tool", "Conflict Check"],
-      },
-    },
-    {
-      number: 3,
       icon: FaCalendarAlt,
       title: "Preliminary Hearing",
       description: "Establish procedures and timelines for your case.",
@@ -47,6 +35,19 @@ function ArbitrationProcess() {
         description:
           "Participate in a virtual preliminary hearing to establish timelines, evidence submission procedures, and hearing dates.",
         tags: ["Video Conference", "Procedural Order", "Calendar Integration"],
+      },
+    },
+    {
+      number: 3,
+      icon: FaUserTie,
+      title: "Arbitrator Selection",
+      description:
+        "Our Platform will provide panel of qualified, experienced arbitrators.",
+      details: {
+        title: "Panel Selection & Appointment",
+        description:
+          "Our System will provide three neutrals where one neutral will be appointed for plaintiffs, one neutral will be appointed for defendants and one neutral will be a chairmen arbitrator. Our system facilitates the appointment process.",
+        tags: ["Arbitrator Profiles", "Conflict Check"],
       },
     },
     {
