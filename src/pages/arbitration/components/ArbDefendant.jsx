@@ -1,5 +1,11 @@
 import React from "react";
-import { FaUserTag, FaUser, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaUserTag,
+  FaUser,
+  FaPlus,
+  FaTimes,
+  FaArrowLeft,
+} from "react-icons/fa";
 
 const ArbDefendant = ({
   register,
@@ -203,12 +209,13 @@ const ArbDefendant = ({
           </div>
         </div>
 
-        <div className="flex justify-between mt-10 pt-6 border-t border-gray-200">
+        <div className="flex flex-col md:flex-row justify-between gap-4 mt-10 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onBack}
             className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
+            <FaArrowLeft className="mr-3" />
             Back to Plaintiffs
           </button>
           <button
