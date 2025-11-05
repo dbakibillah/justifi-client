@@ -15,6 +15,7 @@ import {
   FaUserTag,
   FaHourglassHalf,
 } from "react-icons/fa";
+import { TbCurrencyTaka } from "react-icons/tb";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const MedOverview = ({ formData, plaintiffs, defendants, onBack }) => {
@@ -143,7 +144,7 @@ const MedOverview = ({ formData, plaintiffs, defendants, onBack }) => {
                     <h4 className="font-semibold text-gray-700">Case Status</h4>
                   </div>
                   <div className="flex items-center pl-11">
-                    <span className="bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-semibold shadow-sm">
+                    <span className="bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-semibold shadow-sm">
                       Pending Payment
                     </span>
                   </div>
@@ -336,9 +337,14 @@ const MedOverview = ({ formData, plaintiffs, defendants, onBack }) => {
           <div className="bg-white rounded-xl p-6 border border-purple-200">
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-700">Processing Fee:</span>
-              <span className="font-semibold">
-                ${processingFee.toLocaleString()}
-              </span>
+              <div className="flex justify-center items-center">
+                <span className="font-semibold">
+                  <TbCurrencyTaka />
+                </span>
+                <span className="font-semibold">
+                  {processingFee.toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
         </div>
