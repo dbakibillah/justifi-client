@@ -1,8 +1,4 @@
-import {
-    FaCopy,
-    FaExclamationTriangle,
-    FaTimesCircle
-} from "react-icons/fa";
+import { FaCopy, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
