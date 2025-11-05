@@ -23,7 +23,11 @@ import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointm
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import Arbitration from "./pages/arbitration/Arbitration";
-import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
+
+import paymentSuccess from "./pages/lawyers/components/paymentSuccess";
+import paymentFail from './pages/lawyers/components/paymentFail';
+import paymentCancel from './pages/lawyers/components/paymentCancel';
+
 
 const queryClient = new QueryClient();
 
@@ -45,6 +49,20 @@ createRoot(document.getElementById("root")).render(
                             path="/book-lawyer/:lawyerId"
                             element={<BookLawyer />}
                         />
+                        <Route
+                            path="/payment/success/:tran_id"
+                            element={<paymentSuccess />}
+                        />
+                       
+                        <Route
+                            path="payment/fail/:tran_id"
+                            element={<paymentFail />}
+                        />
+                        <Route
+                            path="payment/cancel/:tran_id"
+                            element={<paymentCancel />}
+                        />
+                        
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:blogId" element={<BlogDetails />} />
                         <Route path="/arbitrators" element={<Arbitrator />} />
@@ -56,10 +74,6 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="/mediators/:mediatorsobj"
                             element={<MediatorDetails />}
-                        />
-                        <Route
-                            path="/arbitration-process"
-                            element={<ArbitrationProcess />}
                         />
                         <Route path="/arbitration" element={<Arbitration />} />
                     </Route>
@@ -74,6 +88,7 @@ createRoot(document.getElementById("root")).render(
                             path="appointments"
                             element={<LawyerAppointments />}
                         />
+
                         <Route path="user-profile" element={<UserProfile />} />
                         <Route
                             path="my-appointments"
