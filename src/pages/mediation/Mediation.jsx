@@ -290,7 +290,6 @@ const Mediation = () => {
         {currentStep === 4 && (
           <MedOverview
             formData={formData}
-            suitValue={formData.suitValue}
             plaintiffs={plaintiffs}
             defendants={defendants}
             onBack={prevStep}
