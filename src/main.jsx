@@ -26,6 +26,7 @@ import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
 import Mediation from "./pages/mediation/Mediation";
 import MediationProcess from "./pages/mediation/components/MediationProcess";
+import AboutUs from "./pages/about/AboutUs";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/arbitration" element={<Arbitration />} />
             <Route path="/mediation-process" element={<MediationProcess />} />
             <Route path="/mediation" element={<Mediation />} />
+            <Route path="/about" element={<AboutUs />} />
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>
