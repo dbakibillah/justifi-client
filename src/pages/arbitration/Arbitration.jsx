@@ -4,12 +4,11 @@ import ArbCaseInfo from "./components/ArbCaseInfo";
 import ArbDefendant from "./components/ArbDefendant";
 import ArbOverview from "./components/ArbOverview";
 import ArbPlaintiff from "./components/ArbPlaintiff";
-import Payment from "./components/Payment";
 
 const Arbitration = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({});
-    const [arbitrationId, setArbitrationId] = useState("");
+    // const [arbitrationId, setArbitrationId] = useState("");
     const [plaintiffs, setPlaintiffs] = useState([{ id: 1 }]);
     const [defendants, setDefendants] = useState([{ id: 1 }]);
 
@@ -21,12 +20,6 @@ const Arbitration = () => {
         setValue,
         getValues,
     } = useForm();
-
-    const generateArbitrationId = () => {
-        const year = new Date().getFullYear();
-        const randomNum = Math.floor(100 + Math.random() * 900);
-        return `ARB-${year}-${randomNum}`;
-    };
 
     const onSubmitCaseInfo = (data) => {
         setFormData((prev) => ({ ...prev, ...data }));
@@ -72,22 +65,7 @@ const Arbitration = () => {
             ...prev,
             defendants: defendantsData,
         }));
-
-        const generatedId = generateArbitrationId();
-        setArbitrationId(generatedId);
         setCurrentStep(4);
-    };
-
-    const handlePaymentSuccess = () => {
-        const completeData = {
-            arbitrationId,
-            ...formData,
-            submissionDate: new Date().toISOString(),
-            status: "Payment Confirmed - Case Active",
-        };
-
-        console.log("Arbitration Case Details:", completeData);
-        alert("Payment successful! Case submitted.");
     };
 
     const prevStep = () => setCurrentStep(currentStep - 1);
@@ -97,7 +75,7 @@ const Arbitration = () => {
         { number: 2, label: "Plaintiff Details", mobileLabel: "Plaintiff" },
         { number: 3, label: "Defendant Details", mobileLabel: "Defendant" },
         { number: 4, label: "Case Overview", mobileLabel: "Review" },
-        { number: 5, label: "Payment & Submit", mobileLabel: "Payment" },
+        // { number: 5, label: "Payment & Submit", mobileLabel: "Payment" },
     ];
 
     return (
@@ -163,7 +141,9 @@ const Arbitration = () => {
                                                                 <path
                                                                     strokeLinecap="round"
                                                                     strokeLinejoin="round"
-                                                                    strokeWidth={3}
+                                                                    strokeWidth={
+                                                                        3
+                                                                    }
                                                                     d="M5 13l4 4L19 7"
                                                                 />
                                                             </svg>
@@ -338,20 +318,10 @@ const Arbitration = () => {
                 {currentStep === 4 && (
                     <ArbOverview
                         formData={formData}
+                        suitValue={formData.suitValue}
                         plaintiffs={plaintiffs}
                         defendants={defendants}
-                        arbitrationId={arbitrationId}
                         onBack={prevStep}
-                        onPayment={() => setCurrentStep(5)}
-                    />
-                )}
-                {currentStep === 5 && (
-                    <Payment
-                        arbitrationId={arbitrationId}
-                        suitValue={formData.suitValue}
-                        formData={formData}
-                        onBack={() => setCurrentStep(4)}
-                        onPaymentSuccess={handlePaymentSuccess}
                     />
                 )}
             </main>
