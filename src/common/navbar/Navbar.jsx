@@ -13,8 +13,8 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../../providers/AuthProviders";
 
 const SERVICES = [
-    { name: "Arbitration", path: "/arbitration" },
-    { name: "Mediation", path: "/mediation" },
+  { name: "Arbitration", path: "/arbitration-process" },
+  { name: "Mediation", path: "/mediation-process" },
 ];
 
 const Attorneys = [
