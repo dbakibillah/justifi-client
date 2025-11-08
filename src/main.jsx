@@ -18,7 +18,6 @@ import Blog from "./pages/blog/Blog";
 import BlogDetails from "./pages/blog/components/BlogDetails";
 import Home from "./pages/Home/Home";
 import BookLawyer from "./pages/lawyers/BookLawyer";
-import PaymentSuccess from "./pages/lawyers/components/paymentSuccess";
 import Lawyer from "./pages/lawyers/Lawyer";
 import LawyerDetails from "./pages/lawyers/LawyerDetails";
 import MediationProcess from "./pages/mediation/components/MediationProcess";
@@ -27,6 +26,7 @@ import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
+import PaymentSuccess from "./pages/arbitration/components/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
