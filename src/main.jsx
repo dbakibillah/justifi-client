@@ -6,7 +6,6 @@ import Dashboard from "./dashboard/Dashboard";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
