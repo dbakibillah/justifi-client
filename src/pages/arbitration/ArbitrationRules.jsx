@@ -1,379 +1,306 @@
 import React, { useEffect } from "react";
-import { FaMoneyBillWave, FaBan, FaExclamationCircle, FaHandshake, FaHeadset, FaClock, FaCommentAlt, FaUserShield, FaInfoCircle, FaExclamationTriangle, FaGavel, FaFileSignature, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
+import {
+  FaMoneyBillWave,
+  FaBan,
+  FaExclamationCircle,
+  FaHandshake,
+  FaClock,
+  FaCommentAlt,
+  FaUserShield,
+  FaInfoCircle,
+  FaExclamationTriangle,
+  FaGavel,
+  FaFileSignature,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 const ArbitrationRules = () => {
   useEffect(() => {
-    const stepNumbers = document.querySelectorAll(".step-number");
-    stepNumbers.forEach((step, index) => {
-      setTimeout(() => {
-        step.classList.add("scale-100");
-        step.classList.remove("scale-0");
-      }, 300 * index);
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const handleAccept = () => {
     alert(
-      "Thank you for accepting the Arbitration Terms and Conditions. You may now proceed with your request."
+      "✅ You have accepted the Arbitration Terms and Conditions. You may proceed."
     );
   };
 
   return (
-    <div className="font-inter bg-gray-50 text-gray-800 min-h-screen p-6 space-y-12">
-      {/* Intro */}
-      <section>
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Arbitration Agreement
-          </h2>
-          <p className="text-gray-600 mb-6">
-            By initiating an Arbitration process on the JustiFi platform, you
-            ("the User" or "the Party") agree to be legally bound by the
-            following terms, rules, and procedures.
-          </p>
-
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500 p-5 rounded-lg">
-            <div className="flex items-start">
-              <FaExclamationCircle className="text-blue-500 text-xl mt-1 mr-3" />
+    <div className="font-inter bg-gradient-to-br from-gray-100 via-white to-gray-100 text-gray-800 min-h-screen py-12 px-6">
+      <motion.div
+        className="max-w-7xl mx-auto space-y-14"
+        initial="hidden"
+        animate="show"
+        variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+      >
+        {/* Header */}
+        <motion.header
+          variants={fadeUp}
+          className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-10 shadow-lg"
+        >
+          <div className="grid md:grid-cols-3 gap-10">
+            <div className="md:col-span-2">
+              <h1 className="text-5xl font-bold text-gray-900 leading-tight">
+                Arbitration Agreement
+              </h1>
+              <p className="text-gray-700 mt-4 text-lg leading-relaxed">
+                By initiating an Arbitration process on the <b>JustiFi</b>{" "}
+                platform, you ("the User" or "the Party") agree to be legally
+                bound by the following terms, rules, and procedures.
+              </p>
+            </div>
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              className="bg-gradient-to-br from-blue-200 to-blue-50 border-l-6 border-blue-600 p-6 rounded-2xl flex items-start gap-4"
+            >
+              <FaExclamationCircle className="text-blue-600 text-4xl mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-800">Important Notice</h3>
-                <p className="text-gray-700 mt-1">
-                  These terms constitute a legally binding agreement. Please
-                  read them carefully before proceeding with arbitration
-                  services.
+                <p className="font-semibold text-gray-900 text-lg">
+                  Important Notice
+                </p>
+                <p className="text-gray-700 text-sm mt-1 leading-snug">
+                  These terms are legally binding. Please read them carefully
+                  before proceeding.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </motion.header>
 
-      {/* Fees */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Article 1: Arbitration Request and Fees
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-500 hover:shadow-lg transition-all">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FaMoneyBillWave className="text-blue-500 text-xl" />
-              </div>
-              <h3 className="ml-4 text-lg font-semibold text-gray-800">
-                Request Fee
-              </h3>
-            </div>
-            <p className="text-gray-600 mb-4">
-              A non-refundable Arbitration Request Fee of{" "}
-              <span className="font-bold text-blue-600">BDT 5,000</span> must be
-              paid at the time of submitting the arbitration request.
-            </p>
+        {/* Article 1 */}
+        <ArticleSection title="Article 1: Arbitration Request and Fees">
+          <div className="grid sm:grid-cols-2 gap-8">
+            <InfoCard
+              Icon={FaMoneyBillWave}
+              title="Request Fee"
+              desc="A non-refundable Arbitration Request Fee of BDT 5,000 must be paid at the time of submitting the arbitration request."
+              borderColor="blue"
+              gradient="from-blue-50 to-blue-100"
+            />
+            <InfoCard
+              Icon={FaBan}
+              title="Non-Refundable Policy"
+              desc="This fee is administrative and non-refundable under any circumstances, even if arbitration does not proceed."
+              borderColor="red"
+              gradient="from-red-50 to-red-100"
+            />
           </div>
+        </ArticleSection>
 
-          <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-red-500 hover:shadow-lg transition-all">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <FaBan className="text-red-500 text-xl" />
-              </div>
-              <h3 className="ml-4 text-lg font-semibold text-gray-800">
-                Non-Refundable Policy
-              </h3>
-            </div>
-            <p className="text-gray-600">
-              This fee is for administrative costs and is{" "}
-              <span className="font-bold text-red-600">non-refundable</span>{" "}
-              under any circumstances, including if arbitration does not proceed
-              or if a settlement is reached early.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Process Steps */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Arbitration Process
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
-          <div className="space-y-8">
-            {[
-              {
-                title: "Payment & Submission",
-                desc: "Pay the BDT 5,000 request fee while submitting your arbitration request through our platform.",
-              },
-              {
-                title: "Agreement Session",
-                desc: "We will contact all parties to schedule an online meeting where we'll discuss and confirm:",
-                list: [
-                  "Total arbitration cost (negotiable)",
-                  "Number of prospective sessions",
-                  "Selection of arbitrators from our panel",
-                  "Session duration and timelines",
-                  "Award compliance period",
-                ],
-                extra: "Parties will provide digital signatures during this session.",
-              },
-              {
-                title: "Formal Agreement",
-                desc: "After the session, we'll create a formal arbitration agreement and send it to all parties via email.",
-              },
-              {
-                title: "Arbitration Sessions",
-                desc: "Sessions will proceed according to the agreed procedure and timeline.",
-              },
-              {
-                title: "Final Verdict & Award",
-                desc: "After the final session, the arbitrator will issue a binding award that is enforceable by law.",
-              },
-            ].map((step, i) => (
-              <div key={i} className="flex flex-col md:flex-row">
-                <div className="step-number flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full font-semibold mr-3 transition-transform duration-500 scale-0">
-                  {i + 1}
+        {/* Process Timeline */}
+        <ArticleSection title="Arbitration Process">
+          <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-3xl p-8 grid gap-10 md:grid-cols-2">
+            {processSteps.map((step, idx) => (
+              <motion.div
+                key={idx}
+                variants={fadeUp}
+                whileHover={{ scale: 1.03 }}
+                className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-2xl border-l-6 border-blue-500 shadow-md"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="text-blue-600 font-bold text-2xl mt-1">
+                    {idx + 1}.
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 text-xl">
+                      {step.title}
+                    </h4>
+                    <p className="text-gray-700 mt-1 text-base leading-relaxed">
+                      {step.desc}
+                    </p>
+                    {step.list && (
+                      <ul className="list-disc pl-6 text-gray-700 mt-3 space-y-1 text-sm">
+                        {step.list.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 mb-2">{step.desc}</p>
-                  {step.list && (
-                    <ul className="list-disc pl-5 text-gray-600 space-y-1 mb-2">
-                      {step.list.map((item, j) => (
-                        <li key={j}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {step.extra && (
-                    <p className="text-gray-600 mt-1">{step.extra}</p>
-                  )}
-                </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </ArticleSection>
 
-      {/* Termination */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Article 3: Process Termination
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
-          <div className="flex flex-col md:flex-row items-start">
-            <div className="md:w-1/4 mb-6 flex justify-center">
-              <div className="w-32 h-32 bg-purple-100 rounded-full flex items-center justify-center">
-                <FaHandshake className="text-purple-500 text-4xl" />
-              </div>
-            </div>
-            <div className="md:w-3/4 md:pl-8">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Mutual Termination Option
-              </h3>
-              <p className="text-gray-600 mb-4">
-                If after some sessions, parties mutually decide not to continue,
-                they can terminate further sessions by informing JustiFi.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <h4 className="font-semibold text-purple-700 mb-2">
-                    <FaCheckCircle className="inline mr-2" />
-                    Cost Responsibility
-                  </h4>
-                  <p className="text-purple-600 text-sm">
-                    Parties will pay only for the sessions completed up to the
-                    termination point.
-                  </p>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <h4 className="font-semibold text-purple-700 mb-2">
-                    <FaFileSignature className="inline mr-2" />
-                    Termination Processing Cost
-                  </h4>
-                  <p className="text-purple-600 text-sm">
-                    A lump-sum amount will be added to cover administrative
-                    costs associated with process termination.
-                  </p>
-                </div>
-              </div>
-            </div>
+        {/* Termination */}
+        <ArticleSection title="Article 3: Process Termination">
+          <div className="grid md:grid-cols-2 gap-8">
+            <InfoCard
+              Icon={FaHandshake}
+              title="Mutual Termination"
+              desc="Parties may mutually decide to end arbitration early by notifying JustiFi. Only completed sessions will be charged."
+              borderColor="purple"
+              gradient="from-purple-50 to-purple-100"
+            />
+            <InfoCard
+              Icon={FaFileSignature}
+              title="Administrative Cost"
+              desc="A fixed administrative cost applies to process termination for logistical handling."
+              borderColor="purple"
+              gradient="from-purple-50 to-purple-100"
+            />
           </div>
-        </div>
-      </section>
+        </ArticleSection>
 
-      {/* Cost Distribution */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Article 4: Cost Distribution
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Equal Sharing Principle
-          </h3>
-          <p className="text-gray-600 mb-4">
-            The total cost of arbitration, as finalized during the Agreement
-            Session, shall be distributed{" "}
-            <span className="font-bold text-blue-600">equally among all parties</span>.
-          </p>
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <p className="text-blue-700">
-              <FaInfoCircle className="inline mr-2" />
-              Unless otherwise unanimously agreed upon in writing by all
-              parties and recorded in the Arbitration Agreement.
-            </p>
+        {/* Issue Resolution */}
+        <ArticleSection title="Article 5: Issue Resolution">
+          <div className="grid md:grid-cols-2 gap-8">
+            <InfoCard
+              Icon={FaClock}
+              title="3-Day Resolution Window"
+              desc="Report an issue within 3 days and JustiFi will resolve it promptly."
+              borderColor="green"
+              gradient="from-green-50 to-green-100"
+            />
+            <InfoCard
+              Icon={FaUserShield}
+              title="Fair & Prompt Assessment"
+              desc="All issues are fairly assessed and handled promptly to ensure smooth arbitration."
+              borderColor="green"
+              gradient="from-green-50 to-green-100"
+            />
           </div>
-        </div>
-      </section>
+        </ArticleSection>
 
-      {/* Issue Resolution */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Article 5: Issue Resolution
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Our Commitment to You
-          </h3>
-          <p className="text-gray-600 mb-4">
-            JustiFi always aims to ensure your legal journey is fair and smooth.
-            If you face any issue during the process, we're here to help.
-          </p>
-
-          <div className="bg-green-50 p-5 rounded-lg border border-green-200 mb-6">
-            <div className="flex items-start">
-              <FaClock className="text-green-500 text-xl mt-1 mr-3" />
-              <div>
-                <h4 className="font-semibold text-green-700 mb-2">
-                  3-Day Issue Resolution Window
-                </h4>
-                <p className="text-green-600">
-                  If you inform us about any issues within 3 days, JustiFi will
-                  evaluate and resolve the concern promptly.
-                </p>
-              </div>
-            </div>
+        {/* Conduct */}
+        <ArticleSection title="Article 6: User Conduct & Prohibited Activities">
+          <div className="grid md:grid-cols-3 gap-8">
+            <InfoCard
+              Icon={FaHandshake}
+              title="Professional Demeanor"
+              desc="All parties must act respectfully toward arbitrators, staff, and other parties."
+              borderColor="green"
+              gradient="from-green-50 to-green-100"
+            />
+            <InfoCard
+              Icon={FaExclamationTriangle}
+              title="Prohibited Activities"
+              desc="No recording sessions without consent, no harassment, and no breach of confidentiality."
+              borderColor="red"
+              gradient="from-red-50 to-red-100"
+            />
+            <InfoCard
+              Icon={FaGavel}
+              title="Consequences"
+              desc="Violations may lead to process termination or legal action by JustiFi."
+              borderColor="yellow"
+              gradient="from-yellow-50 to-yellow-100"
+            />
           </div>
+        </ArticleSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-700 mb-2">
-                <FaCommentAlt className="inline mr-2" /> Prompt Communication
-              </h4>
-              <p className="text-blue-600 text-sm">
-                We encourage you to communicate concerns immediately so we can
-                address them quickly.
-              </p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-700 mb-2">
-                <FaUserShield className="inline mr-2" /> Fair Assessment
-              </h4>
-              <p className="text-blue-600 text-sm">
-                JustiFi will fairly assess all reported issues to ensure a
-                smooth arbitration process.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* User Conduct */}
-      <section>
-        <h2 className="relative pl-4 text-xl font-bold text-gray-800 mb-6">
-          Article 6: User Conduct and Prohibited Activities
-          <span className="absolute left-0 top-2 w-1 h-6 bg-blue-500 rounded"></span>
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-green-500 hover:shadow-lg transition-all">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <FaHandshake className="text-green-500 text-xl" />
-              </div>
-              <h3 className="ml-4 text-lg font-semibold text-gray-800">
-                Professional Demeanor
-              </h3>
-            </div>
-            <p className="text-gray-600">
-              All parties must act respectfully and professionally toward the
-              Arbitrator, JustiFi staff, and other parties throughout the
-              process.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-red-500 hover:shadow-lg transition-all">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <FaExclamationTriangle className="text-red-500 text-xl" />
-              </div>
-              <h3 className="ml-4 text-lg font-semibold text-gray-800">
-                Prohibited Activities
-              </h3>
-            </div>
-            <ul className="list-disc pl-5 text-gray-600 space-y-2">
-              <li>Breaching confidentiality of the proceedings</li>
-              <li>Recording sessions without permission</li>
-              <li>Engaging in harassment, intimidation, or deceit</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-6 bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
-          <div className="flex items-start">
-            <FaGavel className="text-yellow-500 text-xl mt-1 mr-3" />
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">
-                Consequences of Violations
-              </h3>
-              <p className="text-gray-700">
-                Any breach of these conduct rules may lead to immediate
-                termination of the process by JustiFi and may result in legal
-                action for damages.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Acceptance */}
-      <section>
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8 text-center">
-          <FaFileSignature className="text-4xl text-blue-500 mb-4 mx-auto" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        {/* Acceptance */}
+        <motion.section
+          variants={fadeUp}
+          className="bg-gradient-to-br from-blue-50 to-white border border-gray-200 rounded-3xl shadow-lg p-12 text-center"
+        >
+          <FaFileSignature className="text-5xl text-blue-600 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
             Acknowledgment & Acceptance
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-            By paying the Arbitration Request Fee, I acknowledge that I have
-            read, understood, and voluntarily agree to be bound by all the terms
-            and conditions outlined in this document.
+          <p className="text-gray-700 max-w-3xl mx-auto mb-8 text-lg leading-relaxed">
+            By paying the Arbitration Request Fee, I acknowledge that I have read, understood, and voluntarily agree to the terms and conditions of this agreement.
           </p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-            <button
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleAccept}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 flex items-center justify-center"
+              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg text-lg"
             >
-              <FaCheckCircle className="mr-2" /> I Accept the Terms
-            </button>
-            <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-300 flex items-center justify-center">
-              <FaTimesCircle className="mr-2" /> Decline
-            </button>
-          </div>
+              <FaCheckCircle /> I Accept the Terms
+            </motion.button>
 
+            <motion.button
+              whileHover={{ scale: 1.05, backgroundColor: "#DC2626" }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-3 bg-gray-100 hover:text-white text-gray-800 px-8 py-4 rounded-xl font-semibold shadow-lg text-lg"
+            >
+              <FaTimesCircle /> Decline
+            </motion.button>
+          </div>
           <p className="text-gray-500 text-sm mt-4">
-            By clicking "I Accept", you are electronically signing this
-            agreement.
+            Clicking “Accept” constitutes an electronic signature.
           </p>
-        </div>
-      </section>
+        </motion.section>
+      </motion.div>
     </div>
   );
 };
+
+/* ====== REUSABLE COMPONENTS ====== */
+function ArticleSection({ title, children }) {
+  return (
+    <section className="space-y-6">
+      <h3 className="text-3xl font-semibold text-gray-900 border-l-6 border-blue-600 pl-6 py-1">
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+function InfoCard({ Icon, title, desc, borderColor = "blue", gradient }) {
+  const borderMap = {
+    blue: "border-blue-500",
+    red: "border-red-500",
+    purple: "border-purple-500",
+    green: "border-green-500",
+    yellow: "border-yellow-500",
+  };
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.03 }}
+      className={`bg-gradient-to-br ${gradient} border-t-6 ${borderMap[borderColor]} p-6 rounded-3xl shadow-lg flex items-start gap-5`}
+    >
+      <div className="text-3xl text-gray-700 mt-1">
+        <Icon />
+      </div>
+      <div>
+        <h4 className="font-semibold text-gray-900 text-xl">{title}</h4>
+        <p className="text-gray-700 text-base mt-2 leading-relaxed">{desc}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ====== PROCESS STEPS ====== */
+const processSteps = [
+  {
+    title: "Payment & Submission",
+    desc: "Pay the BDT 5,000 request fee while submitting your arbitration request.",
+  },
+  {
+    title: "Agreement Session",
+    desc: "We schedule a meeting to discuss:",
+    list: [
+      "Total arbitration cost",
+      "Number of sessions",
+      "Arbitrator selection",
+      "Session timeline",
+      "Award compliance period",
+    ],
+  },
+  {
+    title: "Formal Agreement",
+    desc: "A formal agreement will be sent via email for confirmation.",
+  },
+  {
+    title: "Arbitration Sessions",
+    desc: "Sessions proceed as per the agreed timeline and procedure.",
+  },
+  {
+    title: "Final Verdict & Award",
+    desc: "The arbitrator issues a binding legal award after final session.",
+  },
+];
 
 export default ArbitrationRules;
