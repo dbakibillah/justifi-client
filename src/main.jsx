@@ -9,7 +9,9 @@ import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
-import PaymentFailed from "./pages/arbitration/components/PaymentFailed";
+import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
+import PaymentFailed from "./pages/payment/PaymentFailed";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import Arbitrator from "./pages/arbitrator/Arbitrator";
 import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
 import Login from "./pages/auth/Login";
@@ -26,90 +28,56 @@ import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
-import PaymentSuccess from "./pages/arbitration/components/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-    <BrowserRouter>
-        <AuthProvider>
-            <QueryClientProvider client={queryClient}>
-                <Routes>
-                    <Route path="/" element={<Root />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Registration />} />
-                        <Route path="/lawyers" element={<Lawyer />} />
-                        <Route
-                            path="lawyers/:lawyerId"
-                            element={<LawyerDetails />}
-                        />
-                        <Route
-                            path="/book-lawyer/:lawyerId"
-                            element={<BookLawyer />}
-                        />
-                        <Route
-                            path="/payment/success/:tran_id"
-                            element={<paymentSuccess />}
-                        />
+  <BrowserRouter>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Routes>
+          <Route path="/" element={<Root />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Registration />} />
+            <Route path="/lawyers" element={<Lawyer />} />
+            <Route path="lawyers/:lawyerId" element={<LawyerDetails />} />
+            <Route path="/book-lawyer/:lawyerId" element={<BookLawyer />} />
 
-                        <Route
-                            path="payment/fail/:tran_id"
-                            element={<paymentFail />}
-                        />
-                        <Route
-                            path="payment/cancel/:tran_id"
-                            element={<paymentCancel />}
-                        />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:blogId" element={<BlogDetails />} />
+            <Route path="/arbitrators" element={<Arbitrator />} />
+            <Route
+              path="/arbitrators/:arbitratorID"
+              element={<ArbitratorDetails />}
+            />
+            <Route path="/mediators" element={<Mediator />} />
+            <Route
+              path="/mediators/:mediatorsobj"
+              element={<MediatorDetails />}
+            />
+            <Route
+              path="/arbitration-process"
+              element={<ArbitrationProcess />}
+            />
+            <Route path="/arbitration" element={<Arbitration />} />
+            <Route path="/mediation-process" element={<MediationProcess />} />
+            <Route path="/mediation" element={<Mediation />} />
+            <Route path="/payment/success/:id" element={<PaymentSuccess />} />
+            <Route path="/payment/fail/:id" element={<PaymentFailed />} />
+          </Route>
 
-                        <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:blogId" element={<BlogDetails />} />
-                        <Route path="/arbitrators" element={<Arbitrator />} />
-                        <Route
-                            path="/arbitrators/:arbitratorID"
-                            element={<ArbitratorDetails />}
-                        />
-                        <Route path="/mediators" element={<Mediator />} />
-                        <Route
-                            path="/mediators/:mediatorsobj"
-                            element={<MediatorDetails />}
-                        />
-                        <Route path="/arbitration" element={<Arbitration />} />
-                        <Route
-                            path="/mediation-process"
-                            element={<MediationProcess />}
-                        />
-                        <Route path="/mediation" element={<Mediation />} />
-                        <Route
-                            path="/payment/success/:id"
-                            element={<PaymentSuccess />}
-                        />
-                        <Route
-                            path="/payment/fail/:id"
-                            element={<PaymentFailed />}
-                        />
-                    </Route>
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route index element={<Dashboard />} />
+            <Route path="lawyer-profile" element={<LawyerProfile />} />
+            <Route path="appointments" element={<LawyerAppointments />} />
 
-                    <Route path="/dashboard" element={<Dashboard />}>
-                        <Route index element={<Dashboard />} />
-                        <Route
-                            path="lawyer-profile"
-                            element={<LawyerProfile />}
-                        />
-                        <Route
-                            path="appointments"
-                            element={<LawyerAppointments />}
-                        />
-
-                        <Route path="user-profile" element={<UserProfile />} />
-                        <Route
-                            path="my-appointments"
-                            element={<UserAppointments />}
-                        />
-                    </Route>
-                </Routes>
-            </QueryClientProvider>
-        </AuthProvider>
-        <ToastContainer />
-    </BrowserRouter>
+            <Route path="user-profile" element={<UserProfile />} />
+            <Route path="my-appointments" element={<UserAppointments />} />
+          </Route>
+        </Routes>
+      </QueryClientProvider>
+    </AuthProvider>
+    <ToastContainer />
+  </BrowserRouter>
 );
