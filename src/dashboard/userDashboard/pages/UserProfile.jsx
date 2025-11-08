@@ -1,29 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-    FaCheck,
-    FaCamera,
-    FaMapMarkerAlt,
-    FaUser,
-    FaEnvelope,
-    FaPhone,
-    FaEdit,
-} from "react-icons/fa";
-import EditProfileModal from "../components/EditProfileModal";
-import EditBioModal from "../components/EditBioModal";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import {
+    FaCamera,
+    FaCheck,
+    FaEdit,
+    FaEnvelope,
+    FaMapMarkerAlt,
+    FaPhone,
+    FaUser,
+} from "react-icons/fa";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUserData from "../../../hooks/useUserData";
+import EditBioModal from "../components/EditBioModal";
+import EditProfileModal from "../components/EditProfileModal";
 
 const UserProfile = () => {
     // State management
     const axiosSecure = useAxiosSecure();
-    const currentUser = useUserData();
+    const { currentUser } = useUserData();
+
     const {
         data: profileData,
         isLoading,
-        isError,
+        refetch,
     } = useQuery({
-        queryKey: ["userProfile"],
+        queryKey: ["userProfile", currentUser?.email],
         queryFn: async () => {
             const response = await axiosSecure.get(
                 `/userProfile?email=${currentUser?.email}`
@@ -50,15 +51,15 @@ const UserProfile = () => {
     // Open modals
     const openEditModal = () => {
         setTempData({
-            fullName: profileData.fullName,
-            phone: profileData.phone,
-            address: profileData.address,
+            name: profileData?.name || "",
+            phone: profileData?.phone || "",
+            address: profileData?.address || "",
         });
         setModals({ ...modals, editProfile: true });
     };
 
     const openBioModal = () => {
-        setTempData({ bio: profileData.bio });
+        setTempData({ bio: profileData?.bio || "" });
         setModals({ ...modals, editBio: true });
     };
 
@@ -92,10 +93,10 @@ const UserProfile = () => {
     };
 
     // Save profile changes
-    const saveProfileChanges = () => {
-        const { fullName, phone, address } = tempData;
+    const saveProfileChanges = async () => {
+        const { name, phone, address } = tempData;
 
-        if (!fullName?.trim()) {
+        if (!name?.trim()) {
             showNotification("Please enter your full name", "error");
             return;
         }
@@ -110,29 +111,40 @@ const UserProfile = () => {
             return;
         }
 
-        const updatedProfileData = {
-            fullName: fullName.trim(),
-            phone: phone.trim(),
-            address: address.trim(),
-            profileImage: profileData.profileImage, 
-        };
+        try {
+            const updatedProfileData = {
+                name: name.trim(),
+                phone: phone.trim(),
+                address: address.trim(),
+                photo: profileData?.photo,
+            };
 
-        const response = axiosSecure.put("/userProfile", updatedProfileData);
-
-        closeModals();
-        showNotification("Profile updated successfully!", "success");
+            await axiosSecure.put("/userProfile", updatedProfileData);
+            refetch(); // Refresh the data
+            closeModals();
+            showNotification("Profile updated successfully!", "success");
+        } catch (error) {
+            showNotification("Failed to update profile", "error");
+        }
     };
 
     // Save bio changes
-    const saveBioChanges = () => {
+    const saveBioChanges = async () => {
         const bio = tempData.bio?.trim() || "";
 
         if (bio.length > 500) {
             showNotification("Bio must be 500 characters or less", "error");
             return;
         }
-        closeModals();
-        showNotification("Bio updated successfully!", "success");
+
+        try {
+            await axiosSecure.put("/userProfile", { bio });
+            refetch(); // Refresh the data
+            closeModals();
+            showNotification("Bio updated successfully!", "success");
+        } catch (error) {
+            showNotification("Failed to update bio", "error");
+        }
     };
 
     // Show notification
@@ -160,6 +172,26 @@ const UserProfile = () => {
         return () => document.removeEventListener("keydown", handleEscapeKey);
     }, []);
 
+    // Show loading state
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-lg">Loading...</div>
+            </div>
+        );
+    }
+
+    // Show error state if no profile data
+    if (!profileData) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-lg text-red-500">
+                    Failed to load profile
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-4 md:p-8">
             {/* Notification */}
@@ -176,7 +208,7 @@ const UserProfile = () => {
                     <div className="flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-6">
                         <div className="relative group">
                             <img
-                                src={profileData.profileImage}
+                                src={profileData.photo || "/default-avatar.png"}
                                 alt="Profile"
                                 className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300 group-hover:brightness-75"
                             />
@@ -186,21 +218,22 @@ const UserProfile = () => {
                             {/* Edit Photo Overlay */}
                             <div
                                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
-                                onClick={openEditModal}
+                                onClick={() => fileInputRef.current?.click()}
                             >
                                 <FaCamera className="h-6 w-6 text-white" />
                             </div>
                         </div>
                         <div className="flex-1">
                             <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-                                {profileData.fullName}
+                                {profileData.name}
                             </h2>
                             <div className="flex flex-col items-center md:items-start gap-2 mt-2">
                                 <span className="text-gray-500 flex items-center gap-1 text-sm md:text-base">
                                     <FaMapMarkerAlt className="h-4 w-4" />
-                                    {profileData.address}
+                                    {profileData.address ||
+                                        "No address provided"}
                                 </span>
-                                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs md:text-sm font-medium">
+                                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs md:text-sm font-medium capitalize">
                                     {profileData.role}
                                 </span>
                             </div>
@@ -239,7 +272,7 @@ const UserProfile = () => {
                                     <FaUser className="h-5 w-5 text-blue-600" />
                                 }
                                 title="Full Name"
-                                value={profileData.fullName}
+                                value={profileData.name}
                                 bgColor="bg-blue-100"
                             />
 
@@ -259,7 +292,7 @@ const UserProfile = () => {
                                     <FaPhone className="h-5 w-5 text-purple-600" />
                                 }
                                 title="Phone Number"
-                                value={profileData.phone}
+                                value={profileData.phone || "Not provided"}
                                 bgColor="bg-purple-100"
                             />
 
@@ -269,7 +302,7 @@ const UserProfile = () => {
                                     <FaMapMarkerAlt className="h-5 w-5 text-orange-600" />
                                 }
                                 title="Address"
-                                value={profileData.address}
+                                value={profileData.address || "Not provided"}
                                 bgColor="bg-orange-100"
                             />
                         </div>
@@ -287,10 +320,15 @@ const UserProfile = () => {
                                 </div>
                                 <div className="flex justify-center sm:justify-end">
                                     <img
-                                        src={profileData.profileImage}
+                                        src={
+                                            profileData.photo ||
+                                            "/default-avatar.png"
+                                        }
                                         alt="Profile"
                                         className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-gray-200 shadow-md cursor-pointer"
-                                        onClick={openEditModal}
+                                        onClick={() =>
+                                            fileInputRef.current?.click()
+                                        }
                                     />
                                 </div>
                             </div>
@@ -320,7 +358,8 @@ const UserProfile = () => {
                             </div>
                             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 md:p-6 border border-gray-100">
                                 <p className="text-gray-700 leading-relaxed text-sm md:text-base">
-                                    {profileData.bio}
+                                    {profileData.bio ||
+                                        "No bio added yet. Click 'Edit Bio' to add one."}
                                 </p>
                             </div>
                         </div>
@@ -330,6 +369,15 @@ const UserProfile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Hidden file input */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePhotoUpload}
+                accept="image/*"
+                className="hidden"
+            />
 
             {/* Edit Profile Modal */}
             <EditProfileModal
@@ -380,8 +428,23 @@ const OverviewSection = () => {
     ];
 
     return (
-        <div>
-            <h1>User Profile</h1>
+        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+                Overview
+            </h3>
+            <div className="space-y-4">
+                {overviewItems.map((item, index) => (
+                    <div
+                        key={index}
+                        className="flex justify-between items-center py-2 border-b border-gray-100"
+                    >
+                        <span className="text-gray-600">{item.label}</span>
+                        <span className="font-semibold text-gray-800">
+                            {item.value}
+                        </span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
