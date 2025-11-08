@@ -74,9 +74,9 @@ const UserProfile = () => {
 
       setCurrentPhotoFile(file);
       const reader = new FileReader();
-      reader.onload = (e) => {
-        // In a real app, you would update the image preview here
-      };
+      //   reader.onload = (e) => {
+      //     // In a real app, you would update the image preview here
+      //   };
       reader.readAsDataURL(file);
     }
   };
