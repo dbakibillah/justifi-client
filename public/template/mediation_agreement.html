@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JustiFi - Mediation Agreement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        .signature-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            background-color: white;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .signature-preview {
+            max-width: 100%;
+            max-height: 150px;
+        }
+        .party-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+            position: relative;
+        }
+        .remove-party {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+        .signature-field {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e5e7eb;
+        }
+        
+        /* Agreement preview styles */
+        .agreement-preview {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            font-size: 12pt;
+            padding: 2rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        
+        .preview-header {
+            text-align: center;
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .preview-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .preview-signature-area {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .legal-clause {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #000;
+            min-height: 60px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* PDF container */
+        #pdf-container {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            background: white;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            font-size: 12pt;
+        }
+
+        .pdf-signature-img {
+            max-height: 50px;
+            max-width: 150px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">JustiFi - Mediation Agreement</h1>
+        
+        <!-- Form Section -->
+        <div id="form-section" class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <form id="mediation-form">
+                <!-- Agreement Date -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Agreement Date</h2>
+                    <div class="max-w-xs">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" id="agreement-date" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                    </div>
+                </div>
+                
+                <!-- Dispute Information -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Dispute Information</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nature of Dispute</label>
+                        <textarea id="dispute-nature" class="w-full border border-gray-300 rounded-md px-3 py-2" rows="3" required></textarea>
+                    </div>
+                </div>
+                
+                <!-- Party Information -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Party Information</h2>
+                        <div class="space-x-2">
+                            <button type="button" id="add-party" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Add Party</button>
+                        </div>
+                    </div>
+                    
+                    <div id="parties-container">
+                        <!-- Parties will be added here -->
+                    </div>
+                </div>
+                
+                <!-- Mediation Details -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Mediation Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Number of Sessions Agreed</label>
+                            <select id="sessions-agreed" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                                <option value="1">1 Session</option>
+                                <option value="2">2 Sessions</option>
+                                <option value="3">3 Sessions</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Total Mediation Cost (BDT)</label>
+                            <input type="number" id="total-cost" class="w-full border border-gray-300 rounded-md px-3 py-2" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Mediator</label>
+                            <input type="text" id="mediator-name" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mediator Qualification</label>
+                            <input type="text" id="mediator-qualification" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cost Breakdown -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Cost Breakdown</h2>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-700">Total Mediation Cost</p>
+                                <p id="display-total-cost" class="text-lg font-bold">BDT 0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-700">Cost per Party</p>
+                                <p id="cost-per-party" class="text-lg font-bold">BDT 0.00</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-600">
+                            <p>• All costs are divided equally among all parties</p>
+                            <p>• Each party bears equal financial responsibility</p>
+                            <p>• Total cost includes all mediation fees and administrative costs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JustiFi Representative -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">JustiFi Representative</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="justifi-name" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+                            <input type="text" id="justifi-designation" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JustiFi Representative Signature -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">JustiFi Representative Signature</h2>
+                    <div class="border border-gray-200 rounded-md p-4">
+                        <div class="signature-container mb-3">
+                            <input type="file" id="justifi-signature-upload" class="hidden" accept="image/*">
+                            <div id="justifi-signature-preview" class="w-full h-full flex items-center justify-center">
+                                <span class="text-gray-500">Click to upload signature</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <button type="button" id="clear-justifi-signature" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Clear</button>
+                            <div class="text-sm text-gray-500">Upload signature image (PNG, JPG)</div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="justifi-date" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="flex justify-center">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors">
+                        Generate Mediation Agreement
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Output Section (Initially Hidden) -->
+        <div id="output-section" class="bg-white rounded-lg shadow-md p-6 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Generated Mediation Agreement</h2>
+                <button id="back-to-form" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors">
+                    Back to Form
+                </button>
+            </div>
+            
+            <!-- Agreement Preview -->
+            <div id="agreement-preview" class="agreement-preview">
+                <!-- Agreement content will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="mt-4 flex justify-center">
+                <button id="download-pdf" class="bg-green-600 text-white px-6 py-2 rounded-md font-medium hover:bg-green-700 transition-colors">
+                    Download as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden PDF Container -->
+    <div id="pdf-container">
+        <!-- PDF content will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // Global variables
+        let parties = [];
+        let nextPartyId = 1;
+        let justifiSignature = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('agreement-date').value = today;
+            document.getElementById('justifi-date').value = today;
+
+            // Initialize with two parties
+            addParty();
+            addParty();
+
+            // Add party button
+            document.getElementById('add-party').addEventListener('click', addParty);
+
+            // Calculate cost per party when total cost changes
+            document.getElementById('total-cost').addEventListener('input', calculateCosts);
+
+            // JustiFi signature upload
+            const justifiSignatureContainer = document.getElementById('justifi-signature-preview');
+            const justifiSignatureUpload = document.getElementById('justifi-signature-upload');
+            
+            justifiSignatureContainer.addEventListener('click', function() {
+                justifiSignatureUpload.click();
+            });
+            
+            justifiSignatureUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        justifiSignature = event.target.result;
+                        justifiSignatureContainer.innerHTML = `<img src="${justifiSignature}" class="signature-preview" alt="JustiFi Signature">`;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            // Clear JustiFi signature
+            document.getElementById('clear-justifi-signature').addEventListener('click', function() {
+                justifiSignature = null;
+                justifiSignatureContainer.innerHTML = '<span class="text-gray-500">Click to upload signature</span>';
+                justifiSignatureUpload.value = '';
+            });
+
+            // Form submission
+            document.getElementById('mediation-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate at least two parties
+                if (parties.length < 2) {
+                    alert('Please add at least two parties.');
+                    return;
+                }
+                
+                // Validate all signatures are provided
+                let allSignaturesProvided = true;
+                let missingSignatures = [];
+                
+                parties.forEach(party => {
+                    if (!party.signature) {
+                        allSignaturesProvided = false;
+                        missingSignatures.push(`Party: ${party.name}`);
+                    }
+                });
+                
+                if (!justifiSignature) {
+                    allSignaturesProvided = false;
+                    missingSignatures.push('JustiFi Representative');
+                }
+                
+                if (!allSignaturesProvided) {
+                    alert('Please provide signatures for all parties:\n' + missingSignatures.join('\n'));
+                    return;
+                }
+                
+                // Get form values
+                const formData = {
+                    agreementDate: document.getElementById('agreement-date').value,
+                    parties: parties,
+                    disputeNature: document.getElementById('dispute-nature').value,
+                    sessionsAgreed: document.getElementById('sessions-agreed').value,
+                    totalCost: document.getElementById('total-cost').value,
+                    costPerParty: document.getElementById('cost-per-party').textContent.replace('BDT ', ''),
+                    mediatorName: document.getElementById('mediator-name').value,
+                    mediatorQualification: document.getElementById('mediator-qualification').value,
+                    justifiName: document.getElementById('justifi-name').value,
+                    justifiDesignation: document.getElementById('justifi-designation').value,
+                    justifiDate: document.getElementById('justifi-date').value,
+                    justifiSignature: justifiSignature
+                };
+                
+                // Generate agreement preview
+                generateAgreementPreview(formData);
+                
+                // Show output section, hide form section
+                document.getElementById('form-section').classList.add('hidden');
+                document.getElementById('output-section').classList.remove('hidden');
+            });
+            
+            // Back to form button
+            document.getElementById('back-to-form').addEventListener('click', function() {
+                document.getElementById('output-section').classList.add('hidden');
+                document.getElementById('form-section').classList.remove('hidden');
+            });
+            
+            // Download PDF button
+            document.getElementById('download-pdf').addEventListener('click', function() {
+                generatePDF();
+            });
+        });
+
+        // Function to calculate costs
+        function calculateCosts() {
+            const totalCost = parseFloat(document.getElementById('total-cost').value) || 0;
+            const partyCount = parties.length;
+            const costPerParty = totalCost / partyCount;
+            
+            // Format numbers properly with 2 decimal places
+            document.getElementById('display-total-cost').textContent = `BDT ${totalCost.toFixed(2)}`;
+            document.getElementById('cost-per-party').textContent = `BDT ${costPerParty.toFixed(2)}`;
+        }
+
+        // Function to add a party
+        function addParty() {
+            const partyId = `party-${nextPartyId++}`;
+            const party = { 
+                id: partyId, 
+                name: '', 
+                address: '', 
+                contact: '',
+                signature: null,
+                signatureDate: new Date().toISOString().split('T')[0]
+            };
+            parties.push(party);
+            
+            // Create party card
+            const partyCard = document.createElement('div');
+            partyCard.className = 'party-card';
+            partyCard.innerHTML = `
+                <button type="button" class="remove-party bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs" data-id="${partyId}">×</button>
+                <h4 class="font-medium mb-2">Party ${parties.length}</h4>
+                <div class="space-y-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input type="text" class="party-name w-full border border-gray-300 rounded-md px-3 py-2" data-id="${partyId}" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <textarea class="party-address w-full border border-gray-300 rounded-md px-3 py-2" rows="2" data-id="${partyId}" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                        <input type="text" class="party-contact w-full border border-gray-300 rounded-md px-3 py-2" data-id="${partyId}" required>
+                    </div>
+                </div>
+                <div class="signature-field">
+                    <h5 class="font-medium mb-2">Signature</h5>
+                    <div class="signature-container mb-3" data-id="${partyId}">
+                        <input type="file" class="signature-upload hidden" data-id="${partyId}" accept="image/*">
+                        <div class="signature-preview w-full h-full flex items-center justify-center" data-id="${partyId}">
+                            <span class="text-gray-500">Click to upload signature</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <button type="button" class="clear-signature bg-red-500 text-white px-3 py-1 rounded text-sm" data-id="${partyId}">Clear</button>
+                        <div class="text-sm text-gray-500">Upload signature image (PNG, JPG)</div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" class="signature-date w-full border border-gray-300 rounded-md px-3 py-2" data-id="${partyId}" required>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('parties-container').appendChild(partyCard);
+            
+            // Set default date to today
+            partyCard.querySelector('.signature-date').value = party.signatureDate;
+            
+            // Add event listeners
+            setupPartyEventListeners(partyCard, partyId);
+            
+            // Recalculate costs
+            calculateCosts();
+        }
+
+        // Function to setup event listeners for a party card
+        function setupPartyEventListeners(card, partyId) {
+            // Remove party button
+            card.querySelector('.remove-party').addEventListener('click', function() {
+                removeParty(partyId);
+            });
+            
+            // Name input
+            card.querySelector('.party-name').addEventListener('input', function() {
+                updateParty(partyId, 'name', this.value);
+            });
+            
+            // Address input
+            card.querySelector('.party-address').addEventListener('input', function() {
+                updateParty(partyId, 'address', this.value);
+            });
+            
+            // Contact input
+            card.querySelector('.party-contact').addEventListener('input', function() {
+                updateParty(partyId, 'contact', this.value);
+            });
+            
+            // Signature upload
+            const signatureContainer = card.querySelector('.signature-container');
+            const signatureUpload = card.querySelector('.signature-upload');
+            const signaturePreview = card.querySelector('.signature-preview');
+            const clearSignature = card.querySelector('.clear-signature');
+            const signatureDate = card.querySelector('.signature-date');
+            
+            signatureContainer.addEventListener('click', function() {
+                signatureUpload.click();
+            });
+            
+            signatureUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        updateParty(partyId, 'signature', event.target.result);
+                        signaturePreview.innerHTML = `<img src="${event.target.result}" class="signature-preview" alt="Signature">`;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            clearSignature.addEventListener('click', function() {
+                updateParty(partyId, 'signature', null);
+                signaturePreview.innerHTML = '<span class="text-gray-500">Click to upload signature</span>';
+                signatureUpload.value = '';
+            });
+            
+            signatureDate.addEventListener('change', function() {
+                updateParty(partyId, 'signatureDate', this.value);
+            });
+        }
+
+        // Function to update party data
+        function updateParty(id, field, value) {
+            const party = parties.find(p => p.id === id);
+            if (party) {
+                party[field] = value;
+            }
+        }
+
+        // Function to remove a party
+        function removeParty(id) {
+            parties = parties.filter(p => p.id !== id);
+            
+            // Remove from UI
+            const partyCard = document.querySelector(`.party-name[data-id="${id}"]`).closest('.party-card');
+            partyCard.remove();
+            
+            // Renumber remaining parties
+            document.querySelectorAll('#parties-container .party-card').forEach((card, index) => {
+                card.querySelector('h4').textContent = `Party ${index + 1}`;
+            });
+            
+            // Recalculate costs
+            calculateCosts();
+        }
+
+        // Function to generate the agreement preview
+        function generateAgreementPreview(data) {
+            const previewDiv = document.getElementById('agreement-preview');
+            
+            // Format dates for display
+            const agreementDateDisplay = formatDateForDisplay(data.agreementDate);
+            const justifiDateDisplay = formatDateForDisplay(data.justifiDate);
+            
+            // Create parties list HTML
+            let partiesHTML = '';
+            data.parties.forEach((party, index) => {
+                partiesHTML += `
+                    <div class="mb-4">
+                        <p><strong>Party ${index + 1}:</strong> ${party.name}</p>
+                        <p><strong>Address:</strong> ${party.address}</p>
+                        <p><strong>Contact:</strong> ${party.contact}</p>
+                        ${index < data.parties.length - 1 ? '<hr class="my-4">' : ''}
+                    </div>
+                `;
+            });
+            
+            // Create signature slots for parties
+            let partySignaturesHTML = '';
+            data.parties.forEach((party, index) => {
+                const signatureDate = formatDateForDisplay(party.signatureDate);
+                partySignaturesHTML += `
+                    <div class="mb-6 text-center">
+                        <p class="font-medium mb-2">${party.name}</p>
+                        <div class="signature-line">
+                            ${party.signature ? `<img src="${party.signature}" style="max-height: 60px; max-width: 180px;" alt="${party.name} Signature">` : ''}
+                        </div>
+                        <p class="mt-2">Date: ${signatureDate}</p>
+                    </div>
+                `;
+            });
+            
+            // Create agreement preview HTML
+            previewDiv.innerHTML = `
+                <div class="preview-header">
+                    <h1 class="text-2xl font-bold mb-2">JustiFi - Mediation Agreement</h1>
+                    <p class="text-lg"><strong>Date:</strong> ${agreementDateDisplay}</p>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">THIS MEDIATION AGREEMENT</h2>
+                    <p class="legal-clause">(Hereinafter referred to as the "Agreement") is made and entered into by and between the following parties:</p>
+                    
+                    <div class="border border-gray-300 p-4 rounded mb-6">
+                        ${partiesHTML}
+                    </div>
+                    
+                    <p class="legal-clause">Collectively referred to as the <strong>Parties</strong>, and individually as a <strong>Party</strong>.</p>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">WHEREAS:</h2>
+                    <ol class="list-decimal pl-6 space-y-3">
+                        <li class="legal-clause">The Parties are involved in a dispute arising out of: <strong>${data.disputeNature}</strong>;</li>
+                        <li class="legal-clause">The Parties have mutually agreed to refer the said dispute to mediation through the <strong>JustiFi – Online Legal Aid & Mediation Platform</strong>;</li>
+                        <li class="legal-clause">The Parties desire to record their mutual understanding and agreement to the terms, conditions, and procedures governing such mediation.</li>
+                    </ol>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">ARTICLE 1: MEDIATION TERMS</h2>
+                    <div class="legal-clause">
+                        <p><strong>1.1 Mediation Process:</strong> The Parties have agreed to resolve their dispute through mediation.</p>
+                        <p><strong>1.2 Session Agreement:</strong> The Parties have agreed to <strong>${data.sessionsAgreed} mediation session(s)</strong>.</p>
+                        <p><strong>1.3 Assigned Mediator:</strong> ${data.mediatorName} (${data.mediatorQualification}) has been assigned as the mediator.</p>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">ARTICLE 2: COST DISTRIBUTION</h2>
+                    <div class="legal-clause">
+                        <p><strong>2.1 Equal Cost Sharing:</strong> All mediation costs shall be divided equally among all parties.</p>
+                        <p><strong>2.2 Cost Breakdown:</strong></p>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Total Mediation Cost: <strong>BDT ${parseFloat(data.totalCost).toFixed(2)}</strong></li>
+                            <li>Number of Parties: <strong>${data.parties.length}</strong></li>
+                            <li>Cost per Party: <strong>BDT ${parseFloat(data.costPerParty).toFixed(2)}</strong></li>
+                        </ul>
+                        <p class="mt-3"><strong>2.3 Payment Responsibility:</strong> Parties are jointly and severally responsible for full payment.</p>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">ARTICLE 3: CONFIDENTIALITY</h2>
+                    <div class="legal-clause">
+                        <p><strong>3.1 Strict Confidentiality:</strong> All mediation proceedings, documents, discussions, and offers remain strictly confidential.</p>
+                        <p><strong>3.2 Legal Protection:</strong> Mediation communications are privileged and cannot be used as evidence in legal proceedings.</p>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">ARTICLE 4: PARTY RESPONSIBILITIES</h2>
+                    <div class="legal-clause">
+                        <p><strong>4.1 Financial Obligations:</strong> Each Party agrees to pay their equal share of all mediation costs according to the agreed schedule.</p>
+                        <p><strong>4.2 Participation Requirements:</strong> Each Party agrees to:</p>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Attend all scheduled mediation sessions</li>
+                            <li>Participate in good faith throughout the process</li>
+                            <li>Maintain respectful and professional conduct</li>
+                            <li>Respect the mediator and other parties</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">ARTICLE 5: ACKNOWLEDGMENT AND ACCEPTANCE</h2>
+                    <div class="legal-clause">
+                        <p>By signing this Agreement, the Parties acknowledge and agree to:</p>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Bear equal share of all mediation costs</li>
+                            <li>Participate in good faith throughout the mediation process</li>
+                            <li>Maintain strict confidentiality of all proceedings</li>
+                            <li>Accept the mediation session limits (${data.sessionsAgreed} session(s))</li>
+                            <li>Be bound by the mediator's decisions and procedures</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="preview-signature-area">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">EXECUTION & SIGNATURES</h2>
+                    <p class="legal-clause mb-6"><strong>IN WITNESS WHEREOF</strong>, the Parties have executed this Mediation Agreement on the date first written above.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="text-center">
+                            <h3 class="font-bold text-lg mb-4">THE PARTIES</h3>
+                            <div class="space-y-4">
+                                ${partySignaturesHTML}
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h3 class="font-bold text-lg mb-4">ON BEHALF OF JUSTIFI</h3>
+                            <div class="mb-6">
+                                <p class="font-medium">Name: ${data.justifiName}</p>
+                                <p class="font-medium">Designation: ${data.justifiDesignation}</p>
+                            </div>
+                            <div class="signature-line">
+                                ${data.justifiSignature ? `<img src="${data.justifiSignature}" style="max-height: 60px; max-width: 180px;" alt="JustiFi Signature">` : ''}
+                            </div>
+                            <p class="mt-2">Date: ${justifiDateDisplay}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center text-sm text-gray-600 border-t pt-4">
+                    <p><strong>JustiFi - Fair Dispute Resolution Through Equal Partnership</strong></p>
+                    <p class="mt-2">This document constitutes a legally binding agreement between all signing parties.</p>
+                </div>
+            `;
+
+            // Also generate PDF content
+            generatePDFContent(data);
+        }
+
+        // Function to generate PDF content
+        function generatePDFContent(data) {
+            const pdfContainer = document.getElementById('pdf-container');
+            
+            // Format dates for display
+            const agreementDateDisplay = formatDateForDisplay(data.agreementDate);
+            const justifiDateDisplay = formatDateForDisplay(data.justifiDate);
+            
+            // Create parties list for PDF
+            let partiesPDF = '';
+            data.parties.forEach((party, index) => {
+                partiesPDF += `
+                    <div style="margin-bottom: 15px;">
+                        <p><strong>Party ${index + 1}:</strong> ${party.name}</p>
+                        <p><strong>Address:</strong> ${party.address}</p>
+                        <p><strong>Contact:</strong> ${party.contact}</p>
+                    </div>
+                `;
+            });
+            
+            // Create signature slots for PDF with actual images
+            let partySignaturesPDF = '';
+            data.parties.forEach((party, index) => {
+                const signatureDate = formatDateForDisplay(party.signatureDate);
+                partySignaturesPDF += `
+                    <div style="margin-bottom: 30px; text-align: center;">
+                        <p style="margin-bottom: 10px;"><strong>${party.name}</strong></p>
+                        <div style="border-bottom: 1px solid #000; height: 50px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
+                            ${party.signature ? `<img src="${party.signature}" class="pdf-signature-img" alt="${party.name} Signature" style="max-height: 40px; max-width: 120px;">` : ''}
+                        </div>
+                        <p>Date: ${signatureDate}</p>
+                    </div>
+                `;
+            });
+            
+            // Create PDF content
+            pdfContainer.innerHTML = `
+                <div style="text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 20px; margin-bottom: 40px;">
+                    <h1 style="font-size: 24pt; font-weight: bold; margin-bottom: 10px;">JustiFi - Mediation Agreement</h1>
+                    <p style="font-size: 14pt;"><strong>Date:</strong> ${agreementDateDisplay}</p>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">THIS MEDIATION AGREEMENT</h2>
+                    <p style="text-align: justify; margin-bottom: 20px;">(Hereinafter referred to as the "Agreement") is made and entered into by and between the following parties:</p>
+                    
+                    <div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px;">
+                        ${partiesPDF}
+                    </div>
+                    
+                    <p style="text-align: justify;">Collectively referred to as the <strong>Parties</strong>, and individually as a <strong>Party</strong>.</p>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">WHEREAS:</h2>
+                    <ol style="text-align: justify; padding-left: 20px;">
+                        <li style="margin-bottom: 10px;">The Parties are involved in a dispute arising out of: <strong>${data.disputeNature}</strong>;</li>
+                        <li style="margin-bottom: 10px;">The Parties have mutually agreed to refer the said dispute to mediation through the <strong>JustiFi – Online Legal Aid & Mediation Platform</strong>;</li>
+                        <li style="margin-bottom: 10px;">The Parties desire to record their mutual understanding and agreement to the terms, conditions, and procedures governing such mediation.</li>
+                    </ol>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 1: MEDIATION TERMS</h2>
+                    <div style="text-align: justify;">
+                        <p style="margin-bottom: 10px;"><strong>1.1 Mediation Process:</strong> The Parties have agreed to resolve their dispute through mediation.</p>
+                        <p style="margin-bottom: 10px;"><strong>1.2 Session Agreement:</strong> The Parties have agreed to <strong>${data.sessionsAgreed} mediation session(s)</strong>.</p>
+                        <p style="margin-bottom: 10px;"><strong>1.3 Assigned Mediator:</strong> ${data.mediatorName} (${data.mediatorQualification}) has been assigned as the mediator.</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 2: COST DISTRIBUTION</h2>
+                    <div style="text-align: justify;">
+                        <p style="margin-bottom: 10px;"><strong>2.1 Equal Cost Sharing:</strong> All mediation costs shall be divided equally among all parties.</p>
+                        <p style="margin-bottom: 10px;"><strong>2.2 Cost Breakdown:</strong></p>
+                        <ul style="padding-left: 20px; margin-bottom: 10px;">
+                            <li style="margin-bottom: 5px;">Total Mediation Cost: <strong>BDT ${parseFloat(data.totalCost).toFixed(2)}</strong></li>
+                            <li style="margin-bottom: 5px;">Number of Parties: <strong>${data.parties.length}</strong></li>
+                            <li style="margin-bottom: 5px;">Cost per Party: <strong>BDT ${parseFloat(data.costPerParty).toFixed(2)}</strong></li>
+                        </ul>
+                        <p style="margin-bottom: 10px;"><strong>2.3 Payment Responsibility:</strong> Parties are jointly and severally responsible for full payment.</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 3: CONFIDENTIALITY</h2>
+                    <div style="text-align: justify;">
+                        <p style="margin-bottom: 10px;"><strong>3.1 Strict Confidentiality:</strong> All mediation proceedings, documents, discussions, and offers remain strictly confidential.</p>
+                        <p style="margin-bottom: 10px;"><strong>3.2 Legal Protection:</strong> Mediation communications are privileged and cannot be used as evidence in legal proceedings.</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 4: PARTY RESPONSIBILITIES</h2>
+                    <div style="text-align: justify;">
+                        <p style="margin-bottom: 10px;"><strong>4.1 Financial Obligations:</strong> Each Party agrees to pay their equal share of all mediation costs according to the agreed schedule.</p>
+                        <p style="margin-bottom: 10px;"><strong>4.2 Participation Requirements:</strong> Each Party agrees to:</p>
+                        <ul style="padding-left: 20px; margin-bottom: 10px;">
+                            <li style="margin-bottom: 5px;">Attend all scheduled mediation sessions</li>
+                            <li style="margin-bottom: 5px;">Participate in good faith throughout the process</li>
+                            <li style="margin-bottom: 5px;">Maintain respectful and professional conduct</li>
+                            <li style="margin-bottom: 5px;">Respect the mediator and other parties</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 5: ACKNOWLEDGMENT AND ACCEPTANCE</h2>
+                    <div style="text-align: justify;">
+                        <p style="margin-bottom: 10px;">By signing this Agreement, the Parties acknowledge and agree to:</p>
+                        <ul style="padding-left: 20px; margin-bottom: 10px;">
+                            <li style="margin-bottom: 5px;">Bear equal share of all mediation costs</li>
+                            <li style="margin-bottom: 5px;">Participate in good faith throughout the mediation process</li>
+                            <li style="margin-bottom: 5px;">Maintain strict confidentiality of all proceedings</li>
+                            <li style="margin-bottom: 5px;">Accept the mediation session limits (${data.sessionsAgreed} session(s))</li>
+                            <li style="margin-bottom: 5px;">Be bound by the mediator's decisions and procedures</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ccc;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">EXECUTION & SIGNATURES</h2>
+                    <p style="text-align: justify; margin-bottom: 30px;"><strong>IN WITNESS WHEREOF</strong>, the Parties have executed this Mediation Agreement on the date first written above.</p>
+                    
+                    <table width="100%" style="border-collapse: collapse;">
+                        <tr>
+                            <td width="50%" style="vertical-align: top; padding-right: 20px;">
+                                <h3 style="text-align: center; font-weight: bold; margin-bottom: 20px;">THE PARTIES</h3>
+                                ${partySignaturesPDF}
+                            </td>
+                            <td width="50%" style="vertical-align: top; padding-left: 20px;">
+                                <h3 style="text-align: center; font-weight: bold; margin-bottom: 20px;">ON BEHALF OF JUSTIFI</h3>
+                                <div style="text-align: center; margin-bottom: 30px;">
+                                    <p><strong>Name:</strong> ${data.justifiName}</p>
+                                    <p><strong>Designation:</strong> ${data.justifiDesignation}</p>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; height: 50px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
+                                    ${data.justifiSignature ? `<img src="${data.justifiSignature}" class="pdf-signature-img" alt="JustiFi Signature" style="max-height: 40px; max-width: 120px;">` : ''}
+                                </div>
+                                <p style="text-align: center;">Date: ${justifiDateDisplay}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="text-align: center; margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px;">
+                    <p><strong>JustiFi - Fair Dispute Resolution Through Equal Partnership</strong></p>
+                    <p style="margin-top: 10px;">This document constitutes a legally binding agreement between all signing parties.</p>
+                </div>
+            `;
+        }
+
+        // Function to generate PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const pdfContainer = document.getElementById('pdf-container');
+            
+            // Show loading state
+            const downloadBtn = document.getElementById('download-pdf');
+            const originalText = downloadBtn.textContent;
+            downloadBtn.textContent = 'Generating PDF...';
+            downloadBtn.disabled = true;
+            
+            // Wait for images to load
+            setTimeout(() => {
+                // Use html2canvas to capture the PDF container
+                html2canvas(pdfContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    width: pdfContainer.scrollWidth,
+                    height: pdfContainer.scrollHeight,
+                    onclone: function(clonedDoc) {
+                        // Ensure images are properly loaded in the cloned document
+                        const images = clonedDoc.querySelectorAll('img');
+                        images.forEach(img => {
+                            if (img.complete) {
+                                return;
+                            }
+                            img.onload = function() {
+                                // Image loaded, continue with PDF generation
+                            };
+                        });
+                    }
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgWidth = 210; // A4 width in mm
+                    const pageHeight = 295; // A4 height in mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+                    
+                    // Add first page
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                    
+                    // Add additional pages if needed
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                    
+                    // Save the PDF
+                    pdf.save('mediation-agreement.pdf');
+                    
+                    // Restore button state
+                    downloadBtn.textContent = originalText;
+                    downloadBtn.disabled = false;
+                }).catch(error => {
+                    console.error('PDF generation error:', error);
+                    alert('Error generating PDF. Please try again.');
+                    downloadBtn.textContent = originalText;
+                    downloadBtn.disabled = false;
+                });
+            }, 1000); // Wait 1 second for images to load
+        }
+        
+        // Helper function to format date for display
+        function formatDateForDisplay(dateString) {
+            if (!dateString) return '';
+            
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            
+            const day = date.getDate();
+            const month = date.toLocaleString('default', { month: 'long' });
+            const year = date.getFullYear();
+            
+            return `${day} ${month}, ${year}`;
+        }
+    </script>
+</body>
+</html>
