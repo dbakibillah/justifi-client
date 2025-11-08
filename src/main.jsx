@@ -10,8 +10,8 @@ import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
-import PaymentFailed from "./pages/arbitration/components/PaymentFailed";
-import PaymentSuccess from "./pages/arbitration/components/PaymentSuccess";
+import PaymentFailed from "./pages/payment/PaymentFailed";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import Arbitrator from "./pages/arbitrator/Arbitrator";
 import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
 import Login from "./pages/auth/Login";
@@ -28,6 +28,8 @@ import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
+import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
+import AllUsers from "./dashboard/admin/pages/AllUsers";
 
 const queryClient = new QueryClient();
 
@@ -43,12 +45,6 @@ createRoot(document.getElementById("root")).render(
             <Route path="/lawyers" element={<Lawyer />} />
             <Route path="lawyers/:lawyerId" element={<LawyerDetails />} />
             <Route path="/book-lawyer/:lawyerId" element={<BookLawyer />} />
-            <Route
-              path="/payment/success/:tran_id"
-              element={<PaymentSuccess />}
-            />
-
-            <Route path="payment/fail/:tran_id" element={<paymentFail />} />
 
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:blogId" element={<BlogDetails />} />
@@ -80,6 +76,8 @@ createRoot(document.getElementById("root")).render(
 
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="my-appointments" element={<UserAppointments />} />
+            <Route path="my-arbitrations" element={<MyArbitrations />} />
+            <Route path="all-users" element={<AllUsers />} />
           </Route>
         </Routes>
       </QueryClientProvider>
