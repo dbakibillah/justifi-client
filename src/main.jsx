@@ -29,6 +29,7 @@ import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
