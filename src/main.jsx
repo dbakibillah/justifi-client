@@ -6,7 +6,6 @@ import Dashboard from "./dashboard/Dashboard";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
@@ -30,6 +29,7 @@ import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
