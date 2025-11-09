@@ -30,6 +30,7 @@ import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
+import AllLawyers from "./dashboard/admin/pages/AllLawyers";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +106,7 @@ createRoot(document.getElementById("root")).render(
                             element={<MyArbitrations />}
                         />
                         <Route path="all-users" element={<AllUsers />} />
+                        <Route path="all-lawyers" element={<AllLawyers />} />
                     </Route>
                 </Routes>
             </QueryClientProvider>
