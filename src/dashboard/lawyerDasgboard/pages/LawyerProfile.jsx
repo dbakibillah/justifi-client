@@ -82,7 +82,7 @@ const LawyerProfile = () => {
             const { _id, ...updateData } = data;
 
             const response = await axiosSecure.patch(
-                `/lawyerProfile/${lawyer._id}`,
+                `/lawyerProfile/${lawyer.email}`,
                 updateData
             );
 
@@ -105,7 +105,7 @@ const LawyerProfile = () => {
         async (field, value) => {
             try {
                 const response = await axiosSecure.patch(
-                    `/lawyerProfile/${lawyer._id}`,
+                    `/lawyerProfile/${lawyer.email}`,
                     { [field]: value }
                 );
 
