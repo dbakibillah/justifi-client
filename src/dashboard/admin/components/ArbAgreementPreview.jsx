@@ -866,6 +866,17 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
           </table>
         </div>
       </div>
+      <div className="mt-8 mb-6 text-center text-sm text-gray-600 border-t pt-4">
+        <p>
+          <strong>
+            JustiFi - Fair Dispute Resolution Through Equal Partnership
+          </strong>
+        </p>
+        <p className="mt-2">
+          This document constitutes a legally binding agreement between all
+          signing parties.
+        </p>
+      </div>
 
       <div className="mt-4 flex justify-center no-print">
         <button
