@@ -121,59 +121,59 @@ const BookLawyer = () => {
         return !bookedSlots.includes(slot);
     };
 
-    const onSubmit = async (data) => {
-        if (!selectedDate || !selectedSlot || !lawyer) {
-            toast.error("Please select date and time slot");
-            return;
-        }
+ const onSubmit = async (data) => {
+  if (!selectedDate || !selectedSlot || !lawyer) {
+    toast.error("Please select date and time slot");
+    return;
+  }
 
-        setIsSubmitting(true);
+  setIsSubmitting(true); // start loading spinner
 
-        const bookingInfo = {
-            user: {
-                name: currentUser?.name || "User",
-                email: currentUser?.email,
-                phone: data.phone,
-                img:
-                    currentUser?.photo ||
-                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face",
-            },
-            booking: {
-                problemDescription: data.problemDescription,
-                preferredDate: selectedDate,
-                preferredTime: selectedSlot,
-                caseType: data.caseType || "General Consultation",
-            },
-            lawyer: {
-                name: lawyer.name,
-                email: lawyer.email,
-                specialization: lawyer.specialization,
-                img: lawyer.image,
-                experience: lawyer.experience,
-                successRate: lawyer.successRate,
-            },
-            status: "pending",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        };
+  const bookingInfo = {
+    user: {
+      name: currentUser?.name || "User",
+      email: currentUser?.email,
+      phone: data.phone,
+      img:
+        currentUser?.photo ||
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face",
+    },
+    booking: {
+      problemDescription: data.problemDescription,
+      preferredDate: selectedDate,
+      preferredTime: selectedSlot,
+      caseType: data.caseType || "General Consultation",
+    },
+    lawyer: {
+      name: lawyer.name,
+      email: lawyer.email,
+      specialization: lawyer.specialization,
+      img: lawyer.image,
+      experience: lawyer.experience,
+      successRate: lawyer.successRate,
+    },
+    status: "pending",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+ 
+  try {
+    const res = await axiosPublic.post("/bookings", bookingInfo);
+     console.log(bookingInfo); 
+     console.log(res.data.url); 
+    if (res.data.url) {
+     window.location.replace(res.data.url);
 
-        try {
-            const res = await axiosPublic.post("/bookings", bookingInfo);
-            if (res.data.insertedId) {
-                toast.success("Booking request submitted successfully!");
-                reset();
-                setSelectedDate("");
-                setSelectedSlot("");
-                refetch();
-                navigate("/");
-            }
-        } catch (error) {
-            toast.error("Failed to book appointment");
-            console.error("Booking error:", error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    } else {
+      toast.error("Failed to initiate payment session");
+      setIsSubmitting(false); // stop loading if no redirect
+    }
+  } catch (error) {
+    console.error("Payment initialization error:", error);
+    toast.error("Payment initialization failed");
+    setIsSubmitting(false);
+  }
+};
 
     const StepIndicator = ({ step, isActive, isCompleted }) => (
         <div
@@ -809,22 +809,24 @@ const BookLawyer = () => {
                                                 type="submit"
                                                 disabled={isSubmitting}
                                                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                                            >
+                                                >
                                                 {isSubmitting ? (
                                                     <>
-                                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                                        Processing Booking...
+                                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                                    Processing Payment...
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <FaCheckCircle className="text-lg" />
-                                                        Confirm Booking - ৳
-                                                        {lawyer.fee || "4500"}
+                                                    <FaCheckCircle className="text-lg" />
+                                                    Confirm Booking - ৳{lawyer.fee || "4500"}
                                                     </>
                                                 )}
                                             </button>
-                                        </div>
+
+                                            
+                                        </div>     
                                     )}
+                                    
                                 </form>
                             </div>
                         </div>
@@ -834,5 +836,8 @@ const BookLawyer = () => {
         </section>
     );
 };
+
+
+
 
 export default BookLawyer;
