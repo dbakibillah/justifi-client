@@ -129,12 +129,12 @@ const DashboardLeft = () => {
             icon: <FaUsers className="text-lg" />,
         },
         {
-            name: "All Lawyers",
+            name: "Laywers Management",
             path: "/dashboard/all-lawyers",
             icon: <FaGavel className="text-lg" />,
         },
         {
-            name: "All Arbitrators",
+            name: "Arbitrators Management",
             path: "/dashboard/all-arbitrators",
             icon: <FaBalanceScale className="text-lg" />,
         },

@@ -5,7 +5,7 @@ import LawyerCard from "../components/LawyerCard";
 import LawyerModal from "../components/LawyerModal";
 import PageHeader from "../components/PageHeader";
 
-const AllLawyers = () => {
+const LawyerManagement = () => {
     const axiosSecure = useAxiosSecure();
     const { data: lawyers = [], refetch } = useQuery({
         queryKey: ["lawyers"],
@@ -304,4 +304,4 @@ const AllLawyers = () => {
     );
 };
 
-export default AllLawyers;
+export default LawyerManagement;
