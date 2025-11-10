@@ -6,7 +6,6 @@ import Dashboard from "./dashboard/Dashboard";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
@@ -28,21 +27,10 @@ import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
-<<<<<<< HEAD
-import Dashboard from "./dashboard/Dashboard";
-import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
-import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
-import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
-import Arbitration from "./pages/arbitration/Arbitration";
-import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
-import Mediation from "./pages/mediation/Mediation";
-import MediationProcess from "./pages/mediation/components/MediationProcess";
-import AboutUs from "./pages/about/AboutUs";
-=======
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
->>>>>>> main
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
+import AllLawyers from "./dashboard/admin/pages/AllLawyers";
 
 const queryClient = new QueryClient();
 
@@ -78,12 +66,8 @@ createRoot(document.getElementById("root")).render(
             <Route path="/arbitration" element={<Arbitration />} />
             <Route path="/mediation-process" element={<MediationProcess />} />
             <Route path="/mediation" element={<Mediation />} />
-<<<<<<< HEAD
-            <Route path="/about" element={<AboutUs />} />
-=======
             <Route path="/payment/success/:id" element={<PaymentSuccess />} />
             <Route path="/payment/fail/:id" element={<PaymentFailed />} />
->>>>>>> main
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>
@@ -95,6 +79,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="my-appointments" element={<UserAppointments />} />
             <Route path="my-arbitrations" element={<MyArbitrations />} />
             <Route path="all-users" element={<AllUsers />} />
+            <Route path="all-lawyers" element={<AllLawyers />} />
           </Route>
         </Routes>
       </QueryClientProvider>
