@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import MediationForm from "./components/MediationForm";
-import MedAgreementPreview from "./components/MedAgreementPreview";
+import MediationForm from "../components/MediationForm";
+import MedAgreementPreview from "../components/MedAgreementPreview";
 
 function Mediation_Agreement() {
   const [showPreview, setShowPreview] = useState(false);

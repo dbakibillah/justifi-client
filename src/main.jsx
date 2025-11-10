@@ -31,6 +31,7 @@ import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import AllLawyers from "./dashboard/admin/pages/AllLawyers";
+import Mediation_Agreement from "./dashboard/admin/pages/Mediation_Agreement";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,10 @@ createRoot(document.getElementById("root")).render(
             <Route path="my-arbitrations" element={<MyArbitrations />} />
             <Route path="all-users" element={<AllUsers />} />
             <Route path="all-lawyers" element={<AllLawyers />} />
+            <Route
+              path="mediation-agreement"
+              element={<Mediation_Agreement />}
+            />
           </Route>
         </Routes>
       </QueryClientProvider>
