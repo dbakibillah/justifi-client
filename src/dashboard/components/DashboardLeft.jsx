@@ -144,7 +144,7 @@ const DashboardLeft = () => {
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
-            name: "All Mediators",
+            name: "Mediator Management",
             path: "/dashboard/all-mediators",
             icon: <FaHandshake className="text-lg" />,
         },
