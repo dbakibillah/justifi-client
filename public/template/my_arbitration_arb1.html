@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Arbitrations - JustiFi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Arbitrations</h1>
+            <p class="text-gray-600 mt-2">Manage and track all your arbitration cases</p>
+        </div>
+
+        <!-- Filters and Sorting -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                <div class="flex flex-wrap gap-2">
+                    <button id="filter-all" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white transition-colors">
+                        All Cases
+                    </button>
+                    <button id="filter-pending" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
+                        Pending
+                    </button>
+                    <button id="filter-ongoing" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
+                        Ongoing
+                    </button>
+                    <button id="filter-completed" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
+                        Completed
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                    <select id="sort-select" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="date">Date</option>
+                        <option value="value">Suit Value</option>
+                        <option value="title">Title</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arbitration Cards Grid -->
+        <div id="arbitration-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be dynamically loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="text-center py-12 hidden">
+            <div class="text-gray-400 mb-4">
+                <i class="fas fa-folder-open text-6xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No arbitrations found</h3>
+            <p class="text-gray-500">No arbitration cases match your current filters.</p>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for arbitrations
+        const arbitrations = [
+            {
+                id: 'ARB-001',
+                title: 'Commercial Contract Dispute',
+                status: 'ongoing',
+                nextHearing: '2024-12-15',
+                suitValue: 'BDT 50,00,000',
+                nature: 'Breach of Contract',
+                arbitrators: ['arbitrator1@email.com', 'arbitrator2@email.com', 'arbitrator3@email.com'],
+                createdAt: '2024-11-01'
+            },
+            {
+                id: 'ARB-002',
+                title: 'Property Ownership Conflict',
+                status: 'pending',
+                nextHearing: '2024-12-20',
+                suitValue: 'BDT 1,20,00,000',
+                nature: 'Property Dispute',
+                arbitrators: ['arbitrator1@email.com', 'arbitrator4@email.com', 'arbitrator5@email.com'],
+                createdAt: '2024-11-05'
+            },
+            {
+                id: 'ARB-003',
+                title: 'Business Partnership Dissolution',
+                status: 'completed',
+                nextHearing: null,
+                suitValue: 'BDT 75,00,000',
+                nature: 'Partnership Dispute',
+                arbitrators: ['arbitrator2@email.com', 'arbitrator3@email.com', 'arbitrator6@email.com'],
+                createdAt: '2024-10-15'
+            },
+            {
+                id: 'ARB-004',
+                title: 'Employment Termination Dispute',
+                status: 'ongoing',
+                nextHearing: '2024-12-18',
+                suitValue: 'BDT 25,00,000',
+                nature: 'Employment Contract',
+                arbitrators: ['arbitrator1@email.com', 'arbitrator7@email.com', 'arbitrator8@email.com'],
+                createdAt: '2024-11-10'
+            },
+            {
+                id: 'ARB-005',
+                title: 'Intellectual Property Rights',
+                status: 'pending',
+                nextHearing: '2024-12-25',
+                suitValue: 'BDT 2,50,00,000',
+                nature: 'IP Infringement',
+                arbitrators: ['arbitrator3@email.com', 'arbitrator9@email.com', 'arbitrator10@email.com'],
+                createdAt: '2024-11-12'
+            },
+            {
+                id: 'ARB-006',
+                title: 'Construction Contract Breach',
+                status: 'completed',
+                nextHearing: null,
+                suitValue: 'BDT 95,00,000',
+                nature: 'Construction Delay',
+                arbitrators: ['arbitrator4@email.com', 'arbitrator5@email.com', 'arbitrator11@email.com'],
+                createdAt: '2024-09-20'
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentSort = 'date';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderArbitrationCards();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                    });
+                    
+                    this.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                    this.classList.add('bg-blue-600', 'text-white');
+                    
+                    // Update filter
+                    currentFilter = this.id.replace('filter-', '');
+                    renderArbitrationCards();
+                });
+            });
+
+            // Sort select
+            document.getElementById('sort-select').addEventListener('change', function() {
+                currentSort = this.value;
+                renderArbitrationCards();
+            });
+        }
+
+        function renderArbitrationCards() {
+            const container = document.getElementById('arbitration-cards');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Filter arbitrations
+            let filteredArbitrations = arbitrations.filter(arb => {
+                if (currentFilter === 'all') return true;
+                return arb.status === currentFilter;
+            });
+
+            // Sort arbitrations
+            filteredArbitrations.sort((a, b) => {
+                switch (currentSort) {
+                    case 'date':
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    case 'value':
+                        return parseFloat(b.suitValue.replace(/[^\d.]/g, '')) - parseFloat(a.suitValue.replace(/[^\d.]/g, ''));
+                    case 'title':
+                        return a.title.localeCompare(b.title);
+                    default:
+                        return 0;
+                }
+            });
+
+            // Clear container
+            container.innerHTML = '';
+
+            // Show empty state if no results
+            if (filteredArbitrations.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Render cards
+            filteredArbitrations.forEach(arbitration => {
+                const card = document.createElement('a');
+                card.href = `my_arbitration_arb2.html?id=${arbitration.id}`;
+                card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 block';
+                
+                const statusColor = getStatusColor(arbitration.status);
+                const statusText = getStatusText(arbitration.status);
+                
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColor}">
+                                ${statusText}
+                            </span>
+                            <span class="text-sm text-gray-500">${arbitration.id}</span>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                            ${arbitration.title}
+                        </h3>
+
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                            ${arbitration.nature}
+                        </p>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-gray-500">Suit Value:</span>
+                            <span class="text-lg font-bold text-green-600">${arbitration.suitValue}</span>
+                        </div>
+
+                        ${arbitration.nextHearing ? `
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <span class="text-sm text-gray-500">Next Hearing:</span>
+                                <span class="text-sm font-medium text-blue-600">
+                                    ${new Date(arbitration.nextHearing).toLocaleDateString()}
+                                </span>
+                            </div>
+                        ` : arbitration.status === 'completed' ? `
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <span class="text-sm text-gray-500">Status:</span>
+                                <span class="text-sm font-medium text-green-600">Case Closed</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'pending': return 'bg-yellow-100 text-yellow-800';
+                case 'ongoing': return 'bg-blue-100 text-blue-800';
+                case 'completed': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'Pending';
+                case 'ongoing': return 'Ongoing';
+                case 'completed': return 'Completed';
+                default: return status;
+            }
+        }
+    </script>
+</body>
+</html>

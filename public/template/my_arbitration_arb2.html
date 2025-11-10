@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbitration Details - JustiFi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .legal-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        .evidence-item {
+            transition: all 0.3s ease;
+        }
+        .evidence-item:hover {
+            transform: translateX(5px);
+            background-color: #f8fafc;
+        }
+        .party-card {
+            border-left: 4px solid;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .plaintiff-card {
+            border-left-color: #3b82f6;
+        }
+        .defendant-card {
+            border-left-color: #ef4444;
+        }
+        .hearing-row:hover {
+            background-color: #f8fafc;
+        }
+        .arbitrator-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .arbitrator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="my_arbitration_arb1.html" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to My Arbitrations
+            </a>
+        </div>
+
+        <!-- Arbitration Header -->
+        <div class="legal-header text-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center mb-3">
+                        <span id="status-badge" class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold mr-4 bg-white bg-opacity-20 backdrop-blur-sm"></span>
+                        <span id="arbitration-id" class="font-mono bg-black bg-opacity-20 px-3 py-1 rounded-lg"></span>
+                    </div>
+                    <h1 id="arbitration-title" class="text-3xl font-bold mb-4"></h1>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
+                            <p class="text-blue-200 text-sm font-medium mb-1">Suit Value</p>
+                            <p id="suit-value" class="text-xl font-bold text-white"></p>
+                        </div>
+                        <div class="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
+                            <p class="text-blue-200 text-sm font-medium mb-1">Nature of Dispute</p>
+                            <p id="nature-dispute" class="text-lg font-semibold text-white line-clamp-2"></p>
+                        </div>
+                        <div class="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
+                            <p class="text-blue-200 text-sm font-medium mb-1">Next Hearing</p>
+                            <p id="next-hearing" class="text-xl font-bold text-white"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <p class="text-blue-200 text-sm font-medium">Total Sessions</p>
+                            <p id="total-sessions" class="text-2xl font-bold text-white"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-green-300 text-sm font-medium">Completed</p>
+                            <p id="completed-sessions" class="text-2xl font-bold text-green-300"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-orange-300 text-sm font-medium">Remaining</p>
+                            <p id="remaining-sessions" class="text-2xl font-bold text-orange-300"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arbitrators Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-8 bg-blue-600 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-gray-900">Arbitrators Panel</h2>
+            </div>
+            <div id="arbitrators-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Arbitrators will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Parties Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Plaintiffs -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                <div class="flex items-center mb-6">
+                    <div class="w-1 h-8 bg-blue-600 rounded-full mr-3"></div>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-balance-scale mr-3 text-blue-600"></i>Plaintiffs/Claimants
+                    </h2>
+                </div>
+                <div id="plaintiffs-container" class="space-y-6">
+                    <!-- Plaintiffs will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Defendants -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                <div class="flex items-center mb-6">
+                    <div class="w-1 h-8 bg-red-600 rounded-full mr-3"></div>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-gavel mr-3 text-red-600"></i>Defendants/Respondents
+                    </h2>
+                </div>
+                <div id="defendants-container" class="space-y-6">
+                    <!-- Defendants will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Arbitration Summary -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="w-1 h-8 bg-green-600 rounded-full mr-3"></div>
+                    <h2 class="text-2xl font-bold text-gray-900">Arbitration Proceedings</h2>
+                </div>
+                <button id="add-hearing-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-plus mr-2"></i>Schedule Hearing
+                </button>
+            </div>
+
+            <!-- Add Hearing Form (Initially Hidden) -->
+            <div id="add-hearing-form" class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-8 hidden">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-calendar-plus text-blue-600 text-xl mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-900">Schedule New Hearing</h3>
+                </div>
+                <form id="hearing-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hearing Date & Time</label>
+                            <input type="datetime-local" id="hearing-date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Meeting Link</label>
+                            <input type="url" id="meet-link" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors" placeholder="https://meet.justifi.com/..." required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Documents/Evidence Required</label>
+                        <textarea id="documents-needed" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors" rows="3" placeholder="List any documents or evidence required for this hearing..." required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Hearing Agenda & Discussion Points</label>
+                        <textarea id="hearing-agenda" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors" rows="3" placeholder="Brief overview of what will be discussed, key points to address..." required></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-blue-200">
+                        <button type="button" id="cancel-hearing" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-lg">
+                            <i class="fas fa-calendar-check mr-2"></i>Schedule Hearing
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Hearing Date</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Arbitrator 1 Notes</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Arbitrator 2 Notes</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Arbitrator 3 Notes</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Result</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Documents Required</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Meeting Link</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-100">Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hearings-table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Hearings will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State for Hearings -->
+            <div id="no-hearings" class="text-center py-12 hidden">
+                <div class="bg-gray-50 rounded-2xl p-8 max-w-md mx-auto">
+                    <i class="fas fa-calendar-times text-6xl text-gray-300 mb-6"></i>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No Hearings Scheduled</h3>
+                    <p class="text-gray-500 mb-6">Schedule the first hearing to begin proceedings.</p>
+                    <button id="schedule-first-hearing" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Schedule First Hearing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Mock data for arbitration details with multiple parties
+        const arbitrationDetails = {
+            'ARB-001': {
+                id: 'ARB-001',
+                title: 'Commercial Contract Dispute - ABC Corp vs XYZ Services',
+                status: 'ongoing',
+                suitValue: 'BDT 50,00,000',
+                nature: 'Breach of contract between business entities regarding service delivery timelines and payment terms with additional claims of consequential damages.',
+                nextHearing: '2024-12-15T10:00',
+                totalSessions: 8,
+                completedSessions: 3,
+                remainingSessions: 5,
+                arbitrators: [
+                    {
+                        id: 1,
+                        name: 'Dr. Ahmed Rahman',
+                        email: 'ahmed.rahman@example.com',
+                        designation: 'Senior Arbitrator',
+                        picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+                        specialization: 'Commercial Law',
+                        experience: '15+ years'
+                    },
+                    {
+                        id: 2,
+                        name: 'Prof. Fatima Begum',
+                        email: 'fatima.begum@example.com',
+                        designation: 'Presiding Arbitrator',
+                        picture: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+                        specialization: 'Contract Law',
+                        experience: '12+ years'
+                    },
+                    {
+                        id: 3,
+                        name: 'Adv. Rahim Khan',
+                        email: 'rahim.khan@example.com',
+                        designation: 'Arbitrator',
+                        picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+                        specialization: 'Business Law',
+                        experience: '10+ years'
+                    }
+                ],
+                plaintiffs: [
+                    {
+                        id: 1,
+                        name: 'ABC Corporation Ltd.',
+                        email: 'legal@abccorp.com',
+                        contact: '+880 1712-345678',
+                        address: '123 Business Avenue, Commercial District, Dhaka 1205',
+                        picture: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop&crop=center',
+                        representative: 'Mr. Kamal Hossain, Legal Counsel',
+                        evidence: [
+                            { id: 1, name: 'Master Service Agreement.pdf', date: '2023-01-15', type: 'Contract' },
+                            { id: 2, name: 'Payment Records & Invoices.xlsx', date: '2023-03-20', type: 'Financial' },
+                            { id: 3, name: 'Email Correspondence Archive.zip', date: '2023-02-10', type: 'Communication' },
+                            { id: 4, name: 'Service Delivery Reports.pdf', date: '2023-04-05', type: 'Performance' },
+                            { id: 5, name: 'Damages Calculation Report.pdf', date: '2023-05-12', type: 'Assessment' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: 'Global Tech Solutions Inc.',
+                        email: 'dispute@globaltech.com',
+                        contact: '+880 1812-987654',
+                        address: '456 Tech Park, Gulshan, Dhaka 1212',
+                        picture: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=150&h=150&fit=crop&crop=center',
+                        representative: 'Ms. Anika Rahman, CEO',
+                        evidence: [
+                            { id: 1, name: 'Subcontract Agreement.pdf', date: '2023-02-20', type: 'Contract' },
+                            { id: 2, name: 'Project Timeline Documents.pdf', date: '2023-03-15', type: 'Schedule' },
+                            { id: 3, name: 'Quality Assessment Reports.pdf', date: '2023-04-10', type: 'Quality' }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: 'Innovate Bangladesh Ltd.',
+                        email: 'legal@innovatebd.com',
+                        contact: '+880 1912-456789',
+                        address: '789 Innovation Street, Banani, Dhaka 1213',
+                        picture: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&h=150&fit=crop&crop=center',
+                        representative: 'Mr. Rajib Ahmed, Director',
+                        evidence: [
+                            { id: 1, name: 'Joint Venture Agreement.pdf', date: '2023-01-30', type: 'Contract' },
+                            { id: 2, name: 'Financial Contribution Records.pdf', date: '2023-03-25', type: 'Financial' },
+                            { id: 3, name: 'Meeting Minutes & Decisions.docx', date: '2023-04-18', type: 'Administrative' }
+                        ]
+                    }
+                ],
+                defendants: [
+                    {
+                        id: 1,
+                        name: 'XYZ Services Inc.',
+                        email: 'legal@xyzservices.com',
+                        contact: '+880 1711-223344',
+                        address: '321 Service Road, Uttara, Dhaka 1230',
+                        picture: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&h=150&fit=crop&crop=center',
+                        representative: 'Ms. Tahmina Akter, Legal Head',
+                        evidence: [
+                            { id: 1, name: 'Service Completion Certificates.pdf', date: '2023-05-20', type: 'Performance' },
+                            { id: 2, name: 'Client Communications Archive.docx', date: '2023-04-15', type: 'Communication' },
+                            { id: 3, name: 'Quality Assurance Reports.pdf', date: '2023-06-10', type: 'Quality' },
+                            { id: 4, name: 'Force Majeure Declaration.pdf', date: '2023-03-28', type: 'Legal' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: 'Premium Logistics Bangladesh',
+                        email: 'disputes@premiumlog.com',
+                        contact: '+880 1811-334455',
+                        address: '654 Logistics Center, Mirpur, Dhaka 1216',
+                        picture: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=150&h=150&fit=crop&crop=center',
+                        representative: 'Mr. Farhan Iqbal, Operations Director',
+                        evidence: [
+                            { id: 1, name: 'Delivery & Receipt Records.pdf', date: '2023-04-22', type: 'Delivery' },
+                            { id: 2, name: 'Third-Party Audit Report.pdf', date: '2023-05-30', type: 'Audit' },
+                            { id: 3, name: 'Contractual Obligations Review.docx', date: '2023-06-05', type: 'Legal' }
+                        ]
+                    }
+                ],
+                hearings: [
+                    {
+                        id: 1,
+                        date: '2024-11-10T10:00',
+                        arbitrator1Notes: 'Initial arguments presented by both parties. Need detailed contract execution timeline.',
+                        arbitrator2Notes: 'Parties mutually agreed to arbitration process. Preliminary jurisdiction established.',
+                        arbitrator3Notes: 'Basic evidence submitted. Require complete financial transaction records.',
+                        result: 'Adjourned for comprehensive document submission',
+                        documentsRequired: 'Complete contract execution history, all payment records, communication logs',
+                        meetLink: 'https://meet.justifi.com/arb-001-session1',
+                        attendance: 'All parties present'
+                    },
+                    {
+                        id: 2,
+                        date: '2024-11-24T14:00',
+                        arbitrator1Notes: 'Contractual obligations analysis completed. Identified several breach points.',
+                        arbitrator2Notes: 'Payment schedule discrepancies quantified. Additional financial audit required.',
+                        arbitrator3Notes: 'Witness statements reviewed and cross-referenced with documentary evidence.',
+                        result: 'Evidence evaluation phase extended',
+                        documentsRequired: 'Audited financial statements, expert witness reports, quality control documents',
+                        meetLink: 'https://meet.justifi.com/arb-001-session2',
+                        attendance: 'All parties present'
+                    },
+                    {
+                        id: 3,
+                        date: '2024-12-08T11:00',
+                        arbitrator1Notes: 'Financial impact assessment underway. Damages calculation methodology reviewed.',
+                        arbitrator2Notes: 'Expert testimony scheduled for next session. Technical evaluation pending.',
+                        arbitrator3Notes: 'Settlement negotiation possibilities explored. Parties showed willingness to discuss.',
+                        result: 'Adjourned for expert technical review',
+                        documentsRequired: 'Expert evaluation reports, technical specifications, market analysis data',
+                        meetLink: 'https://meet.justifi.com/arb-001-session3',
+                        attendance: 'All parties present'
+                    }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get arbitration ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const arbitrationId = urlParams.get('id') || 'ARB-001';
+            
+            // Load arbitration data
+            const arbitration = arbitrationDetails[arbitrationId];
+            if (arbitration) {
+                loadArbitrationData(arbitration);
+                setupEventListeners();
+            }
+        });
+
+        function loadArbitrationData(arbitration) {
+            // Set header information
+            document.getElementById('arbitration-id').textContent = arbitration.id;
+            document.getElementById('arbitration-title').textContent = arbitration.title;
+            document.getElementById('suit-value').textContent = arbitration.suitValue;
+            document.getElementById('nature-dispute').textContent = arbitration.nature;
+            document.getElementById('total-sessions').textContent = arbitration.totalSessions;
+            document.getElementById('completed-sessions').textContent = arbitration.completedSessions;
+            document.getElementById('remaining-sessions').textContent = arbitration.remainingSessions;
+            
+            // Set status badge
+            const statusBadge = document.getElementById('status-badge');
+            statusBadge.textContent = getStatusText(arbitration.status);
+            statusBadge.className = `inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold mr-4 ${getStatusColor(arbitration.status)}`;
+            
+            // Set next hearing
+            const nextHearingEl = document.getElementById('next-hearing');
+            if (arbitration.nextHearing) {
+                nextHearingEl.textContent = new Date(arbitration.nextHearing).toLocaleString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                nextHearingEl.textContent = 'Not scheduled';
+                nextHearingEl.classList.add('text-gray-300');
+            }
+
+            // Load arbitrators
+            loadArbitrators(arbitration.arbitrators);
+            
+            // Load parties
+            loadParties(arbitration.plaintiffs, arbitration.defendants);
+            
+            // Load hearings
+            loadHearings(arbitration.hearings);
+        }
+
+        function loadArbitrators(arbitrators) {
+            const container = document.getElementById('arbitrators-container');
+            container.innerHTML = '';
+
+            arbitrators.forEach(arbitrator => {
+                const card = document.createElement('div');
+                card.className = 'arbitrator-card bg-white border border-gray-200 rounded-xl p-6 text-center shadow-md';
+                card.innerHTML = `
+                    <div class="relative mb-4">
+                        <img src="${arbitrator.picture}" alt="${arbitrator.name}" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-blue-100 shadow-md">
+                        <div class="absolute bottom-0 right-6 bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white">
+                            <i class="fas fa-gavel text-xs"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">${arbitrator.name}</h3>
+                    <p class="text-blue-600 font-semibold text-sm mb-1">${arbitrator.designation}</p>
+                    <p class="text-gray-700 text-sm mb-2">${arbitrator.specialization}</p>
+                    <p class="text-gray-500 text-xs mb-3">${arbitrator.experience} Experience</p>
+                    <p class="text-gray-600 text-sm truncate bg-gray-50 p-2 rounded-lg">
+                        <i class="fas fa-envelope mr-2 text-gray-400"></i>${arbitrator.email}
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function loadParties(plaintiffs, defendants) {
+            // Load plaintiffs
+            const plaintiffsContainer = document.getElementById('plaintiffs-container');
+            plaintiffsContainer.innerHTML = '';
+
+            plaintiffs.forEach(party => {
+                const partyCard = document.createElement('div');
+                partyCard.className = 'party-card plaintiff-card bg-white rounded-lg p-6 shadow-sm';
+                partyCard.innerHTML = `
+                    <div class="flex items-start mb-4">
+                        <div class="relative">
+                            <img src="${party.picture}" alt="${party.name}" class="w-16 h-16 rounded-lg object-cover border-2 border-blue-200">
+                            <div class="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="font-bold text-gray-900 text-lg">${party.name}</h3>
+                            <p class="text-gray-600 text-sm mb-1">
+                                <i class="fas fa-user-circle mr-2 text-blue-500"></i>${party.representative}
+                            </p>
+                            <p class="text-gray-600 text-sm mb-1">
+                                <i class="fas fa-envelope mr-2 text-blue-500"></i>${party.email}
+                            </p>
+                            <p class="text-gray-600 text-sm">
+                                <i class="fas fa-phone mr-2 text-blue-500"></i>${party.contact}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-gray-700 text-sm">
+                            <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>${party.address}
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-folder-open mr-2 text-blue-600"></i>
+                            Evidence Submitted (${party.evidence.length} documents)
+                        </h4>
+                        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                            ${party.evidence.map(evidence => `
+                                <div class="evidence-item bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-pdf text-red-500 text-lg mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-800 text-sm">${evidence.name}</p>
+                                            <p class="text-gray-500 text-xs">
+                                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">${evidence.type}</span>
+                                                Submitted: ${new Date(evidence.date).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button class="text-blue-600 hover:text-blue-800 p-1 rounded">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                plaintiffsContainer.appendChild(partyCard);
+            });
+
+            // Load defendants
+            const defendantsContainer = document.getElementById('defendants-container');
+            defendantsContainer.innerHTML = '';
+
+            defendants.forEach(party => {
+                const partyCard = document.createElement('div');
+                partyCard.className = 'party-card defendant-card bg-white rounded-lg p-6 shadow-sm';
+                partyCard.innerHTML = `
+                    <div class="flex items-start mb-4">
+                        <div class="relative">
+                            <img src="${party.picture}" alt="${party.name}" class="w-16 h-16 rounded-lg object-cover border-2 border-red-200">
+                            <div class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="font-bold text-gray-900 text-lg">${party.name}</h3>
+                            <p class="text-gray-600 text-sm mb-1">
+                                <i class="fas fa-user-circle mr-2 text-red-500"></i>${party.representative}
+                            </p>
+                            <p class="text-gray-600 text-sm mb-1">
+                                <i class="fas fa-envelope mr-2 text-red-500"></i>${party.email}
+                            </p>
+                            <p class="text-gray-600 text-sm">
+                                <i class="fas fa-phone mr-2 text-red-500"></i>${party.contact}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-gray-700 text-sm">
+                            <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>${party.address}
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-folder-open mr-2 text-red-600"></i>
+                            Evidence Submitted (${party.evidence.length} documents)
+                        </h4>
+                        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                            ${party.evidence.map(evidence => `
+                                <div class="evidence-item bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file-pdf text-red-500 text-lg mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-800 text-sm">${evidence.name}</p>
+                                            <p class="text-gray-500 text-xs">
+                                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full mr-2">${evidence.type}</span>
+                                                Submitted: ${new Date(evidence.date).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button class="text-red-600 hover:text-red-800 p-1 rounded">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                defendantsContainer.appendChild(partyCard);
+            });
+        }
+
+        function loadHearings(hearings) {
+            const tableBody = document.getElementById('hearings-table-body');
+            const noHearings = document.getElementById('no-hearings');
+
+            if (hearings.length === 0) {
+                tableBody.innerHTML = '';
+                noHearings.classList.remove('hidden');
+                return;
+            }
+
+            noHearings.classList.add('hidden');
+            tableBody.innerHTML = '';
+
+            hearings.forEach(hearing => {
+                const row = document.createElement('tr');
+                row.className = 'hearing-row';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900">${new Date(hearing.date).toLocaleDateString()}</div>
+                        <div class="text-sm text-gray-500">${new Date(hearing.date).toLocaleTimeString()}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        <div class="line-clamp-3 bg-blue-50 p-2 rounded-lg border border-blue-100">${hearing.arbitrator1Notes}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        <div class="line-clamp-3 bg-green-50 p-2 rounded-lg border border-green-100">${hearing.arbitrator2Notes}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        <div class="line-clamp-3 bg-purple-50 p-2 rounded-lg border border-purple-100">${hearing.arbitrator3Notes}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            ${hearing.result}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        <div class="line-clamp-3 bg-gray-50 p-2 rounded-lg border border-gray-100">${hearing.documentsRequired}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="${hearing.meetLink}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                            <i class="fas fa-video mr-2"></i>Join
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i>${hearing.attendance}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function setupEventListeners() {
+            // Add hearing button
+            document.getElementById('add-hearing-btn').addEventListener('click', function() {
+                document.getElementById('add-hearing-form').classList.remove('hidden');
+            });
+
+            // Schedule first hearing button
+            document.getElementById('schedule-first-hearing').addEventListener('click', function() {
+                document.getElementById('add-hearing-form').classList.remove('hidden');
+            });
+
+            // Cancel hearing button
+            document.getElementById('cancel-hearing').addEventListener('click', function() {
+                document.getElementById('add-hearing-form').classList.add('hidden');
+                document.getElementById('hearing-form').reset();
+            });
+
+            // Hearing form submission
+            document.getElementById('hearing-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Here you would typically send data to your backend
+                alert('Hearing scheduled successfully!');
+                document.getElementById('add-hearing-form').classList.add('hidden');
+                this.reset();
+            });
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'pending': return 'bg-yellow-500 text-white';
+                case 'ongoing': return 'bg-blue-500 text-white';
+                case 'completed': return 'bg-green-500 text-white';
+                default: return 'bg-gray-500 text-white';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'Pending Review';
+                case 'ongoing': return 'Proceedings Ongoing';
+                case 'completed': return 'Case Concluded';
+                default: return status;
+            }
+        }
+    </script>
+</body>
+</html>
