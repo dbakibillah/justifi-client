@@ -6,6 +6,8 @@ import ArbitratorModal from "../components/ArbitratorModal";
 import PageHeader from "../components/PageHeader";
 
 const ArbitratorManagement = () => {
+    const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
+    const img_hosting_api = `https://api.imgbb.com/1/upload?key=${img_hosting_key}`;
     const axiosSecure = useAxiosSecure();
     const { data: arbitrators = [], refetch } = useQuery({
         queryKey: ["arbitrators"],
