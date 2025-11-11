@@ -1,5 +1,7 @@
-// components/ArbitrationForm.js
+// components/ArbitrationForm.jsx
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import ArbPartySection from "./ArbPartySection";
 import ArbDisputeInformation from "./ArbDisputeInformation";
 import ArbitratorsInformation from "./ArbitratorsInformation";
@@ -7,84 +9,104 @@ import ArbFinancialInformation from "./ArbFinancialInformation";
 import JustifiRepresentative from "./JustifiRepresentative";
 
 const ArbitrationForm = ({ onSubmit }) => {
-  const [plaintiffs, setPlaintiffs] = useState([
-    {
-      id: "plaintiff-1",
-      name: "palash rahman",
-      email: "palash@gmail.com",
-      phone: "09876543211",
-      address: "Dhaka",
-      occupation: "job",
-      signature: null,
-      signatureDate: new Date().toISOString().split("T")[0],
-    },
-    {
-      id: "plaintiff-2",
-      name: "john doe",
-      email: "john@example.com",
-      phone: "09876543212",
-      address: "Chittagong",
-      occupation: "engineer",
-      signature: null,
-      signatureDate: new Date().toISOString().split("T")[0],
-    },
-  ]);
+  const axiosPublic = useAxiosPublic();
 
-  const [defendants, setDefendants] = useState([
-    {
-      id: "defendant-1",
-      name: "plash",
-      email: "plash@gmail.com",
-      phone: "12345678900",
-      address: "Dhaka",
-      occupation: "business",
-      signature: null,
-      signatureDate: new Date().toISOString().split("T")[0],
+  // Fetch arbitration cases data
+  const { data: arbitrationCases, isLoading: casesLoading } = useQuery({
+    queryKey: ["arbitrationCases"],
+    queryFn: async () => {
+      const response = await axiosPublic.get("/all-arbitrations");
+      return response.data;
     },
-    {
-      id: "defendant-2",
-      name: "nahidur rahman",
-      email: "nahidur@gmail.com",
-      phone: "34567890123",
-      address: "Dhaka",
-      occupation: "Job",
-      signature: null,
-      signatureDate: new Date().toISOString().split("T")[0],
-    },
-    {
-      id: "defendant-3",
-      name: "mehedi",
-      email: "itor@gmail.com",
-      phone: "56789043211",
-      address: "Dhaka",
-      occupation: "Dalal",
-      signature: null,
-      signatureDate: new Date().toISOString().split("T")[0],
-    },
-  ]);
-
-  const [disputeInfo, setDisputeInfo] = useState({
-    nature: "fraud case",
   });
 
-  const [arbitrators, setArbitrators] = useState({
+  // Fetch arbitrators data
+  const { data: arbitrators, isLoading: arbitratorsLoading } = useQuery({
+    queryKey: ["arbitrators"],
+    queryFn: async () => {
+      const response = await axiosPublic.get("/arbitrators");
+      return response.data;
+    },
+  });
+
+  // Transform plaintiffs data from backend format to component format
+  const transformPlaintiffs = () => {
+    if (!arbitrationCases || arbitrationCases.length === 0) return [];
+
+    const caseData = arbitrationCases[0]; // Assuming we're using the first case
+    const plaintiffs = caseData.plaintiffs;
+
+    return Object.keys(plaintiffs).map((key, index) => ({
+      id: `plaintiff-${index + 1}`,
+      name: plaintiffs[key].name,
+      email: plaintiffs[key].email,
+      phone: plaintiffs[key].phone,
+      address: plaintiffs[key].address,
+      occupation: plaintiffs[key].occupation,
+      parentsName: plaintiffs[key].parentsName,
+      signature: null,
+      signatureDate: new Date().toISOString().split("T")[0],
+    }));
+  };
+
+  // Transform defendants data from backend format to component format
+  const transformDefendants = () => {
+    if (!arbitrationCases || arbitrationCases.length === 0) return [];
+
+    const caseData = arbitrationCases[0]; // Assuming we're using the first case
+    const defendants = caseData.defendants;
+
+    return Object.keys(defendants).map((key, index) => ({
+      id: `defendant-${index + 1}`,
+      name: defendants[key].name,
+      email: defendants[key].email,
+      phone: defendants[key].phone,
+      address: defendants[key].address,
+      occupation: defendants[key].occupation,
+      parentsName: defendants[key].parentsName,
+      signature: null,
+      signatureDate: new Date().toISOString().split("T")[0],
+    }));
+  };
+
+  const [plaintiffs, setPlaintiffs] = useState([]);
+  const [defendants, setDefendants] = useState([]);
+  const [disputeInfo, setDisputeInfo] = useState({
+    nature: "",
+  });
+  const [arbitratorsInfo, setArbitratorsInfo] = useState({
     arbitrator1: "",
     arbitrator2: "",
     presidingArbitrator: "",
   });
-
   const [financialInfo, setFinancialInfo] = useState({
-    suitValue: "50000",
+    suitValue: "",
     sittings: "",
     totalCost: "",
     complianceDays: "",
   });
-
   const [justifiRep, setJustifiRep] = useState({
     name: "",
     designation: "",
     signature: null,
   });
+
+  // Initialize data when API data is loaded
+  React.useEffect(() => {
+    if (arbitrationCases && arbitrationCases.length > 0) {
+      const caseData = arbitrationCases[0];
+      setPlaintiffs(transformPlaintiffs());
+      setDefendants(transformDefendants());
+      setDisputeInfo((prev) => ({
+        ...prev,
+        nature: caseData.disputeNature || "",
+      }));
+      setFinancialInfo((prev) => ({
+        ...prev,
+        suitValue: caseData.suitValue || "",
+      }));
+    }
+  }, [arbitrationCases]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -125,9 +147,9 @@ const ArbitrationForm = ({ onSubmit }) => {
       plaintiffs: plaintiffs,
       defendants: defendants,
       disputeNature: disputeInfo.nature,
-      arbitrator1: arbitrators.arbitrator1,
-      arbitrator2: arbitrators.arbitrator2,
-      presidingArbitrator: arbitrators.presidingArbitrator,
+      arbitrator1: arbitratorsInfo.arbitrator1,
+      arbitrator2: arbitratorsInfo.arbitrator2,
+      presidingArbitrator: arbitratorsInfo.presidingArbitrator,
       suitValue: financialInfo.suitValue,
       sittings: financialInfo.sittings,
       totalCost: financialInfo.totalCost,
@@ -156,6 +178,14 @@ const ArbitrationForm = ({ onSubmit }) => {
     );
   };
 
+  if (casesLoading || arbitratorsLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex justify-center items-center h-64">
+        <div className="text-lg">Loading arbitration data...</div>
+      </div>
+    );
+  }
+
   return (
     <div id="form-section" className="bg-white rounded-lg shadow-md p-6 mb-8">
       <form id="arbitration-form" onSubmit={handleSubmit}>
@@ -165,7 +195,6 @@ const ArbitrationForm = ({ onSubmit }) => {
 
           <ArbPartySection
             title="Plaintiffs/Claimants"
-            // type="plaintiff"
             parties={plaintiffs}
             onUpdateParty={updatePlaintiff}
             colorClass="text-blue-600"
@@ -173,7 +202,6 @@ const ArbitrationForm = ({ onSubmit }) => {
 
           <ArbPartySection
             title="Defendants/Respondents"
-            // type="defendant"
             parties={defendants}
             onUpdateParty={updateDefendant}
             colorClass="text-red-600"
@@ -186,8 +214,9 @@ const ArbitrationForm = ({ onSubmit }) => {
         />
 
         <ArbitratorsInformation
-          arbitrators={arbitrators}
-          onUpdateArbitrators={setArbitrators}
+          arbitrators={arbitratorsInfo}
+          onUpdateArbitrators={setArbitratorsInfo}
+          arbitratorsList={arbitrators || []}
         />
 
         <ArbFinancialInformation

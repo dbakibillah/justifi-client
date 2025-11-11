@@ -1,289 +1,327 @@
-// components/ArbitratorsInformation.js
-import React, { useState } from "react";
+// components/ArbitratorsInformation.jsx
+import React, { useState, useMemo } from "react";
 
-const ArbitratorsInformation = ({ arbitrators, onUpdateArbitrators }) => {
-  const [showDropdowns, setShowDropdowns] = useState({
-    arbitrator1: false,
-    arbitrator2: false,
-    presidingArbitrator: false,
-  });
+const ArbitratorsInformation = ({
+  arbitrators,
+  onUpdateArbitrators,
+  arbitratorsList,
+}) => {
+  const [showDropdown1, setShowDropdown1] = useState(false);
+  const [showDropdown2, setShowDropdown2] = useState(false);
+  const [showDropdownPresiding, setShowDropdownPresiding] = useState(false);
+  const [search1, setSearch1] = useState("");
+  const [search2, setSearch2] = useState("");
+  const [searchPresiding, setSearchPresiding] = useState("");
 
-  const [searchTerms, setSearchTerms] = useState({
-    arbitrator1: "",
-    arbitrator2: "",
-    presidingArbitrator: "",
-  });
+  // Calculate available arbitrators for each field
+  const availableArbitrators = useMemo(() => {
+    const selected1 = arbitrators.arbitrator1;
+    const selected2 = arbitrators.arbitrator2;
+    const selectedPresiding = arbitrators.presidingArbitrator;
 
-  const arbitratorList = [
-    {
-      id: 1,
-      name: "Dr. Mohammad Farooq",
-      specialization: "Commercial Law",
-      experience: "15 years",
-    },
-    {
-      id: 2,
-      name: "Advocate Ayesha Rahman",
-      specialization: "Family Law",
-      experience: "12 years",
-    },
-    {
-      id: 3,
-      name: "Prof. Ahmed Hossain",
-      specialization: "Contract Law",
-      experience: "20 years",
-    },
-    {
-      id: 4,
-      name: "Barrister Fatima Begum",
-      specialization: "Corporate Law",
-      experience: "18 years",
-    },
-    {
-      id: 5,
-      name: "Dr. Kamal Uddin",
-      specialization: "Intellectual Property",
-      experience: "14 years",
-    },
-    {
-      id: 6,
-      name: "Advocate Rahim Khan",
-      specialization: "Labor Law",
-      experience: "10 years",
-    },
-    {
-      id: 7,
-      name: "Prof. Nasreen Akhtar",
-      specialization: "International Law",
-      experience: "22 years",
-    },
-    {
-      id: 8,
-      name: "Barrister Tariq Islam",
-      specialization: "Construction Law",
-      experience: "16 years",
-    },
-    {
-      id: 9,
-      name: "Dr. Sabrina Chowdhury",
-      specialization: "Banking Law",
-      experience: "13 years",
-    },
-    {
-      id: 10,
-      name: "Advocate Zafar Iqbal",
-      specialization: "Real Estate",
-      experience: "11 years",
-    },
-  ];
+    // For Arbitrator 1: All arbitrators except those selected in other fields
+    const availableFor1 = arbitratorsList.filter(
+      (arbitrator) =>
+        arbitrator.name !== selected2 && arbitrator.name !== selectedPresiding
+    );
+
+    // For Arbitrator 2: All arbitrators except selected1 and selectedPresiding
+    const availableFor2 = arbitratorsList.filter(
+      (arbitrator) =>
+        arbitrator.name !== selected1 && arbitrator.name !== selectedPresiding
+    );
+
+    // For Presiding Arbitrator: All arbitrators except selected1 and selected2
+    const availableForPresiding = arbitratorsList.filter(
+      (arbitrator) =>
+        arbitrator.name !== selected1 && arbitrator.name !== selected2
+    );
+
+    return {
+      arbitrator1: availableFor1,
+      arbitrator2: availableFor2,
+      presidingArbitrator: availableForPresiding,
+    };
+  }, [
+    arbitratorsList,
+    arbitrators.arbitrator1,
+    arbitrators.arbitrator2,
+    arbitrators.presidingArbitrator,
+  ]);
 
   const handleChange = (field, value) => {
     onUpdateArbitrators((prev) => ({
       ...prev,
       [field]: value,
     }));
-  };
 
-  const handleSearchChange = (field, value) => {
-    setSearchTerms((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleFocus = (field) => {
-    setShowDropdowns((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
-  };
-
-  const handleBlur = (field) => {
-    setTimeout(() => {
-      setShowDropdowns((prev) => ({
-        ...prev,
-        [field]: false,
-      }));
-    }, 200);
-  };
-
-  const selectArbitrator = (field, arbitratorName) => {
-    handleChange(field, arbitratorName);
-    setSearchTerms((prev) => ({
-      ...prev,
-      [field]: arbitratorName,
-    }));
-    setShowDropdowns((prev) => ({
-      ...prev,
-      [field]: false,
-    }));
-  };
-
-  // Get available arbitrators for a specific field (excluding already selected ones)
-  const getAvailableArbitrators = (field) => {
-    const selectedArbitrators = [];
-
-    // Collect all arbitrators selected in other fields
-    if (field !== "arbitrator1" && arbitrators.arbitrator1) {
-      selectedArbitrators.push(arbitrators.arbitrator1);
-    }
-    if (field !== "arbitrator2" && arbitrators.arbitrator2) {
-      selectedArbitrators.push(arbitrators.arbitrator2);
-    }
-    if (field !== "presidingArbitrator" && arbitrators.presidingArbitrator) {
-      selectedArbitrators.push(arbitrators.presidingArbitrator);
-    }
-
-    // Filter out selected arbitrators
-    return arbitratorList.filter(
-      (arbitrator) => !selectedArbitrators.includes(arbitrator.name)
-    );
-  };
-
-  const filteredArbitrators = (field) => {
-    const searchTerm = searchTerms[field].toLowerCase();
-    const availableArbitrators = getAvailableArbitrators(field);
-
-    return availableArbitrators.filter(
-      (arbitrator) =>
-        arbitrator.name.toLowerCase().includes(searchTerm) ||
-        arbitrator.specialization.toLowerCase().includes(searchTerm)
-    );
-  };
-
-  // Clear dependent fields when a selection changes
-  const handleArbitratorSelection = (field, arbitratorName) => {
-    // Clear downstream fields when an upstream field changes
+    // Clear dependent fields when a field is changed
     if (field === "arbitrator1") {
-      if (arbitrators.arbitrator2 === arbitratorName) {
-        handleChange("arbitrator2", "");
-        setSearchTerms((prev) => ({ ...prev, arbitrator2: "" }));
-      }
-      if (arbitrators.presidingArbitrator === arbitratorName) {
-        handleChange("presidingArbitrator", "");
-        setSearchTerms((prev) => ({ ...prev, presidingArbitrator: "" }));
-      }
+      onUpdateArbitrators((prev) => ({
+        ...prev,
+        arbitrator2: prev.arbitrator2 === value ? "" : prev.arbitrator2,
+        presidingArbitrator:
+          prev.presidingArbitrator === value ? "" : prev.presidingArbitrator,
+      }));
+      setSearch2("");
+      setSearchPresiding("");
     } else if (field === "arbitrator2") {
-      if (arbitrators.presidingArbitrator === arbitratorName) {
-        handleChange("presidingArbitrator", "");
-        setSearchTerms((prev) => ({ ...prev, presidingArbitrator: "" }));
-      }
+      onUpdateArbitrators((prev) => ({
+        ...prev,
+        presidingArbitrator:
+          prev.presidingArbitrator === value ? "" : prev.presidingArbitrator,
+      }));
+      setSearchPresiding("");
     }
-
-    selectArbitrator(field, arbitratorName);
   };
+
+  const selectArbitrator = (
+    field,
+    arbitrator,
+    searchSetter,
+    dropdownSetter
+  ) => {
+    handleChange(field, arbitrator.name);
+    searchSetter(arbitrator.name);
+    dropdownSetter(false);
+  };
+
+  const filteredArbitrators1 = availableArbitrators.arbitrator1.filter(
+    (arbitrator) =>
+      arbitrator.name.toLowerCase().includes(search1.toLowerCase()) ||
+      arbitrator.specialization?.some((spec) =>
+        spec.toLowerCase().includes(search1.toLowerCase())
+      )
+  );
+
+  const filteredArbitrators2 = availableArbitrators.arbitrator2.filter(
+    (arbitrator) =>
+      arbitrator.name.toLowerCase().includes(search2.toLowerCase()) ||
+      arbitrator.specialization?.some((spec) =>
+        spec.toLowerCase().includes(search2.toLowerCase())
+      )
+  );
+
+  const filteredArbitratorsPresiding =
+    availableArbitrators.presidingArbitrator.filter(
+      (arbitrator) =>
+        arbitrator.name.toLowerCase().includes(searchPresiding.toLowerCase()) ||
+        arbitrator.specialization?.some((spec) =>
+          spec.toLowerCase().includes(searchPresiding.toLowerCase())
+        )
+    );
 
   return (
     <div className="mb-6">
       <h2 className="text-xl font-semibold mb-4">Arbitrators Information</h2>
-      <div className="space-y-4">
-        <div className="searchable-dropdown relative">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Arbitrator 1 */}
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Arbitrator 1
           </label>
-          <input
-            type="text"
-            value={searchTerms.arbitrator1}
-            onChange={(e) => handleSearchChange("arbitrator1", e.target.value)}
-            onFocus={() => handleFocus("arbitrator1")}
-            onBlur={() => handleBlur("arbitrator1")}
-            className="dropdown-input w-full border border-gray-300 rounded-md px-3 py-2"
-            placeholder="Search and select arbitrator..."
-            required
-          />
-          {showDropdowns.arbitrator1 && (
-            <div className="dropdown-list absolute top-full left-0 right-0 bg-white border border-gray-300 border-t-0 rounded-b max-h-48 overflow-y-auto z-10">
-              {filteredArbitrators("arbitrator1").map((arbitrator) => (
-                <div
-                  key={arbitrator.id}
-                  className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
-                  onMouseDown={() =>
-                    handleArbitratorSelection("arbitrator1", arbitrator.name)
-                  }
-                >
-                  <div className="font-medium">{arbitrator.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {arbitrator.specialization} - {arbitrator.experience}
+          <div className="relative">
+            <input
+              type="text"
+              value={search1}
+              onChange={(e) => setSearch1(e.target.value)}
+              onFocus={() => setShowDropdown1(true)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              placeholder="Search arbitrator..."
+            />
+            {showDropdown1 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                {filteredArbitrators1.length === 0 ? (
+                  <div className="p-2 text-gray-500 text-center">
+                    No available arbitrators
                   </div>
-                </div>
-              ))}
+                ) : (
+                  filteredArbitrators1.map((arbitrator, index) => (
+                    <div
+                      key={arbitrator._id || index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() =>
+                        selectArbitrator(
+                          "arbitrator1",
+                          arbitrator,
+                          setSearch1,
+                          setShowDropdown1
+                        )
+                      }
+                    >
+                      <div className="font-medium">{arbitrator.name}</div>
+                      <div className="text-sm text-gray-600">
+                        {arbitrator.specialization?.join(", ")}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {arbitrators.arbitrator1 && (
+            <div className="text-xs text-green-600 mt-1">
+              Selected: {arbitrators.arbitrator1}
             </div>
           )}
         </div>
 
-        <div className="searchable-dropdown relative">
+        {/* Arbitrator 2 */}
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Arbitrator 2
           </label>
-          <input
-            type="text"
-            value={searchTerms.arbitrator2}
-            onChange={(e) => handleSearchChange("arbitrator2", e.target.value)}
-            onFocus={() => handleFocus("arbitrator2")}
-            onBlur={() => handleBlur("arbitrator2")}
-            className="dropdown-input w-full border border-gray-300 rounded-md px-3 py-2"
-            placeholder="Search and select arbitrator..."
-            required
-          />
-          {showDropdowns.arbitrator2 && (
-            <div className="dropdown-list absolute top-full left-0 right-0 bg-white border border-gray-300 border-t-0 rounded-b max-h-48 overflow-y-auto z-10">
-              {filteredArbitrators("arbitrator2").map((arbitrator) => (
-                <div
-                  key={arbitrator.id}
-                  className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
-                  onMouseDown={() =>
-                    handleArbitratorSelection("arbitrator2", arbitrator.name)
-                  }
-                >
-                  <div className="font-medium">{arbitrator.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {arbitrator.specialization} - {arbitrator.experience}
+          <div className="relative">
+            <input
+              type="text"
+              value={search2}
+              onChange={(e) => setSearch2(e.target.value)}
+              onFocus={() => setShowDropdown2(true)}
+              className={`w-full border rounded-md px-3 py-2 ${
+                !arbitrators.arbitrator1
+                  ? "border-gray-300 bg-gray-100 cursor-not-allowed"
+                  : "border-gray-300"
+              }`}
+              placeholder={
+                !arbitrators.arbitrator1
+                  ? "Select Arbitrator 1 first"
+                  : "Search arbitrator..."
+              }
+              disabled={!arbitrators.arbitrator1}
+            />
+            {showDropdown2 && arbitrators.arbitrator1 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                {filteredArbitrators2.length === 0 ? (
+                  <div className="p-2 text-gray-500 text-center">
+                    No available arbitrators
                   </div>
-                </div>
-              ))}
+                ) : (
+                  filteredArbitrators2.map((arbitrator, index) => (
+                    <div
+                      key={arbitrator._id || index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() =>
+                        selectArbitrator(
+                          "arbitrator2",
+                          arbitrator,
+                          setSearch2,
+                          setShowDropdown2
+                        )
+                      }
+                    >
+                      <div className="font-medium">{arbitrator.name}</div>
+                      <div className="text-sm text-gray-600">
+                        {arbitrator.specialization?.join(", ")}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {!arbitrators.arbitrator1 && (
+            <div className="text-xs text-gray-500 mt-1">
+              Please select Arbitrator 1 first
+            </div>
+          )}
+          {arbitrators.arbitrator2 && (
+            <div className="text-xs text-green-600 mt-1">
+              Selected: {arbitrators.arbitrator2}
             </div>
           )}
         </div>
 
-        <div className="searchable-dropdown relative">
+        {/* Presiding Arbitrator */}
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Presiding Arbitrator
           </label>
-          <input
-            type="text"
-            value={searchTerms.presidingArbitrator}
-            onChange={(e) =>
-              handleSearchChange("presidingArbitrator", e.target.value)
-            }
-            onFocus={() => handleFocus("presidingArbitrator")}
-            onBlur={() => handleBlur("presidingArbitrator")}
-            className="dropdown-input w-full border border-gray-300 rounded-md px-3 py-2"
-            placeholder="Search and select arbitrator..."
-            required
-          />
-          {showDropdowns.presidingArbitrator && (
-            <div className="dropdown-list absolute top-full left-0 right-0 bg-white border border-gray-300 border-t-0 rounded-b max-h-48 overflow-y-auto z-10">
-              {filteredArbitrators("presidingArbitrator").map((arbitrator) => (
-                <div
-                  key={arbitrator.id}
-                  className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
-                  onMouseDown={() =>
-                    handleArbitratorSelection(
-                      "presidingArbitrator",
-                      arbitrator.name
-                    )
-                  }
-                >
-                  <div className="font-medium">{arbitrator.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {arbitrator.specialization} - {arbitrator.experience}
-                  </div>
+          <div className="relative">
+            <input
+              type="text"
+              value={searchPresiding}
+              onChange={(e) => setSearchPresiding(e.target.value)}
+              onFocus={() => setShowDropdownPresiding(true)}
+              className={`w-full border rounded-md px-3 py-2 ${
+                !arbitrators.arbitrator1 || !arbitrators.arbitrator2
+                  ? "border-gray-300 bg-gray-100 cursor-not-allowed"
+                  : "border-gray-300"
+              }`}
+              placeholder={
+                !arbitrators.arbitrator1 || !arbitrators.arbitrator2
+                  ? "Select both arbitrators first"
+                  : "Search presiding arbitrator..."
+              }
+              disabled={!arbitrators.arbitrator1 || !arbitrators.arbitrator2}
+            />
+            {showDropdownPresiding &&
+              arbitrators.arbitrator1 &&
+              arbitrators.arbitrator2 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {filteredArbitratorsPresiding.length === 0 ? (
+                    <div className="p-2 text-gray-500 text-center">
+                      No available arbitrators
+                    </div>
+                  ) : (
+                    filteredArbitratorsPresiding.map((arbitrator, index) => (
+                      <div
+                        key={arbitrator._id || index}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() =>
+                          selectArbitrator(
+                            "presidingArbitrator",
+                            arbitrator,
+                            setSearchPresiding,
+                            setShowDropdownPresiding
+                          )
+                        }
+                      >
+                        <div className="font-medium">{arbitrator.name}</div>
+                        <div className="text-sm text-gray-600">
+                          {arbitrator.specialization?.join(", ")}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              ))}
+              )}
+          </div>
+          {(!arbitrators.arbitrator1 || !arbitrators.arbitrator2) && (
+            <div className="text-xs text-gray-500 mt-1">
+              Please select both Arbitrator 1 and 2 first
+            </div>
+          )}
+          {arbitrators.presidingArbitrator && (
+            <div className="text-xs text-green-600 mt-1">
+              Selected: {arbitrators.presidingArbitrator}
             </div>
           )}
         </div>
       </div>
+
+      {/* Selection Summary */}
+      {(arbitrators.arbitrator1 ||
+        arbitrators.arbitrator2 ||
+        arbitrators.presidingArbitrator) && (
+        <div className="mt-4 p-3 bg-blue-50 rounded-md">
+          <h4 className="font-medium text-blue-800 mb-2">
+            Selected Arbitrators:
+          </h4>
+          <div className="text-sm text-blue-700">
+            {arbitrators.arbitrator1 && (
+              <div>• Arbitrator 1: {arbitrators.arbitrator1}</div>
+            )}
+            {arbitrators.arbitrator2 && (
+              <div>• Arbitrator 2: {arbitrators.arbitrator2}</div>
+            )}
+            {arbitrators.presidingArbitrator && (
+              <div>
+                • Presiding Arbitrator: {arbitrators.presidingArbitrator}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
