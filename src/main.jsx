@@ -56,7 +56,6 @@ createRoot(document.getElementById("root")).render(
                             path="/book-lawyer/:lawyerId"
                             element={<BookLawyer />}
                         />
-
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:blogId" element={<BlogDetails />} />
                         <Route path="/arbitrators" element={<Arbitrator />} />
@@ -99,7 +98,6 @@ createRoot(document.getElementById("root")).render(
                             path="appointments"
                             element={<LawyerAppointments />}
                         />
-
                         <Route path="user-profile" element={<UserProfile />} />
                         <Route
                             path="my-appointments"
@@ -116,7 +114,6 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="arbitration-agreement"
                             element={<Arbitration_Agreement />} />
-
                         <Route
                             path="all-lawyers"
                             element={<LawyerManagement />} />
