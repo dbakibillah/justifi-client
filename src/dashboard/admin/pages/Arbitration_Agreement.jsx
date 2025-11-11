@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import ArbitrationForm from "../components/ArbitrationForm";
 import ArbAgreementPreview from "../components/ArbAgreementPreview";
 
@@ -6,6 +7,9 @@ function Arbitration_Agreement() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(null);
   const pdfContainerRef = useRef(null);
+
+  // Get caseId from URL parameters
+  const { caseId } = useParams();
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -24,12 +28,13 @@ function Arbitration_Agreement() {
         </h1>
 
         {!showPreview ? (
-          <ArbitrationForm onSubmit={handleFormSubmit} />
+          <ArbitrationForm onSubmit={handleFormSubmit} caseId={caseId} />
         ) : (
           <ArbAgreementPreview
             formData={formData}
             onBack={handleBackToForm}
             pdfContainerRef={pdfContainerRef}
+            caseId={caseId}
           />
         )}
       </div>

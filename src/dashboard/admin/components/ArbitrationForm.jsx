@@ -7,11 +7,15 @@ import ArbitratorsInformation from "./ArbitratorsInformation";
 import ArbFinancialInformation from "./ArbFinancialInformation";
 import JustifiRepresentative from "./JustifiRepresentative";
 
-const ArbitrationForm = ({ onSubmit }) => {
+const ArbitrationForm = ({ onSubmit, caseId }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetch arbitration cases data
-  const { data: arbitrationCases, isLoading: casesLoading } = useQuery({
+  // Fetch all arbitration cases and find the specific one by ID
+  const {
+    data: arbitrationCases,
+    isLoading: casesLoading,
+    error: casesError,
+  } = useQuery({
     queryKey: ["arbitrationCases"],
     queryFn: async () => {
       const response = await axiosPublic.get("/all-arbitrations");
@@ -28,12 +32,16 @@ const ArbitrationForm = ({ onSubmit }) => {
     },
   });
 
+  // Find the specific case from the array
+  const arbitrationCase = arbitrationCases?.find(
+    (caseItem) => caseItem._id === caseId
+  );
+
   // Transform plaintiffs data from backend format to component format
   const transformPlaintiffs = () => {
-    if (!arbitrationCases || arbitrationCases.length === 0) return [];
+    if (!arbitrationCase || !arbitrationCase.plaintiffs) return [];
 
-    const caseData = arbitrationCases[0]; // Assuming we're using the first case
-    const plaintiffs = caseData.plaintiffs;
+    const plaintiffs = arbitrationCase.plaintiffs;
 
     return Object.keys(plaintiffs).map((key, index) => ({
       id: `plaintiff-${index + 1}`,
@@ -50,10 +58,9 @@ const ArbitrationForm = ({ onSubmit }) => {
 
   // Transform defendants data from backend format to component format
   const transformDefendants = () => {
-    if (!arbitrationCases || arbitrationCases.length === 0) return [];
+    if (!arbitrationCase || !arbitrationCase.defendants) return [];
 
-    const caseData = arbitrationCases[0]; // Assuming we're using the first case
-    const defendants = caseData.defendants;
+    const defendants = arbitrationCase.defendants;
 
     return Object.keys(defendants).map((key, index) => ({
       id: `defendant-${index + 1}`,
@@ -92,20 +99,20 @@ const ArbitrationForm = ({ onSubmit }) => {
 
   // Initialize data when API data is loaded
   React.useEffect(() => {
-    if (arbitrationCases && arbitrationCases.length > 0) {
-      const caseData = arbitrationCases[0];
+    if (arbitrationCase) {
       setPlaintiffs(transformPlaintiffs());
       setDefendants(transformDefendants());
       setDisputeInfo((prev) => ({
         ...prev,
-        nature: caseData.disputeNature || "",
+        nature: arbitrationCase.disputeNature || "",
       }));
       setFinancialInfo((prev) => ({
         ...prev,
-        suitValue: caseData.suitValue || "",
+        suitValue: arbitrationCase.suitValue || "",
+        totalCost: " ",
       }));
     }
-  }, [arbitrationCases]);
+  }, [arbitrationCase]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -142,6 +149,9 @@ const ArbitrationForm = ({ onSubmit }) => {
     }
 
     const formData = {
+      caseId: caseId,
+      caseTitle: arbitrationCase?.caseTitle || "",
+      caseCategory: arbitrationCase?.caseCategory || "",
       agreementDate: new Date().toISOString().split("T")[0],
       plaintiffs: plaintiffs,
       defendants: defendants,
@@ -185,8 +195,54 @@ const ArbitrationForm = ({ onSubmit }) => {
     );
   }
 
+  if (casesError) {
+    console.error("Error loading cases:", casesError);
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex justify-center items-center h-64">
+        <div className="text-lg text-red-600">
+          Error loading case data: {casesError.message}
+        </div>
+      </div>
+    );
+  }
+
+  if (caseId && !arbitrationCase) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex justify-center items-center h-64">
+        <div className="text-lg text-red-600">
+          Case not found with ID: {caseId}
+        </div>
+        <div className="text-sm text-gray-600 mt-2">
+          Available cases: {arbitrationCases?.length || 0}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div id="form-section" className="bg-white rounded-lg shadow-md p-6 mb-8">
+      {caseId && arbitrationCase && (
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <h3 className="text-lg font-semibold text-blue-800 mb-2">
+            Case Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+            <div>
+              <strong>Case ID:</strong> {caseId}
+            </div>
+            <div>
+              <strong>Case Title:</strong> {arbitrationCase.caseTitle}
+            </div>
+            <div>
+              <strong>Category:</strong> {arbitrationCase.caseCategory}
+            </div>
+            <div>
+              <strong>Suit Value:</strong> BDT {arbitrationCase.suitValue}
+            </div>
+          </div>
+        </div>
+      )}
+
       <form id="arbitration-form" onSubmit={handleSubmit}>
         {/* Party Information */}
         <div className="mb-6">

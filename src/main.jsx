@@ -87,7 +87,7 @@ createRoot(document.getElementById("root")).render(
               element={<Mediation_Agreement />}
             />
             <Route
-              path="arbitration-agreement"
+              path="arbitration-agreement/:caseId"
               element={<Arbitration_Agreement />}
             />
           </Route>

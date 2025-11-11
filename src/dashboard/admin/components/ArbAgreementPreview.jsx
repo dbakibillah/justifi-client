@@ -438,7 +438,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                 </div>
               ))}
               <p className="mt-4">
-                (Hereinafter referred to as the <strong>First Party</strong>)
+                (Here in after referred to as the <strong>First Party</strong>)
               </p>
             </div>
 
@@ -472,7 +472,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                 </div>
               ))}
               <p className="mt-4">
-                (Hereinafter referred to as the <strong>Second Party</strong>)
+                (Here in after referred to as the <strong>Second Party</strong>)
               </p>
             </div>
           </div>
