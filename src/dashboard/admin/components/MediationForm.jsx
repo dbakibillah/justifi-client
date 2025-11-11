@@ -7,7 +7,7 @@ import MediatorDetails from "./MediatorDetails";
 import MedCostBreakdown from "./MedCostBreakdown";
 import JustifiRepresentative from "./JustifiRepresentative";
 
-const MediationForm = ({ onSubmit }) => {
+const MediationForm = ({ onSubmit, caseId }) => {
   const axiosPublic = useAxiosPublic();
 
   // Fetch mediation cases
@@ -30,6 +30,7 @@ const MediationForm = ({ onSubmit }) => {
 
   const [plaintiffs, setPlaintiffs] = useState([]);
   const [defendants, setDefendants] = useState([]);
+  const [selectedCase, setSelectedCase] = useState(null);
 
   const [disputeInfo, setDisputeInfo] = useState({
     category: "",
@@ -52,52 +53,58 @@ const MediationForm = ({ onSubmit }) => {
 
   const [costPerParty, setCostPerParty] = useState(0);
 
-  // Initialize plaintiffs and defendants when mediation cases are loaded
+  // Find the specific case by ID when mediation cases are loaded
   useEffect(() => {
-    if (mediationCases && mediationCases.length > 0) {
-      const firstCase = mediationCases[0];
-
-      // Convert plaintiffs object to array
-      const plaintiffsArray = Object.values(firstCase.plaintiffs || {}).map(
-        (plaintiff, index) => ({
-          id: `plaintiff-${index + 1}`,
-          name: plaintiff.name || "",
-          parents: plaintiff.parentsName || "",
-          email: plaintiff.email || "",
-          phone: plaintiff.phone || "",
-          address: plaintiff.address || "",
-          occupation: plaintiff.occupation || "",
-          signature: null,
-          signatureDate: new Date().toISOString().split("T")[0],
-        })
+    if (mediationCases && mediationCases.length > 0 && caseId) {
+      const foundCase = mediationCases.find(
+        (caseItem) => caseItem._id === caseId
       );
 
-      // Convert defendants object to array
-      const defendantsArray = Object.values(firstCase.defendants || {}).map(
-        (defendant, index) => ({
-          id: `defendant-${index + 1}`,
-          name: defendant.name || "",
-          parents: defendant.parentsName || "",
-          email: defendant.email || "",
-          phone: defendant.phone || "",
-          address: defendant.address || "",
-          occupation: defendant.occupation || "",
-          signature: null,
-          signatureDate: new Date().toISOString().split("T")[0],
-        })
-      );
+      if (foundCase) {
+        setSelectedCase(foundCase);
 
-      setPlaintiffs(plaintiffsArray);
-      setDefendants(defendantsArray);
+        // Convert plaintiffs object to array
+        const plaintiffsArray = Object.values(foundCase.plaintiffs || {}).map(
+          (plaintiff, index) => ({
+            id: `plaintiff-${index + 1}`,
+            name: plaintiff.name || "",
+            parents: plaintiff.parentsName || "",
+            email: plaintiff.email || "",
+            phone: plaintiff.phone || "",
+            address: plaintiff.address || "",
+            occupation: plaintiff.occupation || "",
+            signature: null,
+            signatureDate: new Date().toISOString().split("T")[0],
+          })
+        );
 
-      // Set dispute information from the backend
-      setDisputeInfo({
-        category: firstCase.caseCategory || "",
-        suitValue: "00.00",
-        nature: firstCase.disputeNature || "",
-      });
+        // Convert defendants object to array
+        const defendantsArray = Object.values(foundCase.defendants || {}).map(
+          (defendant, index) => ({
+            id: `defendant-${index + 1}`,
+            name: defendant.name || "",
+            parents: defendant.parentsName || "",
+            email: defendant.email || "",
+            phone: defendant.phone || "",
+            address: defendant.address || "",
+            occupation: defendant.occupation || "",
+            signature: null,
+            signatureDate: new Date().toISOString().split("T")[0],
+          })
+        );
+
+        setPlaintiffs(plaintiffsArray);
+        setDefendants(defendantsArray);
+
+        // Set dispute information from the backend
+        setDisputeInfo({
+          category: foundCase.caseCategory || "",
+          suitValue: "00.00",
+          nature: foundCase.disputeNature || "",
+        });
+      }
     }
-  }, [mediationCases]);
+  }, [mediationCases, caseId]);
 
   useEffect(() => {
     calculateCosts();
@@ -159,6 +166,8 @@ const MediationForm = ({ onSubmit }) => {
       justifiName: justifiRep.name,
       justifiDesignation: justifiRep.designation,
       justifiSignature: justifiRep.signature,
+      caseId: caseId,
+      caseTitle: selectedCase?.caseTitle || "",
     };
 
     onSubmit(formData);
@@ -183,6 +192,27 @@ const MediationForm = ({ onSubmit }) => {
   return (
     <div id="form-section" className="bg-white rounded-lg shadow-md p-6 mb-8">
       <form id="mediation-form" onSubmit={handleSubmit}>
+        {/* Case Information Display */}
+        {selectedCase && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <h2 className="text-lg font-semibold text-blue-800 mb-3">
+              Case Information
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+              <div>
+                <strong>Case ID:</strong> {caseId}
+              </div>
+              <div>
+                <strong>Case Title:</strong> {selectedCase.caseTitle || "N/A"}
+              </div>
+              <div>
+                <strong>Category:</strong> {selectedCase.caseCategory || "N/A"}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Party Information */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4">Party Information</h2>
