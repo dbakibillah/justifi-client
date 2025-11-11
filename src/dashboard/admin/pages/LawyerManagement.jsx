@@ -4,8 +4,11 @@ import { useState, useMemo } from "react";
 import LawyerCard from "../components/LawyerCard";
 import LawyerModal from "../components/LawyerModal";
 import PageHeader from "../components/PageHeader";
+import { toast } from "react-toastify";
 
 const LawyerManagement = () => {
+    const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
+    const img_hosting_api = `https://api.imgbb.com/1/upload?key=${img_hosting_key}`;
     const axiosSecure = useAxiosSecure();
     const { data: lawyers = [], refetch } = useQuery({
         queryKey: ["lawyers"],
@@ -18,6 +21,7 @@ const LawyerManagement = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingLawyer, setEditingLawyer] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -79,23 +83,106 @@ const LawyerManagement = () => {
         }));
     };
 
+    const uploadImageToImgBB = async (imageFile) => {
+        try {
+            const formData = new FormData();
+            formData.append("image", imageFile);
+
+            const response = await fetch(img_hosting_api, {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                return data.data.url;
+            } else {
+                throw new Error(data.error?.message || "Image upload failed");
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            throw new Error("Failed to upload image. Please try again.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+
         try {
-            if (editingLawyer) {
-                await axiosSecure.put(
-                    `/lawyers/${editingLawyer._id}`,
-                    formData
-                );
-            } else {
-                await axiosSecure.post("/lawyers", formData);
+            let finalFormData = { ...formData };
+
+            // If there's an image file to upload (from file input)
+            if (formData.imageFile) {
+                try {
+                    const imageUrl = await uploadImageToImgBB(
+                        formData.imageFile
+                    );
+                    finalFormData.image = imageUrl;
+                } catch (error) {
+                    alert(error.message);
+                    setIsSubmitting(false);
+                    return;
+                }
             }
-            refetch();
-            setShowModal(false);
-            setEditingLawyer(null);
-            resetForm();
+
+            // Clean up the data before sending
+            delete finalFormData.imageFile;
+
+            // Convert string numbers to actual numbers
+            const numericFields = [
+                "fee",
+                "experience",
+                "successRate",
+                "casesHandled",
+                "rating",
+            ];
+            numericFields.forEach((field) => {
+                if (finalFormData[field]) {
+                    finalFormData[field] = Number(finalFormData[field]);
+                }
+            });
+
+            // Ensure arrays are properly formatted
+            if (!Array.isArray(finalFormData.languages)) {
+                finalFormData.languages = finalFormData.languages
+                    ? finalFormData.languages
+                          .split(",")
+                          .map((item) => item.trim())
+                          .filter((item) => item)
+                    : [];
+            }
+
+            if (!Array.isArray(finalFormData.specialization)) {
+                finalFormData.specialization = finalFormData.specialization
+                    ? finalFormData.specialization
+                          .split(",")
+                          .map((item) => item.trim())
+                          .filter((item) => item)
+                    : [];
+            }
+
+            const response = await axiosSecure.post(
+                "/add-lawyer",
+                finalFormData
+            );
+
+            if (response.data.insertedId) {
+                toast.success("Lawyer added successfully!");
+                refetch();
+                closeModal();
+            } else {
+                toast.error(
+                    response.data.message ||
+                        "Failed to add lawyer. Please try again."
+                );
+            }
         } catch (error) {
-            console.error("Error saving lawyer:", error);
+            console.error("Error adding lawyer:", error);
+            toast.error("An error occurred while adding the lawyer.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -123,10 +210,10 @@ const LawyerManagement = () => {
         setShowModal(true);
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (email) => {
         if (window.confirm("Are you sure you want to delete this lawyer?")) {
             try {
-                await axiosSecure.delete(`/lawyers/${id}`);
+                await axiosSecure.delete(`/remove-lawyer/${email}`);
                 refetch();
             } catch (error) {
                 console.error("Error deleting lawyer:", error);
@@ -298,6 +385,8 @@ const LawyerManagement = () => {
                     onInputChange={handleInputChange}
                     onArrayInput={handleArrayInput}
                     isEditing={!!editingLawyer}
+                    resetForm={resetForm}
+                    isSubmitting={isSubmitting}
                 />
             </div>
         </div>

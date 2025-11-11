@@ -1,13 +1,10 @@
 import {
-    FaEdit,
-    FaTrash,
-    FaStar,
-    FaBriefcase,
-    FaMapMarkerAlt,
     FaAward,
-    FaGraduationCap,
+    FaEdit,
     FaLanguage,
-    FaCheckCircle,
+    FaMapMarkerAlt,
+    FaStar,
+    FaTrash
 } from "react-icons/fa";
 
 const LawyerCard = ({ lawyer, onEdit, onDelete, searchTerm = "" }) => {
@@ -259,7 +256,7 @@ const LawyerCard = ({ lawyer, onEdit, onDelete, searchTerm = "" }) => {
                         <span>Edit</span>
                     </button>
                     <button
-                        onClick={() => onDelete(lawyer._id)}
+                        onClick={() => onDelete(lawyer.email)}
                         className="flex-1 flex items-center justify-center space-x-2 bg-white text-gray-700 px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-all duration-200 font-medium text-sm"
                     >
                         <FaTrash className="w-4 h-4" />
