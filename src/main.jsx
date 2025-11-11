@@ -30,6 +30,8 @@ import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
+import MyArbitrationDetails from "./dashboard/userDashboard/pages/MyArbitrationDetails";
+import LawyerArbitrations from "./dashboard/lawyerDasgboard/pages/LawyerArbitrations";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +96,10 @@ createRoot(document.getElementById("root")).render(
                             path="appointments"
                             element={<LawyerAppointments />}
                         />
+                        <Route
+                            path="lawyer-arbitrations"
+                            element={<LawyerArbitrations />}
+                        />
 
                         <Route path="user-profile" element={<UserProfile />} />
                         <Route
@@ -103,6 +109,10 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="my-arbitrations"
                             element={<MyArbitrations />}
+                        />
+                        <Route
+                            path="my-arbitrations/:id"
+                            element={<MyArbitrationDetails />}
                         />
                         <Route path="all-users" element={<AllUsers />} />
                     </Route>
