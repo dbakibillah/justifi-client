@@ -1,4 +1,3 @@
-// components/ArbitratorsInformation.jsx
 import React, { useState, useMemo } from "react";
 
 const ArbitratorsInformation = ({

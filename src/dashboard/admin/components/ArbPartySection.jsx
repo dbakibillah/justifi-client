@@ -1,4 +1,3 @@
-// components/ArbPartySection.js
 import React from "react";
 import { FaTrash } from "react-icons/fa";
 
@@ -30,6 +29,9 @@ const ArbPartySection = ({ title, parties, onUpdateParty, colorClass }) => {
             <div className="party-info bg-gray-100 p-2 rounded mb-3">
               <p>
                 <strong>Name:</strong> {party.name}
+              </p>
+              <p>
+                <strong>Parent:</strong> {party.parentsName}
               </p>
               <p>
                 <strong>Email:</strong> {party.email}

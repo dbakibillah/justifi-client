@@ -46,6 +46,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                   (plaintiff) => `
                 <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ccc;">
                   <p><strong>Name:</strong> ${plaintiff.name}</p>
+                  <p><strong>Parent:</strong> ${plaintiff.parentsName}</p>
                   <p><strong>Email:</strong> ${plaintiff.email}</p>
                   <p><strong>Phone:</strong> ${plaintiff.phone}</p>
                   <p><strong>Address:</strong> ${plaintiff.address}</p>
@@ -63,6 +64,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                   (defendant) => `
                 <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ccc;">
                   <p><strong>Name:</strong> ${defendant.name}</p>
+                  <p><strong>Parent:</strong> ${defendant.parentsName}</p>
                   <p><strong>Email:</strong> ${defendant.email}</p>
                   <p><strong>Phone:</strong> ${defendant.phone}</p>
                   <p><strong>Address:</strong> ${defendant.address}</p>
@@ -417,6 +419,9 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                     <strong>Name:</strong> {plaintiff.name}
                   </p>
                   <p>
+                    <strong>Parent:</strong> {plaintiff.parentsName}
+                  </p>
+                  <p>
                     <strong>Email:</strong> {plaintiff.email}
                   </p>
                   <p>
@@ -446,6 +451,9 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
                 <div key={index} className="mb-4">
                   <p>
                     <strong>Name:</strong> {defendant.name}
+                  </p>
+                  <p>
+                    <strong>Parent:</strong> {defendant.parentsName}
                   </p>
                   <p>
                     <strong>Email:</strong> {defendant.email}
