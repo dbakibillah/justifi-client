@@ -119,13 +119,58 @@ const ArbitratorsInformation = ({ arbitrators, onUpdateArbitrators }) => {
     }));
   };
 
+  // Get available arbitrators for a specific field (excluding already selected ones)
+  const getAvailableArbitrators = (field) => {
+    const selectedArbitrators = [];
+
+    // Collect all arbitrators selected in other fields
+    if (field !== "arbitrator1" && arbitrators.arbitrator1) {
+      selectedArbitrators.push(arbitrators.arbitrator1);
+    }
+    if (field !== "arbitrator2" && arbitrators.arbitrator2) {
+      selectedArbitrators.push(arbitrators.arbitrator2);
+    }
+    if (field !== "presidingArbitrator" && arbitrators.presidingArbitrator) {
+      selectedArbitrators.push(arbitrators.presidingArbitrator);
+    }
+
+    // Filter out selected arbitrators
+    return arbitratorList.filter(
+      (arbitrator) => !selectedArbitrators.includes(arbitrator.name)
+    );
+  };
+
   const filteredArbitrators = (field) => {
     const searchTerm = searchTerms[field].toLowerCase();
-    return arbitratorList.filter(
+    const availableArbitrators = getAvailableArbitrators(field);
+
+    return availableArbitrators.filter(
       (arbitrator) =>
         arbitrator.name.toLowerCase().includes(searchTerm) ||
         arbitrator.specialization.toLowerCase().includes(searchTerm)
     );
+  };
+
+  // Clear dependent fields when a selection changes
+  const handleArbitratorSelection = (field, arbitratorName) => {
+    // Clear downstream fields when an upstream field changes
+    if (field === "arbitrator1") {
+      if (arbitrators.arbitrator2 === arbitratorName) {
+        handleChange("arbitrator2", "");
+        setSearchTerms((prev) => ({ ...prev, arbitrator2: "" }));
+      }
+      if (arbitrators.presidingArbitrator === arbitratorName) {
+        handleChange("presidingArbitrator", "");
+        setSearchTerms((prev) => ({ ...prev, presidingArbitrator: "" }));
+      }
+    } else if (field === "arbitrator2") {
+      if (arbitrators.presidingArbitrator === arbitratorName) {
+        handleChange("presidingArbitrator", "");
+        setSearchTerms((prev) => ({ ...prev, presidingArbitrator: "" }));
+      }
+    }
+
+    selectArbitrator(field, arbitratorName);
   };
 
   return (
@@ -153,7 +198,7 @@ const ArbitratorsInformation = ({ arbitrators, onUpdateArbitrators }) => {
                   key={arbitrator.id}
                   className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
                   onMouseDown={() =>
-                    selectArbitrator("arbitrator1", arbitrator.name)
+                    handleArbitratorSelection("arbitrator1", arbitrator.name)
                   }
                 >
                   <div className="font-medium">{arbitrator.name}</div>
@@ -187,7 +232,7 @@ const ArbitratorsInformation = ({ arbitrators, onUpdateArbitrators }) => {
                   key={arbitrator.id}
                   className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
                   onMouseDown={() =>
-                    selectArbitrator("arbitrator2", arbitrator.name)
+                    handleArbitratorSelection("arbitrator2", arbitrator.name)
                   }
                 >
                   <div className="font-medium">{arbitrator.name}</div>
@@ -223,7 +268,10 @@ const ArbitratorsInformation = ({ arbitrators, onUpdateArbitrators }) => {
                   key={arbitrator.id}
                   className="dropdown-item p-2 cursor-pointer hover:bg-gray-100"
                   onMouseDown={() =>
-                    selectArbitrator("presidingArbitrator", arbitrator.name)
+                    handleArbitratorSelection(
+                      "presidingArbitrator",
+                      arbitrator.name
+                    )
                   }
                 >
                   <div className="font-medium">{arbitrator.name}</div>
