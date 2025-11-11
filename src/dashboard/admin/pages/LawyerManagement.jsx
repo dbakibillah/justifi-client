@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { useState, useMemo } from "react";
 import LawyerCard from "../components/LawyerCard";
 import LawyerModal from "../components/LawyerModal";
 import PageHeader from "../components/PageHeader";
-import { toast } from "react-toastify";
 
 const LawyerManagement = () => {
     const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
     const img_hosting_api = `https://api.imgbb.com/1/upload?key=${img_hosting_key}`;
     const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
+
     const { data: lawyers = [], refetch } = useQuery({
         queryKey: ["lawyers"],
         queryFn: async () => {
@@ -19,7 +22,6 @@ const LawyerManagement = () => {
     });
 
     const [showModal, setShowModal] = useState(false);
-    const [editingLawyer, setEditingLawyer] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -187,36 +189,19 @@ const LawyerManagement = () => {
     };
 
     const handleEdit = (lawyer) => {
-        setEditingLawyer(lawyer);
-        setFormData({
-            name: lawyer.name,
-            email: lawyer.email,
-            phone: lawyer.phone,
-            address: lawyer.address,
-            image: lawyer.image,
-            gender: lawyer.gender,
-            languages: lawyer.languages,
-            specialization: lawyer.specialization,
-            bar_id: lawyer.bar_id,
-            fee: lawyer.fee,
-            description: lawyer.description,
-            court: lawyer.court,
-            experience: lawyer.experience,
-            successRate: lawyer.successRate,
-            casesHandled: lawyer.casesHandled,
-            rating: lawyer.rating,
-            qualification: lawyer.qualification,
-        });
-        setShowModal(true);
+        // Redirect to LawyerProfile page with lawyer email as parameter
+        navigate(`/dashboard/lawyer-profile/${lawyer.email}`);
     };
 
     const handleDelete = async (email) => {
         if (window.confirm("Are you sure you want to delete this lawyer?")) {
             try {
                 await axiosSecure.delete(`/remove-lawyer/${email}`);
+                toast.success("Lawyer deleted successfully!");
                 refetch();
             } catch (error) {
                 console.error("Error deleting lawyer:", error);
+                toast.error("Failed to delete lawyer. Please try again.");
             }
         }
     };
@@ -241,7 +226,6 @@ const LawyerManagement = () => {
             rating: "",
             qualification: "",
         });
-        setEditingLawyer(null);
     };
 
     const openAddModal = () => {
@@ -251,7 +235,6 @@ const LawyerManagement = () => {
 
     const closeModal = () => {
         setShowModal(false);
-        setEditingLawyer(null);
         resetForm();
     };
 
@@ -376,7 +359,7 @@ const LawyerManagement = () => {
                     </div>
                 )}
 
-                {/* Add/Edit Modal */}
+                {/* Add Modal Only - No Edit Modal */}
                 <LawyerModal
                     show={showModal}
                     onClose={closeModal}
@@ -384,7 +367,7 @@ const LawyerManagement = () => {
                     formData={formData}
                     onInputChange={handleInputChange}
                     onArrayInput={handleArrayInput}
-                    isEditing={!!editingLawyer}
+                    isEditing={false}
                     resetForm={resetForm}
                     isSubmitting={isSubmitting}
                 />

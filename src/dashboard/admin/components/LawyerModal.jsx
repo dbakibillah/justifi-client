@@ -150,7 +150,7 @@ const LawyerModal = ({
             });
         }
     };
-    
+
     const handleRemoveImage = () => {
         setImagePreview("");
         onInputChange({

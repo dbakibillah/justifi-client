@@ -90,7 +90,7 @@ createRoot(document.getElementById("root")).render(
                     <Route path="/dashboard" element={<Dashboard />}>
                         <Route index element={<Dashboard />} />
                         <Route
-                            path="lawyer-profile"
+                            path="lawyer-profile/:email"
                             element={<LawyerProfile />}
                         />
                         <Route
