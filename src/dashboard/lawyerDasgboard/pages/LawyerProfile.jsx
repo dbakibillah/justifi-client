@@ -30,7 +30,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUserData from "../../../hooks/useUserData";
 
 const LawyerProfile = () => {
-    const { currentUser } = useUserData();
+    const { currentUser, userRole } = useUserData();
     const { email } = useParams();
     const navigate = useNavigate();
     const axiosSecure = useAxiosSecure();
@@ -44,7 +44,6 @@ const LawyerProfile = () => {
         handleSubmit,
         formState: { errors, isSubmitting },
         reset,
-        setValue,
     } = useForm();
 
     // Determine if admin is viewing (has email param) or lawyer is viewing their own profile
@@ -342,7 +341,7 @@ const LawyerProfile = () => {
                 <div className="mb-8">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            {isAdminView && (
+                            {userRole === "admin" && (
                                 <button
                                     onClick={() => navigate(-1)}
                                     className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
