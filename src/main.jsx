@@ -97,7 +97,6 @@ createRoot(document.getElementById("root")).render(
                             path="appointments"
                             element={<LawyerAppointments />}
                         />
-
                         <Route path="user-profile" element={<UserProfile />} />
                         <Route
                             path="my-appointments"
@@ -107,6 +106,10 @@ createRoot(document.getElementById("root")).render(
                             path="my-arbitrations"
                             element={<MyArbitrations />}
                         />
+                    </Route>
+
+                    {/* Admin routes */}
+                    <Route path="/admin" element={<Dashboard />}>
                         <Route path="all-users" element={<AllUsers />} />
                         <Route
                             path="all-lawyers"

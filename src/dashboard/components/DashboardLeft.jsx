@@ -28,13 +28,16 @@ const DashboardLeft = () => {
 
     // Redirect from /dashboard to appropriate profile
     useEffect(() => {
-        if (location.pathname === "/dashboard") {
+        if (
+            location.pathname === "/dashboard" ||
+            location.pathname === "/admin"
+        ) {
             const profileRoutes = {
                 user: "/dashboard/user-profile",
                 lawyer: `/dashboard/lawyer-profile/${currentUser?.email}`,
                 arbitrator: "/dashboard/arbitrator-profile",
                 mediator: "/dashboard/mediator-profile",
-                admin: "/dashboard/all-users",
+                admin: "/admin/all-users",
             };
 
             const redirectPath = profileRoutes[userRole] || "/dashboard";
@@ -125,32 +128,32 @@ const DashboardLeft = () => {
     const adminLinks = [
         {
             name: "All Users",
-            path: "/dashboard/all-users",
+            path: "/admin/all-users",
             icon: <FaUsers className="text-lg" />,
         },
         {
             name: "Laywers Management",
-            path: "/dashboard/all-lawyers",
+            path: "/admin/all-lawyers",
             icon: <FaGavel className="text-lg" />,
         },
         {
             name: "Arbitrators Management",
-            path: "/dashboard/all-arbitrators",
+            path: "/admin/all-arbitrators",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
             name: "All Arbitratons",
-            path: "/dashboard/all-arbitrations",
+            path: "/admin/all-arbitrations",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
             name: "Mediator Management",
-            path: "/dashboard/all-mediators",
+            path: "/admin/all-mediators",
             icon: <FaHandshake className="text-lg" />,
         },
         {
             name: "All Mediatons",
-            path: "/dashboard/all-mediations",
+            path: "/admin/all-mediations",
             icon: <FaHandshake className="text-lg" />,
         },
     ];
