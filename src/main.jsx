@@ -2,15 +2,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
+import AllUsers from "./dashboard/admin/pages/AllUsers";
+import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
+import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
+import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
 import Dashboard from "./dashboard/Dashboard";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
+import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
-import PaymentFailed from "./pages/payment/PaymentFailed";
-import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import Arbitrator from "./pages/arbitrator/Arbitrator";
 import ArbitratorDetails from "./pages/arbitrator/components/ArbitratorDetails";
 import Login from "./pages/auth/Login";
@@ -25,14 +29,12 @@ import MediationProcess from "./pages/mediation/components/MediationProcess";
 import Mediation from "./pages/mediation/Mediation";
 import MediatorDetails from "./pages/mediator/components/MediatorDetails";
 import Mediator from "./pages/mediator/Mediator";
+import PaymentFailed from "./pages/payment/PaymentFailed";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
-import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
-import AllUsers from "./dashboard/admin/pages/AllUsers";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
-import AllLawyers from "./dashboard/admin/pages/AllLawyers";
-import Mediation_Agreement from "./dashboard/admin/pages/Mediation_Agreement";
 import Arbitration_Agreement from "./dashboard/admin/pages/Arbitration_Agreement";
+import Mediation_Agreement from "./dashboard/admin/pages/Mediation_Agreement";
 
 const queryClient = new QueryClient();
 
@@ -90,7 +92,7 @@ createRoot(document.getElementById("root")).render(
                     <Route path="/dashboard" element={<Dashboard />}>
                         <Route index element={<Dashboard />} />
                         <Route
-                            path="lawyer-profile"
+                            path="lawyer-profile/:email"
                             element={<LawyerProfile />}
                         />
                         <Route
@@ -108,14 +110,23 @@ createRoot(document.getElementById("root")).render(
                             element={<MyArbitrations />}
                         />
                         <Route path="all-users" element={<AllUsers />} />
-                        <Route path="all-lawyers" element={<AllLawyers />} />
                         <Route
                             path="mediation-agreement"
-                            element={<Mediation_Agreement />}
-                        />
+                            element={<Mediation_Agreement />} />
                         <Route
                             path="arbitration-agreement"
-                            element={<Arbitration_Agreement />}
+                            element={<Arbitration_Agreement />} />
+
+                        <Route
+                            path="all-lawyers"
+                            element={<LawyerManagement />} />
+                        <Route
+                            path="all-arbitrators"
+                            element={<ArbitratorManagement />}
+                        />
+                        <Route
+                            path="all-mediators"
+                            element={<MediatorManagement />}
                         />
                     </Route>
                 </Routes>

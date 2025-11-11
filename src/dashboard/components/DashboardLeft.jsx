@@ -31,7 +31,7 @@ const DashboardLeft = () => {
         if (location.pathname === "/dashboard") {
             const profileRoutes = {
                 user: "/dashboard/user-profile",
-                lawyer: "/dashboard/lawyer-profile",
+                lawyer: `/dashboard/lawyer-profile/${currentUser?.email}`,
                 arbitrator: "/dashboard/arbitrator-profile",
                 mediator: "/dashboard/mediator-profile",
                 admin: "/dashboard/all-users",
@@ -76,7 +76,7 @@ const DashboardLeft = () => {
     const lawyerLinks = [
         {
             name: "Profile",
-            path: "/dashboard/lawyer-profile",
+            path: `/dashboard/lawyer-profile/${currentUser?.email}`,
             icon: <FaUser className="text-lg" />,
         },
         {
@@ -129,12 +129,12 @@ const DashboardLeft = () => {
             icon: <FaUsers className="text-lg" />,
         },
         {
-            name: "All Lawyers",
+            name: "Laywers Management",
             path: "/dashboard/all-lawyers",
             icon: <FaGavel className="text-lg" />,
         },
         {
-            name: "All Arbitrators",
+            name: "Arbitrators Management",
             path: "/dashboard/all-arbitrators",
             icon: <FaBalanceScale className="text-lg" />,
         },
@@ -144,7 +144,8 @@ const DashboardLeft = () => {
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
-            name: "All Mediators",
+
+            name: "Mediator Management",
             path: "/dashboard/all-mediators",
             icon: <FaHandshake className="text-lg" />,
         },

@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
-import ArbitrationForm from "../components/ArbitrationForm";
+import { useRef, useState } from "react";
 import ArbAgreementPreview from "../components/ArbAgreementPreview";
+import ArbitrationForm from "../components/ArbitrationForm";
 
 function Arbitration_Agreement() {
   const [showPreview, setShowPreview] = useState(false);
