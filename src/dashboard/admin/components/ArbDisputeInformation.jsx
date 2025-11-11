@@ -1,4 +1,3 @@
-// components/ArbDisputeInformation.js
 import React from "react";
 
 const ArbDisputeInformation = ({ disputeInfo, onUpdateDisputeInfo }) => {

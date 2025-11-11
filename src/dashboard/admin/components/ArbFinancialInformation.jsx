@@ -1,4 +1,3 @@
-// components/ArbFinancialInformation.js
 import React from "react";
 
 const ArbFinancialInformation = ({ financialInfo, onUpdateFinancialInfo }) => {

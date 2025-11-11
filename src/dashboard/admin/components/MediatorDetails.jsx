@@ -1,27 +1,12 @@
 import React, { useState } from "react";
 
-const MediatorDetails = ({ mediatorDetails, onUpdateMediatorDetails }) => {
+const MediatorDetails = ({
+  mediatorDetails,
+  onUpdateMediatorDetails,
+  mediators = [],
+}) => {
   const [showMediatorDropdown, setShowMediatorDropdown] = useState(false);
   const [mediatorSearch, setMediatorSearch] = useState("");
-
-  const mediators = [
-    {
-      name: "Dr. Sarah Johnson",
-      qualification: "PhD in Conflict Resolution, Certified Mediator",
-    },
-    {
-      name: "Michael Chen",
-      qualification: "JD, Harvard Law School, Senior Mediator",
-    },
-    {
-      name: "Priya Patel",
-      qualification: "MA in Dispute Resolution, International Mediation Expert",
-    },
-    {
-      name: "Robert Williams",
-      qualification: "LLM, Family Law Specialist, Certified Mediator",
-    },
-  ];
 
   const handleChange = (field, value) => {
     onUpdateMediatorDetails((prev) => ({
@@ -93,9 +78,9 @@ const MediatorDetails = ({ mediatorDetails, onUpdateMediatorDetails }) => {
             />
             {showMediatorDropdown && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                {filteredMediators.map((mediator, index) => (
+                {filteredMediators.map((mediator) => (
                   <div
-                    key={index}
+                    key={mediator._id}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => selectMediator(mediator)}
                   >

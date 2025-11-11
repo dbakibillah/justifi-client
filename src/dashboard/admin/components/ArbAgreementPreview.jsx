@@ -1,4 +1,3 @@
-// components/ArbAgreementPreview.js
 import React, { useEffect } from "react";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
