@@ -1,15 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 
 const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
-  useEffect(() => {
-    if (formData && pdfContainerRef.current) {
-      generatePDFContent();
-    }
-  }, [formData, pdfContainerRef]);
-
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -20,250 +13,8 @@ const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
     return `${day} ${month}, ${year}`;
   };
 
-  const generatePDFContent = () => {
-    if (!formData || !pdfContainerRef.current) return;
-
-    const agreementDateDisplay = formatDateForDisplay(formData.agreementDate);
-
-    // Create parties list for PDF with side-by-side layout
-    let partiesPDF = `
-      <table width="100%" style="border-collapse: collapse; margin-bottom: 20px;">
-        <tr>
-          <td width="50%" style="vertical-align: top; padding-right: 15px;">
-            <h3 style="font-weight: bold; margin-bottom: 10px; color: #2563eb;">PLAINTIFFS</h3>
-    `;
-
-    // Plaintiffs
-    formData.plaintiffs.forEach((plaintiff, index) => {
-      partiesPDF += `
-        <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ccc;">
-          <p style="font-weight: bold;">Plaintiff ${index + 1}</p>
-          <p><strong>Name:</strong> ${plaintiff.name}</p>
-          <p><strong>Parents:</strong> ${plaintiff.parents}</p>
-          <p><strong>Email:</strong> ${plaintiff.email}</p>
-          <p><strong>Phone:</strong> ${plaintiff.phone}</p>
-          <p><strong>Address:</strong> ${plaintiff.address}</p>
-          <p><strong>Occupation:</strong> ${plaintiff.occupation}</p>
-        </div>
-      `;
-    });
-
-    partiesPDF += `
-          </td>
-          <td width="50%" style="vertical-align: top; padding-left: 15px;">
-            <h3 style="font-weight: bold; margin-bottom: 10px; color: #dc2626;">DEFENDANTS</h3>
-    `;
-
-    // Defendants
-    formData.defendants.forEach((defendant, index) => {
-      partiesPDF += `
-        <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ccc;">
-          <p style="font-weight: bold;">Defendant ${index + 1}</p>
-          <p><strong>Name:</strong> ${defendant.name}</p>
-          <p><strong>Parents:</strong> ${defendant.parents}</p>
-          <p><strong>Email:</strong> ${defendant.email}</p>
-          <p><strong>Phone:</strong> ${defendant.phone}</p>
-          <p><strong>Address:</strong> ${defendant.address}</p>
-          <p><strong>Occupation:</strong> ${defendant.occupation}</p>
-        </div>
-      `;
-    });
-
-    partiesPDF += `
-          </td>
-        </tr>
-      </table>
-    `;
-
-    // Create PDF content
-    const pdfContent = `
-      <div style="text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 20px; margin-bottom: 40px;">
-        <h1 style="font-size: 24pt; font-weight: bold; margin-bottom: 10px;">JustiFi - Mediation Agreement</h1>
-        <p style="font-size: 14pt;"><strong>Date:</strong> ${agreementDateDisplay}</p>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">THIS MEDIATION AGREEMENT</h2>
-        <p style="text-align: justify; margin-bottom: 20px;">(Hereinafter referred to as the "Agreement") is made and entered into by and between the following parties:</p>
-        
-        ${partiesPDF}
-        
-        <p style="text-align: justify;">Collectively referred to as the <strong>Parties</strong>, and individually as a <strong>Party</strong>.</p>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">WHEREAS:</h2>
-        <ol style="text-align: justify; padding-left: 20px;">
-          <li style="margin-bottom: 10px;">The Parties are involved in a dispute of category <strong>${
-            formData.disputeCategory
-          }</strong> with suit value <strong>${
-      formData.suitValue
-    }</strong> arising out of: <strong>${formData.disputeNature}</strong>;</li>
-          <li style="margin-bottom: 10px;">The Parties have mutually agreed to refer the said dispute to mediation through the <strong>JustiFi – Online Legal Aid & Mediation Platform</strong>;</li>
-          <li style="margin-bottom: 10px;">The Parties desire to record their mutual understanding and agreement to the terms, conditions, and procedures governing such mediation.</li>
-        </ol>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 1: MEDIATION TERMS</h2>
-        <div style="text-align: justify;">
-          <p style="margin-bottom: 10px;"><strong>1.1 Mediation Process:</strong> The Parties have agreed to resolve their dispute through mediation.</p>
-          <p style="margin-bottom: 10px;"><strong>1.2 Session Agreement:</strong> The Parties have agreed to <strong>${
-            formData.sessionsAgreed
-          } mediation session(s)</strong>.</p>
-          <p style="margin-bottom: 10px;"><strong>1.3 Assigned Mediator:</strong> ${
-            formData.mediatorName
-          } (${
-      formData.mediatorQualification
-    }) has been assigned as the mediator.</p>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 2: COST DISTRIBUTION</h2>
-        <div style="text-align: justify;">
-          <p style="margin-bottom: 10px;"><strong>2.1 Equal Cost Sharing:</strong> All mediation costs shall be divided equally among all parties.</p>
-          <p style="margin-bottom: 10px;"><strong>2.2 Cost Breakdown:</strong></p>
-          <ul style="padding-left: 20px; margin-bottom: 10px;">
-            <li style="margin-bottom: 5px;">Total Mediation Cost: <strong>BDT ${parseFloat(
-              formData.totalCost
-            ).toFixed(2)}</strong></li>
-            <li style="margin-bottom: 5px;">Number of Parties: <strong>${
-              formData.plaintiffs.length + formData.defendants.length
-            }</strong></li>
-            <li style="margin-bottom: 5px;">Cost per Party: <strong>BDT ${parseFloat(
-              formData.costPerParty
-            ).toFixed(2)}</strong></li>
-          </ul>
-          <p style="margin-bottom: 10px;"><strong>2.3 Payment Responsibility:</strong> Parties are jointly and severally responsible for full payment.</p>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 3: CONFIDENTIALITY</h2>
-        <div style="text-align: justify;">
-          <p style="margin-bottom: 10px;"><strong>3.1 Strict Confidentiality:</strong> All mediation proceedings, documents, discussions, and offers remain strictly confidential.</p>
-          <p style="margin-bottom: 10px;"><strong>3.2 Legal Protection:</strong> Mediation communications are privileged and cannot be used as evidence in legal proceedings.</p>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 4: PARTY RESPONSIBILITIES</h2>
-        <div style="text-align: justify;">
-          <p style="margin-bottom: 10px;"><strong>4.1 Financial Obligations:</strong> Each Party agrees to pay their equal share of all mediation costs according to the agreed schedule.</p>
-          <p style="margin-bottom: 10px;"><strong>4.2 Participation Requirements:</strong> Each Party agrees to:</p>
-          <ul style="padding-left: 20px; margin-bottom: 10px;">
-            <li style="margin-bottom: 5px;">Attend all scheduled mediation sessions</li>
-            <li style="margin-bottom: 5px;">Participate in good faith throughout the process</li>
-            <li style="margin-bottom: 5px;">Maintain respectful and professional conduct</li>
-            <li style="margin-bottom: 5px;">Respect the mediator and other parties</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">ARTICLE 5: ACKNOWLEDGMENT AND ACCEPTANCE</h2>
-        <div style="text-align: justify;">
-          <p style="margin-bottom: 10px;">By signing this Agreement, the Parties acknowledge and agree to:</p>
-          <ul style="padding-left: 20px; margin-bottom: 10px;">
-            <li style="margin-bottom: 5px;">Bear equal share of all mediation costs</li>
-            <li style="margin-bottom: 5px;">Participate in good faith throughout the mediation process</li>
-            <li style="margin-bottom: 5px;">Maintain strict confidentiality of all proceedings</li>
-            <li style="margin-bottom: 5px;">Accept the mediation session limits (${
-              formData.sessionsAgreed
-            } session(s))</li>
-            <li style="margin-bottom: 5px;">Be bound by the mediator's decisions and procedures</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ccc;">
-        <h2 style="font-size: 16pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px;">EXECUTION & SIGNATURES</h2>
-        <p style="text-align: justify; margin-bottom: 30px;"><strong>IN WITNESS WHEREOF</strong>, the Parties have executed this Mediation Agreement on the date first written above.</p>
-        
-        <table width="100%" style="border-collapse: collapse;">
-          <tr>
-            <td width="50%" style="vertical-align: top; padding-right: 20px;">
-              <h3 style="text-align: center; font-weight: bold; margin-bottom: 20px;">PLAINTIFFS</h3>
-              ${formData.plaintiffs
-                .map((plaintiff) => {
-                  const signatureDate = formatDateForDisplay(
-                    plaintiff.signatureDate
-                  );
-                  return `
-                  <div style="margin-bottom: 30px; text-align: center;">
-                    <p style="margin-bottom: 10px;"><strong>${
-                      plaintiff.name
-                    }</strong></p>
-                    <div style="border-bottom: 1px solid #000; height: 50px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-                      ${
-                        plaintiff.signature
-                          ? `<img src="${plaintiff.signature}" alt="${plaintiff.name} Signature" style="max-height: 40px; max-width: 120px;">`
-                          : ""
-                      }
-                    </div>
-                    <p>Date: ${signatureDate}</p>
-                  </div>
-                `;
-                })
-                .join("")}
-            </td>
-            <td width="50%" style="vertical-align: top; padding-left: 20px;">
-              <h3 style="text-align: center; font-weight: bold; margin-bottom: 20px;">DEFENDANTS</h3>
-              ${formData.defendants
-                .map((defendant) => {
-                  const signatureDate = formatDateForDisplay(
-                    defendant.signatureDate
-                  );
-                  return `
-                  <div style="margin-bottom: 30px; text-align: center;">
-                    <p style="margin-bottom: 10px;"><strong>${
-                      defendant.name
-                    }</strong></p>
-                    <div style="border-bottom: 1px solid #000; height: 50px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-                      ${
-                        defendant.signature
-                          ? `<img src="${defendant.signature}" alt="${defendant.name} Signature" style="max-height: 40px; max-width: 120px;">`
-                          : ""
-                      }
-                    </div>
-                    <p>Date: ${signatureDate}</p>
-                  </div>
-                `;
-                })
-                .join("")}
-            </td>
-          </tr>
-        </table>
-        
-        <div style="text-align: center; margin-top: 40px;">
-          <h3 style="font-weight: bold; margin-bottom: 20px;">ON BEHALF OF JUSTIFI</h3>
-          <div style="text-align: center; margin-bottom: 30px;">
-            <p><strong>Name:</strong> ${formData.justifiName}</p>
-            <p><strong>Designation:</strong> ${formData.justifiDesignation}</p>
-          </div>
-          <div style="border-bottom: 1px solid #000; height: 50px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-            ${
-              formData.justifiSignature
-                ? `<img src="${formData.justifiSignature}" alt="JustiFi Signature" style="max-height: 40px; max-width: 120px;">`
-                : ""
-            }
-          </div>
-          <p style="text-align: center;">Date: ${agreementDateDisplay}</p>
-        </div>
-      </div>
-      
-      <div style="text-align: center; margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px;">
-        <p><strong>JustiFi - Fair Dispute Resolution Through Equal Partnership</strong></p>
-        <p style="margin-top: 10px;">This document constitutes a legally binding agreement between all signing parties.</p>
-      </div>
-    `;
-
-    pdfContainerRef.current.innerHTML = pdfContent;
-  };
-
-  const generatePDF = async () => {
-    if (!pdfContainerRef.current) return;
+  const generatePDF = () => {
+    if (!formData) return;
 
     const downloadBtn = document.getElementById("download-pdf");
     const originalText = downloadBtn.textContent;
@@ -271,43 +22,387 @@ const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
     downloadBtn.disabled = true;
 
     try {
-      const canvas = await html2canvas(pdfContainerRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        width: pdfContainerRef.current.scrollWidth,
-        height: pdfContainerRef.current.scrollHeight,
-        onclone: function (clonedDoc) {
-          const images = clonedDoc.querySelectorAll("img");
-          images.forEach((img) => {
-            if (img.complete) {
-              return;
-            }
-            img.onload = function () {
-              // Image loaded, continue with PDF generation
-            };
-          });
-        },
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 20;
+      let yPosition = margin;
+      const lineHeight = 6;
+      const sectionSpacing = 8;
+
+      // Header
+      pdf.setFont("times", "bold");
+      pdf.setFontSize(18);
+      pdf.text("JustiFi - Mediation Agreement", pageWidth / 2, yPosition, {
+        align: "center",
+      });
+      yPosition += lineHeight;
+
+      pdf.setFontSize(12);
+      pdf.setFont("times", "normal");
+      const agreementDateDisplay = formatDateForDisplay(formData.agreementDate);
+      pdf.text(`Date: ${agreementDateDisplay}`, pageWidth / 2, yPosition, {
+        align: "center",
+      });
+      yPosition += sectionSpacing * 2;
+
+      // THIS MEDIATION AGREEMENT section
+      pdf.setFontSize(14);
+      pdf.setFont("times", "bold");
+      pdf.text("THIS MEDIATION AGREEMENT", margin, yPosition);
+      yPosition += lineHeight;
+
+      pdf.setFont("times", "normal");
+      pdf.setFontSize(11);
+      const agreementText =
+        '(Hereinafter referred to as the "Agreement") is made and entered into by and between the following parties:';
+      const agreementLines = pdf.splitTextToSize(
+        agreementText,
+        pageWidth - 2 * margin
+      );
+      pdf.text(agreementLines, margin, yPosition);
+      yPosition += agreementLines.length * lineHeight + sectionSpacing;
+
+      // Parties information - Side by side layout
+      const partyWidth = (pageWidth - 2 * margin - 10) / 2;
+      const plaintiffsStartY = yPosition;
+
+      // Plaintiffs Column
+      pdf.setFont("times", "bold");
+      pdf.setTextColor(0, 0, 255);
+      pdf.text("PLAINTIFFS", margin, yPosition);
+      yPosition += lineHeight;
+
+      let maxPlaintiffHeight = 0;
+      formData.plaintiffs.forEach((plaintiff, index) => {
+        pdf.setFont("times", "bold");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(`Plaintiff ${index + 1}:`, margin, yPosition);
+        yPosition += lineHeight;
+
+        pdf.setFont("times", "normal");
+        const plaintiffDetails = [
+          `Name: ${plaintiff.name}`,
+          `Parents: ${plaintiff.parents}`,
+          `Email: ${plaintiff.email}`,
+          `Phone: ${plaintiff.phone}`,
+          `Address: ${plaintiff.address}`,
+          `Occupation: ${plaintiff.occupation}`,
+        ];
+
+        plaintiffDetails.forEach((detail) => {
+          pdf.text(detail, margin + 5, yPosition);
+          yPosition += lineHeight;
+        });
+        yPosition += 2;
+        maxPlaintiffHeight = yPosition - plaintiffsStartY;
       });
 
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210;
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
+      // Defendants Column - Start at same Y position
+      yPosition = plaintiffsStartY;
+      pdf.setFont("times", "bold");
+      pdf.setTextColor(255, 0, 0);
+      pdf.text("DEFENDANTS", margin + partyWidth + 10, yPosition);
+      yPosition += lineHeight;
 
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      formData.defendants.forEach((defendant, index) => {
+        pdf.setFont("times", "bold");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(
+          `Defendant ${index + 1}:`,
+          margin + partyWidth + 10,
+          yPosition
+        );
+        yPosition += lineHeight;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+        pdf.setFont("times", "normal");
+        const defendantDetails = [
+          `Name: ${defendant.name}`,
+          `Parents: ${defendant.parents}`,
+          `Email: ${defendant.email}`,
+          `Phone: ${defendant.phone}`,
+          `Address: ${defendant.address}`,
+          `Occupation: ${defendant.occupation}`,
+        ];
+
+        defendantDetails.forEach((detail) => {
+          pdf.text(detail, margin + partyWidth + 15, yPosition);
+          yPosition += lineHeight;
+        });
+        yPosition += 2;
+      });
+
+      // Move to the maximum height of both columns
+      yPosition =
+        plaintiffsStartY +
+        Math.max(maxPlaintiffHeight, yPosition - plaintiffsStartY) +
+        sectionSpacing;
+
+      // Collective reference
+      pdf.setTextColor(0, 0, 0);
+      const collectiveText =
+        'Collectively referred to as the "Parties", and individually as a "Party".';
+      pdf.text(collectiveText, margin, yPosition);
+      yPosition += sectionSpacing * 2;
+
+      // Check for page break
+      if (yPosition > pageHeight - 50) {
         pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        yPosition = margin;
       }
 
+      // WHEREAS section
+      pdf.setFont("times", "bold");
+      pdf.setFontSize(14);
+      pdf.text("WHEREAS:", margin, yPosition);
+      yPosition += lineHeight;
+
+      pdf.setFont("times", "normal");
+      pdf.setFontSize(11);
+      const whereasPoints = [
+        `1. The Parties are involved in a dispute of category ${formData.disputeCategory} with suit value ${formData.suitValue} arising out of: ${formData.disputeNature};`,
+        `2. The Parties have mutually agreed to refer the said dispute to mediation through the JustiFi – Online Legal Aid & Mediation Platform;`,
+        `3. The Parties desire to record their mutual understanding and agreement to the terms, conditions, and procedures governing such mediation.`,
+      ];
+
+      whereasPoints.forEach((point) => {
+        if (yPosition > pageHeight - 20) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        const lines = pdf.splitTextToSize(point, pageWidth - 2 * margin);
+        pdf.text(lines, margin, yPosition);
+        yPosition += lines.length * lineHeight + 2;
+      });
+      yPosition += sectionSpacing;
+
+      // Articles
+      const articles = [
+        {
+          title: "ARTICLE 1: MEDIATION TERMS",
+          content: [
+            "1.1 Mediation Process: The Parties have agreed to resolve their dispute through mediation.",
+            `1.2 Session Agreement: The Parties have agreed to ${formData.sessionsAgreed} mediation session(s).`,
+            `1.3 Assigned Mediator: ${formData.mediatorName} (${formData.mediatorQualification}) has been assigned as the mediator.`,
+          ],
+        },
+        {
+          title: "ARTICLE 2: COST DISTRIBUTION",
+          content: [
+            "2.1 Equal Cost Sharing: All mediation costs shall be divided equally among all parties.",
+            "2.2 Cost Breakdown:",
+            `   • Total Mediation Cost: BDT ${parseFloat(
+              formData.totalCost || 0
+            ).toFixed(2)}`,
+            `   • Number of Parties: ${
+              formData.plaintiffs.length + formData.defendants.length
+            }`,
+            `   • Cost per Party: BDT ${parseFloat(
+              formData.costPerParty || 0
+            ).toFixed(2)}`,
+            "2.3 Payment Responsibility: Parties are jointly and severally responsible for full payment.",
+          ],
+        },
+        {
+          title: "ARTICLE 3: CONFIDENTIALITY",
+          content: [
+            "3.1 Strict Confidentiality: All mediation proceedings, documents, discussions, and offers remain strictly confidential.",
+            "3.2 Legal Protection: Mediation communications are privileged and cannot be used as evidence in legal proceedings.",
+          ],
+        },
+        {
+          title: "ARTICLE 4: PARTY RESPONSIBILITIES",
+          content: [
+            "4.1 Financial Obligations: Each Party agrees to pay their equal share of all mediation costs according to the agreed schedule.",
+            "4.2 Participation Requirements: Each Party agrees to:",
+            "   • Attend all scheduled mediation sessions",
+            "   • Participate in good faith throughout the process",
+            "   • Maintain respectful and professional conduct",
+            "   • Respect the mediator and other parties",
+          ],
+        },
+        {
+          title: "ARTICLE 5: ACKNOWLEDGMENT AND ACCEPTANCE",
+          content: [
+            "By signing this Agreement, the Parties acknowledge and agree to:",
+            "• Bear equal share of all mediation costs",
+            "• Participate in good faith throughout the mediation process",
+            "• Maintain strict confidentiality of all proceedings",
+            `• Accept the mediation session limits (${formData.sessionsAgreed} session(s))`,
+            "• Be bound by the mediator's decisions and procedures",
+          ],
+        },
+      ];
+
+      articles.forEach((article) => {
+        if (yPosition > pageHeight - 50) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+
+        pdf.setFont("times", "bold");
+        pdf.setFontSize(14);
+        pdf.text(article.title, margin, yPosition);
+        yPosition += lineHeight + 2;
+
+        pdf.setFont("times", "normal");
+        pdf.setFontSize(11);
+
+        article.content.forEach((line) => {
+          if (yPosition > pageHeight - 20) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          const lines = pdf.splitTextToSize(line, pageWidth - 2 * margin);
+          pdf.text(lines, margin, yPosition);
+          yPosition += lines.length * lineHeight + 2;
+        });
+
+        yPosition += sectionSpacing;
+      });
+
+      // Signatures section
+      if (yPosition > pageHeight - 100) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      pdf.setFont("times", "bold");
+      pdf.setFontSize(14);
+      pdf.text("EXECUTION & SIGNATURES", margin, yPosition);
+      yPosition += lineHeight + 2;
+
+      pdf.setFont("times", "normal");
+      pdf.setFontSize(11);
+      const witnessText =
+        "IN WITNESS WHEREOF, the Parties have executed this Mediation Agreement on the date first written above.";
+      const witnessLines = pdf.splitTextToSize(
+        witnessText,
+        pageWidth - 2 * margin
+      );
+      pdf.text(witnessLines, margin, yPosition);
+      yPosition += witnessLines.length * lineHeight + sectionSpacing;
+
+      // Signatures - Side by side layout
+      const signatureWidth = (pageWidth - 2 * margin - 10) / 2;
+      const signatureStartY = yPosition;
+
+      // Plaintiffs Signatures
+      pdf.setFont("times", "bold");
+      pdf.text("PLAINTIFFS", margin, yPosition);
+      yPosition += lineHeight;
+
+      formData.plaintiffs.forEach((plaintiff) => {
+        pdf.setFont("times", "normal");
+        const signatureDate = formatDateForDisplay(plaintiff.signatureDate);
+        pdf.text(plaintiff.name, margin, yPosition);
+        yPosition += lineHeight;
+
+        // Signature line
+        pdf.line(margin, yPosition, margin + 60, yPosition);
+        yPosition += lineHeight;
+
+        pdf.text(`Date: ${signatureDate}`, margin, yPosition);
+        yPosition += sectionSpacing;
+      });
+
+      const plaintiffsSignatureHeight = yPosition - signatureStartY;
+
+      // Defendants Signatures
+      yPosition = signatureStartY;
+      pdf.setFont("times", "bold");
+      pdf.text("DEFENDANTS", margin + signatureWidth + 10, yPosition);
+      yPosition += lineHeight;
+
+      formData.defendants.forEach((defendant) => {
+        pdf.setFont("times", "normal");
+        const signatureDate = formatDateForDisplay(defendant.signatureDate);
+        pdf.text(defendant.name, margin + signatureWidth + 10, yPosition);
+        yPosition += lineHeight;
+
+        // Signature line
+        pdf.line(
+          margin + signatureWidth + 10,
+          yPosition,
+          margin + signatureWidth + 70,
+          yPosition
+        );
+        yPosition += lineHeight;
+
+        pdf.text(
+          `Date: ${signatureDate}`,
+          margin + signatureWidth + 10,
+          yPosition
+        );
+        yPosition += sectionSpacing;
+      });
+
+      const defendantsSignatureHeight = yPosition - signatureStartY;
+      yPosition =
+        signatureStartY +
+        Math.max(plaintiffsSignatureHeight, defendantsSignatureHeight) +
+        sectionSpacing;
+
+      // JustiFi Representative
+      if (yPosition > pageHeight - 50) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      pdf.setFont("times", "bold");
+      pdf.text("ON BEHALF OF JUSTIFI", pageWidth / 2, yPosition, {
+        align: "center",
+      });
+      yPosition += lineHeight;
+
+      pdf.setFont("times", "normal");
+      pdf.text(`Name: ${formData.justifiName}`, pageWidth / 2, yPosition, {
+        align: "center",
+      });
+      yPosition += lineHeight;
+      pdf.text(
+        `Designation: ${formData.justifiDesignation}`,
+        pageWidth / 2,
+        yPosition,
+        { align: "center" }
+      );
+      yPosition += lineHeight;
+
+      // Signature line
+      pdf.line(pageWidth / 2 - 30, yPosition, pageWidth / 2 + 30, yPosition);
+      yPosition += lineHeight;
+
+      pdf.text(`Date: ${agreementDateDisplay}`, pageWidth / 2, yPosition, {
+        align: "center",
+      });
+      yPosition += sectionSpacing * 2;
+
+      // Footer
+      if (yPosition > pageHeight - 20) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      pdf.setFont("times", "bold");
+      pdf.setFontSize(10);
+      pdf.text(
+        "JustiFi - Fair Dispute Resolution Through Equal Partnership",
+        pageWidth / 2,
+        yPosition,
+        { align: "center" }
+      );
+      yPosition += lineHeight;
+
+      pdf.setFont("times", "normal");
+      const footerText =
+        "This document constitutes a legally binding agreement between all signing parties.";
+      const footerLines = pdf.splitTextToSize(
+        footerText,
+        pageWidth - 2 * margin
+      );
+      pdf.text(footerLines, pageWidth / 2, yPosition, { align: "center" });
+
+      // Save the PDF
       pdf.save("mediation-agreement.pdf");
     } catch (error) {
       console.error("PDF generation error:", error);
@@ -354,7 +449,7 @@ const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
             THIS MEDIATION AGREEMENT
           </h2>
           <p className="mb-4 text-justify">
-            (Here in after referred to as the "Agreement") is made and entered
+            (Hereinafter referred to as the "Agreement") is made and entered
             into by and between the following parties:
           </p>
 
@@ -489,7 +584,9 @@ const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
             <ul className="list-disc pl-6 mt-2 mb-3">
               <li>
                 Total Mediation Cost:{" "}
-                <strong>BDT {parseFloat(formData.totalCost).toFixed(2)}</strong>
+                <strong>
+                  BDT {parseFloat(formData.totalCost || 0).toFixed(2)}
+                </strong>
               </li>
               <li>
                 Number of Parties:{" "}
@@ -500,7 +597,7 @@ const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
               <li>
                 Cost per Party:{" "}
                 <strong>
-                  BDT {parseFloat(formData.costPerParty).toFixed(2)}
+                  BDT {parseFloat(formData.costPerParty || 0).toFixed(2)}
                 </strong>
               </li>
             </ul>
