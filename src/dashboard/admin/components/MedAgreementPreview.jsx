@@ -55,7 +55,7 @@ const MedAgreementPreview = ({ formData, onBack }) => {
       pdf.setFont("times", "normal");
       pdf.setFontSize(11);
       const agreementText =
-        '(Hereinafter referred to as the "Agreement") is made and entered into by and between the following parties:';
+        '(Here in after referred to as the "Agreement") is made and entered into by and between the following parties:';
       const agreementLines = pdf.splitTextToSize(
         agreementText,
         pageWidth - 2 * margin
@@ -294,16 +294,12 @@ const MedAgreementPreview = ({ formData, onBack }) => {
 
       formData.plaintiffs.forEach((plaintiff) => {
         pdf.setFont("times", "normal");
-        const signatureDate = formatDateForDisplay(plaintiff.signatureDate);
         pdf.text(plaintiff.name, margin, yPosition);
         yPosition += lineHeight;
 
         // Signature line
         pdf.line(margin, yPosition, margin + 60, yPosition);
-        yPosition += lineHeight;
-
-        pdf.text(`Date: ${signatureDate}`, margin, yPosition);
-        yPosition += sectionSpacing;
+        yPosition += lineHeight + sectionSpacing; // Removed date line
       });
 
       const plaintiffsSignatureHeight = yPosition - signatureStartY;
@@ -316,7 +312,6 @@ const MedAgreementPreview = ({ formData, onBack }) => {
 
       formData.defendants.forEach((defendant) => {
         pdf.setFont("times", "normal");
-        const signatureDate = formatDateForDisplay(defendant.signatureDate);
         pdf.text(defendant.name, margin + signatureWidth + 10, yPosition);
         yPosition += lineHeight;
 
@@ -327,14 +322,7 @@ const MedAgreementPreview = ({ formData, onBack }) => {
           margin + signatureWidth + 70,
           yPosition
         );
-        yPosition += lineHeight;
-
-        pdf.text(
-          `Date: ${signatureDate}`,
-          margin + signatureWidth + 10,
-          yPosition
-        );
-        yPosition += sectionSpacing;
+        yPosition += lineHeight + sectionSpacing; // Removed date line
       });
 
       const defendantsSignatureHeight = yPosition - signatureStartY;
@@ -449,7 +437,7 @@ const MedAgreementPreview = ({ formData, onBack }) => {
             THIS MEDIATION AGREEMENT
           </h2>
           <p className="mb-4 text-justify">
-            (Hereinafter referred to as the "Agreement") is made and entered
+            (Here in after referred to as the "Agreement") is made and entered
             into by and between the following parties:
           </p>
 
@@ -669,86 +657,6 @@ const MedAgreementPreview = ({ formData, onBack }) => {
               </li>
               <li>Be bound by the mediator's decisions and procedures</li>
             </ul>
-          </div>
-        </div>
-
-        <div className="mt-8 pt-4 border-t border-gray-300">
-          <h2 className="text-xl font-bold mb-4 border-b pb-2">
-            EXECUTION & SIGNATURES
-          </h2>
-          <p className="text-justify mb-6">
-            <strong>IN WITNESS WHEREOF</strong>, the Parties have executed this
-            Mediation Agreement on the date first written above.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="text-center">
-              <h3 className="font-bold text-lg mb-4">PLAINTIFFS</h3>
-              {formData.plaintiffs.map((plaintiff, index) => {
-                const signatureDate = formatDateForDisplay(
-                  plaintiff.signatureDate
-                );
-                return (
-                  <div key={index} className="mb-6">
-                    <p className="font-medium mb-2">{plaintiff.name}</p>
-                    <div className="border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-                      {plaintiff.signature && (
-                        <img
-                          src={plaintiff.signature}
-                          style={{ maxHeight: "60px", maxWidth: "180px" }}
-                          alt={`${plaintiff.name} Signature`}
-                        />
-                      )}
-                    </div>
-                    <p className="mt-2">Date: {signatureDate}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="text-center">
-              <h3 className="font-bold text-lg mb-4">DEFENDANTS</h3>
-              {formData.defendants.map((defendant, index) => {
-                const signatureDate = formatDateForDisplay(
-                  defendant.signatureDate
-                );
-                return (
-                  <div key={index} className="mb-6">
-                    <p className="font-medium mb-2">{defendant.name}</p>
-                    <div className="border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-                      {defendant.signature && (
-                        <img
-                          src={defendant.signature}
-                          style={{ maxHeight: "60px", maxWidth: "180px" }}
-                          alt={`${defendant.name} Signature`}
-                        />
-                      )}
-                    </div>
-                    <p className="mt-2">Date: {signatureDate}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <h3 className="font-bold text-lg mb-4">ON BEHALF OF JUSTIFI</h3>
-            <div className="mb-6">
-              <p className="font-medium">Name: {formData.justifiName}</p>
-              <p className="font-medium">
-                Designation: {formData.justifiDesignation}
-              </p>
-            </div>
-            <div className="border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-              {formData.justifiSignature && (
-                <img
-                  src={formData.justifiSignature}
-                  style={{ maxHeight: "60px", maxWidth: "180px" }}
-                  alt="JustiFi Signature"
-                />
-              )}
-            </div>
-            <p className="mt-2">Date: {agreementDateDisplay}</p>
           </div>
         </div>
 

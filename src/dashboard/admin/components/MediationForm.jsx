@@ -48,7 +48,6 @@ const MediationForm = ({ onSubmit, caseId }) => {
   const [justifiRep, setJustifiRep] = useState({
     name: "",
     designation: "",
-    signature: null,
   });
 
   const [costPerParty, setCostPerParty] = useState(0);
@@ -73,8 +72,6 @@ const MediationForm = ({ onSubmit, caseId }) => {
             phone: plaintiff.phone || "",
             address: plaintiff.address || "",
             occupation: plaintiff.occupation || "",
-            signature: null,
-            signatureDate: new Date().toISOString().split("T")[0],
           })
         );
 
@@ -88,8 +85,6 @@ const MediationForm = ({ onSubmit, caseId }) => {
             phone: defendant.phone || "",
             address: defendant.address || "",
             occupation: defendant.occupation || "",
-            signature: null,
-            signatureDate: new Date().toISOString().split("T")[0],
           })
         );
 
@@ -99,7 +94,7 @@ const MediationForm = ({ onSubmit, caseId }) => {
         // Set dispute information from the backend
         setDisputeInfo({
           category: foundCase.caseCategory || "",
-          suitValue: "00.00",
+          suitValue: "",
           nature: foundCase.disputeNature || "",
         });
       }
@@ -120,37 +115,6 @@ const MediationForm = ({ onSubmit, caseId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate all signatures are provided
-    let allSignaturesProvided = true;
-    let missingSignatures = [];
-
-    plaintiffs.forEach((plaintiff) => {
-      if (!plaintiff.signature) {
-        allSignaturesProvided = false;
-        missingSignatures.push(`Plaintiff: ${plaintiff.name}`);
-      }
-    });
-
-    defendants.forEach((defendant) => {
-      if (!defendant.signature) {
-        allSignaturesProvided = false;
-        missingSignatures.push(`Defendant: ${defendant.name}`);
-      }
-    });
-
-    if (!justifiRep.signature) {
-      allSignaturesProvided = false;
-      missingSignatures.push("JustiFi Representative");
-    }
-
-    if (!allSignaturesProvided) {
-      alert(
-        "Please provide signatures for all parties:\n" +
-          missingSignatures.join("\n")
-      );
-      return;
-    }
-
     const formData = {
       agreementDate: new Date().toISOString().split("T")[0],
       disputeCategory: disputeInfo.category,
@@ -165,7 +129,6 @@ const MediationForm = ({ onSubmit, caseId }) => {
       mediatorQualification: mediatorDetails.mediatorQualification,
       justifiName: justifiRep.name,
       justifiDesignation: justifiRep.designation,
-      justifiSignature: justifiRep.signature,
       caseId: caseId,
       caseTitle: selectedCase?.caseTitle || "",
     };
