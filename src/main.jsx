@@ -91,14 +91,13 @@ createRoot(document.getElementById("root")).render(
                     <Route path="/dashboard" element={<Dashboard />}>
                         <Route index element={<Dashboard />} />
                         <Route
-                            path="lawyer-profile"
+                            path="lawyer-profile/:email"
                             element={<LawyerProfile />}
                         />
                         <Route
                             path="appointments"
                             element={<LawyerAppointments />}
                         />
-
                         <Route path="user-profile" element={<UserProfile />} />
                         <Route
                             path="my-appointments"
@@ -109,7 +108,11 @@ createRoot(document.getElementById("root")).render(
                             element={<MyArbitrations />}
                         />
                         <Route path="my-arbitrations/:id" element={<ArbitrationDetails/>} />
-                        
+                    </Route>
+
+                    {/* Admin routes */}
+                    <Route path="/admin" element={<Dashboard />}>
+
                         <Route path="all-users" element={<AllUsers />} />
                         <Route
                             path="all-lawyers"
