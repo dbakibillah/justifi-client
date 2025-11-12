@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
+    FaArrowLeft,
     FaAward,
     FaBriefcase,
     FaChartLine,
@@ -22,13 +23,16 @@ import {
 } from "react-icons/fa";
 import { HiOutlineAcademicCap, HiOutlineDocumentText } from "react-icons/hi";
 import { MdVerified, MdWork } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../../../common/loading/Loading";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUserData from "../../../hooks/useUserData";
 
 const LawyerProfile = () => {
-    const { currentUser } = useUserData();
+    const { currentUser, userRole } = useUserData();
+    const { email } = useParams();
+    const navigate = useNavigate();
     const axiosSecure = useAxiosSecure();
     const [isEditing, setIsEditing] = useState(false);
     const [editSection, setEditSection] = useState(null);
@@ -40,8 +44,11 @@ const LawyerProfile = () => {
         handleSubmit,
         formState: { errors, isSubmitting },
         reset,
-        setValue,
     } = useForm();
+
+    // Determine if admin is viewing (has email param) or lawyer is viewing their own profile
+    const isAdminView = !!email;
+    const profileEmail = email || currentUser?.email;
 
     const {
         data: lawyer = {},
@@ -49,14 +56,14 @@ const LawyerProfile = () => {
         error,
         refetch,
     } = useQuery({
-        queryKey: ["lawyerProfile", currentUser?.email],
+        queryKey: ["lawyerProfile", profileEmail],
         queryFn: async () => {
             const response = await axiosSecure.get(
-                `/lawyerProfile?email=${currentUser?.email}`
+                `/lawyerProfile?email=${profileEmail}`
             );
             return response.data;
         },
-        enabled: !!currentUser?.email,
+        enabled: !!profileEmail,
     });
 
     const startEditing = useCallback(
@@ -228,7 +235,7 @@ const LawyerProfile = () => {
                             {title}
                         </h3>
                     </div>
-                    {editable && !isEditing && (
+                    {editable && !isEditing && isAdminView && (
                         <button
                             onClick={() => startEditing(section)}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200"
@@ -241,7 +248,7 @@ const LawyerProfile = () => {
                 <div className="p-6">{children}</div>
             </div>
         ),
-        [isEditing, startEditing]
+        [isEditing, isAdminView, startEditing]
     );
 
     // Form Field Component
@@ -333,14 +340,28 @@ const LawyerProfile = () => {
                 {/* Header */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Professional Profile
-                            </h1>
-                            <p className="text-gray-600 mt-2">
-                                Manage your professional information and
-                                credentials
-                            </p>
+                        <div className="flex items-center gap-4">
+                            {userRole === "admin" && (
+                                <button
+                                    onClick={() => navigate(-1)}
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+                                >
+                                    <FaArrowLeft className="text-sm" />
+                                    Back to Lawyers
+                                </button>
+                            )}
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">
+                                    {isAdminView
+                                        ? "Edit Lawyer Profile"
+                                        : "Professional Profile"}
+                                </h1>
+                                <p className="text-gray-600 mt-2">
+                                    {isAdminView
+                                        ? "Manage lawyer information and credentials"
+                                        : "Manage your professional information and credentials"}
+                                </p>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
                             <MdVerified className="text-blue-600 text-lg" />

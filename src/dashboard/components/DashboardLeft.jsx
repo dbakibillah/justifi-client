@@ -31,7 +31,7 @@ const DashboardLeft = () => {
         if (location.pathname === "/dashboard") {
             const profileRoutes = {
                 user: "/dashboard/user-profile",
-                lawyer: "/dashboard/lawyer-profile",
+                lawyer: `/dashboard/lawyer-profile/${currentUser?.email}`,
                 arbitrator: "/dashboard/arbitrator-profile",
                 mediator: "/dashboard/mediator-profile",
                 admin: "/dashboard/all-users",
@@ -76,7 +76,7 @@ const DashboardLeft = () => {
     const lawyerLinks = [
         {
             name: "Profile",
-            path: "/dashboard/lawyer-profile",
+            path: `/dashboard/lawyer-profile/${currentUser?.email}`,
             icon: <FaUser className="text-lg" />,
         },
         {
