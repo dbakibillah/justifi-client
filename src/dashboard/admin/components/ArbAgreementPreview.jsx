@@ -159,12 +159,25 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
         "left",
         5
       );
+      party1Y += 5;
 
       setNormalFont();
-      formData.plaintiffs.forEach((plaintiff) => {
-        checkPageBreak(30);
+      formData.plaintiffs.forEach((plaintiff, index) => {
+        checkPageBreak(35);
+
+        // Plaintiff number
         party1Y += addText(
-          `Name: ${plaintiff.name || "N/A"}`,
+          `Plaintiff-${index + 1}`,
+          party1X,
+          party1Y,
+          partyWidth,
+          "left",
+          4
+        );
+
+        // Plaintiff details with proper indentation
+        party1Y += addText(
+          ` Name: ${plaintiff.name || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
@@ -172,7 +185,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party1Y += addText(
-          `Parent: ${plaintiff.parentsName || "N/A"}`,
+          ` Parent: ${plaintiff.parentsName || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
@@ -180,7 +193,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party1Y += addText(
-          `Email: ${plaintiff.email || "N/A"}`,
+          ` Email: ${plaintiff.email || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
@@ -188,7 +201,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party1Y += addText(
-          `Phone: ${plaintiff.phone || "N/A"}`,
+          ` Phone: ${plaintiff.phone || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
@@ -196,7 +209,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party1Y += addText(
-          `Address: ${plaintiff.address || "N/A"}`,
+          ` Address: ${plaintiff.address || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
@@ -204,14 +217,14 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party1Y += addText(
-          `Occupation: ${plaintiff.occupation || "N/A"}`,
+          ` Occupation: ${plaintiff.occupation || "N/A"}`,
           party1X,
           party1Y,
           partyWidth,
           "left",
           4
         );
-        party1Y += 3;
+        party1Y += 5; // Extra space between plaintiffs
       });
 
       party1Y += addText(
@@ -236,12 +249,25 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
         "left",
         5
       );
+      party2Y += 5;
 
       setNormalFont();
-      formData.defendants.forEach((defendant) => {
-        checkPageBreak(30);
+      formData.defendants.forEach((defendant, index) => {
+        checkPageBreak(35);
+
+        // Defendant number
         party2Y += addText(
-          `Name: ${defendant.name || "N/A"}`,
+          `Defendant-${index + 1}`,
+          party2X,
+          party2Y,
+          partyWidth,
+          "left",
+          4
+        );
+
+        // Defendant details with proper indentation
+        party2Y += addText(
+          ` Name: ${defendant.name || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
@@ -249,7 +275,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party2Y += addText(
-          `Parent: ${defendant.parentsName || "N/A"}`,
+          ` Parent: ${defendant.parentsName || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
@@ -257,7 +283,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party2Y += addText(
-          `Email: ${defendant.email || "N/A"}`,
+          ` Email: ${defendant.email || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
@@ -265,7 +291,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party2Y += addText(
-          `Phone: ${defendant.phone || "N/A"}`,
+          ` Phone: ${defendant.phone || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
@@ -273,7 +299,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party2Y += addText(
-          `Address: ${defendant.address || "N/A"}`,
+          ` Address: ${defendant.address || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
@@ -281,14 +307,14 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           4
         );
         party2Y += addText(
-          `Occupation: ${defendant.occupation || "N/A"}`,
+          ` Occupation: ${defendant.occupation || "N/A"}`,
           party2X,
           party2Y,
           partyWidth,
           "left",
           4
         );
-        party2Y += 3;
+        party2Y += 5; // Extra space between defendants
       });
 
       party2Y += addText(
@@ -711,11 +737,10 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
       );
 
       let currentSigY = signatureStartY + 15;
-      formData.plaintiffs.forEach((plaintiff) => {
-        checkPageBreak(35);
-        const sigDate = formatDateForDisplay(plaintiff.signatureDate);
+      formData.plaintiffs.forEach((plaintiff, index) => {
+        checkPageBreak(25);
         pdf.text(
-          plaintiff.name || "N/A",
+          `Plaintiff-${index + 1}: ${plaintiff.name || "N/A"}`,
           margin + signatureSectionWidth / 2,
           currentSigY,
           { align: "center" }
@@ -727,13 +752,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           margin + signatureSectionWidth - 10,
           currentSigY + 8
         );
-        pdf.text(
-          `Date: ${sigDate}`,
-          margin + signatureSectionWidth / 2,
-          currentSigY + 15,
-          { align: "center" }
-        );
-        currentSigY += 25;
+        currentSigY += 15;
       });
 
       // Party 2 Signatures
@@ -753,11 +772,10 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
       );
 
       let currentSigY2 = signatureStartY + 15;
-      formData.defendants.forEach((defendant) => {
-        checkPageBreak(35);
-        const sigDate = formatDateForDisplay(defendant.signatureDate);
+      formData.defendants.forEach((defendant, index) => {
+        checkPageBreak(25);
         pdf.text(
-          defendant.name || "N/A",
+          `Defendant-${index + 1}: ${defendant.name || "N/A"}`,
           margin + signatureSectionWidth + signatureSectionWidth / 2,
           currentSigY2,
           { align: "center" }
@@ -769,13 +787,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           margin + 2 * signatureSectionWidth - 10,
           currentSigY2 + 8
         );
-        pdf.text(
-          `Date: ${sigDate}`,
-          margin + signatureSectionWidth + signatureSectionWidth / 2,
-          currentSigY2 + 15,
-          { align: "center" }
-        );
-        currentSigY2 += 25;
+        currentSigY2 += 15;
       });
 
       // JustiFi Signature
@@ -1069,7 +1081,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
               {formData.plaintiffs.map((plaintiff, index) => (
                 <div key={index} className="mb-4">
                   <p>
-                    <strong>Name:</strong> {plaintiff.name}
+                    <strong>Plaintiff-{index + 1}:</strong> {plaintiff.name}
                   </p>
                   <p>
                     <strong>Parent:</strong> {plaintiff.parentsName}
@@ -1103,7 +1115,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
               {formData.defendants.map((defendant, index) => (
                 <div key={index} className="mb-4">
                   <p>
-                    <strong>Name:</strong> {defendant.name}
+                    <strong>Defendant-{index + 1}:</strong> {defendant.name}
                   </p>
                   <p>
                     <strong>Parent:</strong> {defendant.parentsName}
@@ -1372,92 +1384,6 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
               issuance.
             </li>
           </ul>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 border-b pb-2">
-            EXECUTION & SIGNATURES
-          </h2>
-          <p className="mb-4">
-            <strong>IN WITNESS WHEREOF</strong>, the Parties have executed this
-            Arbitration Agreement on the date first written above.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="text-center border-t border-gray-300 pt-4">
-              <p className="font-bold">Party 1 (First Party)</p>
-              <p className="mt-4">Plaintiffs/Claimants</p>
-              <div className="mt-4">
-                {formData.plaintiffs.map((plaintiff, index) => {
-                  const signatureDate = formatDateForDisplay(
-                    plaintiff.signatureDate
-                  );
-                  return (
-                    <div key={index} className="mb-4 text-center">
-                      <p className="font-medium mb-2">{plaintiff.name}</p>
-                      <div className="signature-slot border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-                        {plaintiff.signature && (
-                          <img
-                            src={plaintiff.signature}
-                            className="signature-preview h-12"
-                            alt={`${plaintiff.name} Signature`}
-                          />
-                        )}
-                      </div>
-                      <p className="mt-1">Date: {signatureDate}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="text-center border-t border-gray-300 pt-4">
-              <p className="font-bold">Party 2 (Second Party)</p>
-              <p className="mt-4">Defendants/Respondents</p>
-              <div className="mt-4">
-                {formData.defendants.map((defendant, index) => {
-                  const signatureDate = formatDateForDisplay(
-                    defendant.signatureDate
-                  );
-                  return (
-                    <div key={index} className="mb-4 text-center">
-                      <p className="font-medium mb-2">{defendant.name}</p>
-                      <div className="signature-slot border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-                        {defendant.signature && (
-                          <img
-                            src={defendant.signature}
-                            className="signature-preview h-12"
-                            alt={`${defendant.name} Signature`}
-                          />
-                        )}
-                      </div>
-                      <p className="mt-1">Date: {signatureDate}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="text-center border-t border-gray-300 pt-4">
-              <p className="font-bold">
-                On behalf of JustiFi (Witness & Record Keeper)
-              </p>
-              <p className="mt-4">Name: {formData.justifiName}</p>
-              <p>Designation: {formData.justifiDesignation}</p>
-              <div className="mt-4">
-                <div className="signature-slot border-b border-black min-h-[60px] mt-2 flex items-center justify-center">
-                  {formData.justifiSignature && (
-                    <img
-                      src={formData.justifiSignature}
-                      className="signature-preview h-12"
-                      alt="JustiFi Signature"
-                    />
-                  )}
-                </div>
-                <p className="mt-1">Date: {agreementDateDisplay}</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="mt-12">

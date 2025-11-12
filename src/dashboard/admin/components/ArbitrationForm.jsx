@@ -117,37 +117,6 @@ const ArbitrationForm = ({ onSubmit, caseId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate all signatures are provided
-    let allSignaturesProvided = true;
-    let missingSignatures = [];
-
-    plaintiffs.forEach((plaintiff) => {
-      if (!plaintiff.signature) {
-        allSignaturesProvided = false;
-        missingSignatures.push(`Plaintiff: ${plaintiff.name}`);
-      }
-    });
-
-    defendants.forEach((defendant) => {
-      if (!defendant.signature) {
-        allSignaturesProvided = false;
-        missingSignatures.push(`Defendant: ${defendant.name}`);
-      }
-    });
-
-    if (!justifiRep.signature) {
-      allSignaturesProvided = false;
-      missingSignatures.push("JustiFi Representative");
-    }
-
-    if (!allSignaturesProvided) {
-      alert(
-        "Please provide signatures for all parties:\n" +
-          missingSignatures.join("\n")
-      );
-      return;
-    }
-
     const formData = {
       caseId: caseId,
       caseTitle: arbitrationCase?.caseTitle || "",
@@ -165,7 +134,6 @@ const ArbitrationForm = ({ onSubmit, caseId }) => {
       complianceDays: financialInfo.complianceDays,
       justifiName: justifiRep.name,
       justifiDesignation: justifiRep.designation,
-      justifiSignature: justifiRep.signature,
     };
 
     onSubmit(formData);

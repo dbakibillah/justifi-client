@@ -38,20 +38,6 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
     setShowJustifiDropdown(false);
   };
 
-  const handleSignatureUpload = (file) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        handleChange("signature", event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearSignature = () => {
-    handleChange("signature", null);
-  };
-
   const filteredRepresentatives = representatives.filter(
     (rep) =>
       rep.name.toLowerCase().includes(justifiSearch.toLowerCase()) ||
@@ -104,52 +90,6 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
               className="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100"
               readOnly
             />
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          JustiFi Representative Signature
-        </h2>
-        <div className="border border-gray-200 rounded-md p-4">
-          <div
-            className="border border-gray-300 rounded-md bg-white min-h-[150px] flex items-center justify-center cursor-pointer mb-3"
-            onClick={() =>
-              document.getElementById("justifi-signature-upload").click()
-            }
-          >
-            <input
-              type="file"
-              id="justifi-signature-upload"
-              className="hidden"
-              accept="image/*"
-              onChange={(e) => handleSignatureUpload(e.target.files[0])}
-            />
-            <div className="w-full h-full flex items-center justify-center">
-              {justifiRep.signature ? (
-                <img
-                  src={justifiRep.signature}
-                  className="max-w-full max-h-[150px]"
-                  alt="JustiFi Signature"
-                />
-              ) : (
-                <span className="text-gray-500">Click to upload signature</span>
-              )}
-            </div>
-          </div>
-          <div className="flex justify-between">
-            <button
-              type="button"
-              className="bg-red-500 text-white px-3 py-1 rounded text-sm flex items-center gap-2"
-              onClick={clearSignature}
-            >
-              <FaTrash className="text-xs" />
-              Clear
-            </button>
-            <div className="text-sm text-gray-500">
-              Upload signature image (PNG, JPG)
-            </div>
           </div>
         </div>
       </div>
