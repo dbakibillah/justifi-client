@@ -28,6 +28,7 @@ import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
+import ArbitrationDetails from "./dashboard/userDashboard/pages/ArbitrationDetails";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
@@ -107,6 +108,8 @@ createRoot(document.getElementById("root")).render(
                             path="my-arbitrations"
                             element={<MyArbitrations />}
                         />
+                        <Route path="my-arbitrations/:id" element={<ArbitrationDetails/>} />
+                        
                         <Route path="all-users" element={<AllUsers />} />
                         <Route
                             path="all-lawyers"
