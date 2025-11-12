@@ -2,7 +2,7 @@ import React from "react";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 
-const MedAgreementPreview = ({ formData, onBack, pdfContainerRef }) => {
+const MedAgreementPreview = ({ formData, onBack }) => {
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
