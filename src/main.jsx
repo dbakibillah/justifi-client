@@ -34,6 +34,7 @@ import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
 import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
 import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
+import ArbitrationsManagement from "./dashboard/admin/pages/arbitrationManagement/ArbitrationsManagement";
 
 const queryClient = new QueryClient();
 
@@ -107,12 +108,14 @@ createRoot(document.getElementById("root")).render(
                             path="my-arbitrations"
                             element={<MyArbitrations />}
                         />
-                        <Route path="my-arbitrations/:id" element={<ArbitrationDetails/>} />
+                        <Route
+                            path="my-arbitrations/:id"
+                            element={<ArbitrationDetails />}
+                        />
                     </Route>
 
                     {/* Admin routes */}
                     <Route path="/admin" element={<Dashboard />}>
-
                         <Route path="all-users" element={<AllUsers />} />
                         <Route
                             path="all-lawyers"
@@ -125,6 +128,10 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="all-mediators"
                             element={<MediatorManagement />}
+                        />
+                        <Route
+                            path="arbitrations-management"
+                            element={<ArbitrationsManagement />}
                         />
                     </Route>
                 </Routes>

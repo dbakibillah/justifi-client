@@ -142,8 +142,8 @@ const DashboardLeft = () => {
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
-            name: "All Arbitratons",
-            path: "/admin/all-arbitrations",
+            name: "Arbitrations Management",
+            path: "/admin/arbitrations-management",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
