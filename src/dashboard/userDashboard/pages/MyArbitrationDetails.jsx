@@ -171,6 +171,38 @@ const MyArbitrationDetails = () => {
         </div>
       </motion.div>
 
+     {/* Arbitrators Panel */}
+      <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+        <div className="flex items-center mb-6">
+          <div className="w-1 h-8 bg-blue-600 rounded-full mr-3"></div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Arbitrators Panel
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {caseDetails.arbitrators.map((arb, i) => (
+            <motion.div
+              key={i}
+              className="border border-gray-100 rounded-xl p-4 bg-gray-50 hover:shadow-lg transition-all duration-200 cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setSelectedArbitrator(arb)}
+            >
+              <img
+                src={arb.image}
+                alt={arb.name}
+                className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
+              />
+              <h3 className="text-center font-semibold text-gray-800 text-lg">
+                {arb.name}
+              </h3>
+              <p className="text-center text-blue-600 text-sm">{arb.role}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+     
+     
       {/* Case Description + Evidence Section */}
       <motion.div
         className="bg-white rounded-xl shadow-md p-6 mb-8"
@@ -178,7 +210,7 @@ const MyArbitrationDetails = () => {
         animate={{ opacity: 1 }}
       >
         <h2 className="text-xl font-bold mb-3 text-gray-900">
-          Case Description
+          Case Plantif Information
         </h2>
         <p className="text-gray-600 mb-6">{caseDetails.description}</p>
 
@@ -231,36 +263,7 @@ const MyArbitrationDetails = () => {
         </div>
       </motion.div>
 
-      {/* Arbitrators Panel */}
-      <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-        <div className="flex items-center mb-6">
-          <div className="w-1 h-8 bg-blue-600 rounded-full mr-3"></div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Arbitrators Panel
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {caseDetails.arbitrators.map((arb, i) => (
-            <motion.div
-              key={i}
-              className="border border-gray-100 rounded-xl p-4 bg-gray-50 hover:shadow-lg transition-all duration-200 cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setSelectedArbitrator(arb)}
-            >
-              <img
-                src={arb.image}
-                alt={arb.name}
-                className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
-              />
-              <h3 className="text-center font-semibold text-gray-800 text-lg">
-                {arb.name}
-              </h3>
-              <p className="text-center text-blue-600 text-sm">{arb.role}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+      
 
       {/* Hearing Schedule Section */}
       <motion.div
