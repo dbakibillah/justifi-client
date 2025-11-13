@@ -9,6 +9,7 @@ function Arbitration_Agreement() {
 
   const handleFormSubmit = (data) => {
     setFormData(data);
+    console.log("data: ", data);
     setShowPreview(true);
   };
 
