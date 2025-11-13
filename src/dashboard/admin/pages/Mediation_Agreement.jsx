@@ -2,12 +2,14 @@ import React, { useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import MediationForm from "../components/MediationForm";
 import MedAgreementPreview from "../components/MedAgreementPreview";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 function Mediation_Agreement() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(null);
   const pdfContainerRef = useRef(null);
   const location = useLocation();
+  const axiosSecure = useAxiosSecure();
 
   // Extract case ID from URL
   const getCaseIdFromUrl = () => {
@@ -19,6 +21,8 @@ function Mediation_Agreement() {
 
   const handleFormSubmit = (data) => {
     setFormData(data);
+    console.log("data: ", data);
+    const response = axiosSecure.patch(`/mediation-agreement`, { data });
     setShowPreview(true);
   };
 

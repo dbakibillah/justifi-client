@@ -18,6 +18,7 @@ const MediatorDetails = ({
   const selectMediator = (mediator) => {
     handleChange("mediatorName", mediator.name);
     handleChange("mediatorQualification", mediator.qualification);
+    handleChange("mediatorEmail", mediator.email);
     setMediatorSearch(mediator.name);
     setShowMediatorDropdown(false);
   };
@@ -88,6 +89,11 @@ const MediatorDetails = ({
                     <div className="text-sm text-gray-600">
                       {mediator.qualification}
                     </div>
+                    {mediator.email && (
+                      <div className="text-xs text-gray-500">
+                        {mediator.email}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -106,6 +112,11 @@ const MediatorDetails = ({
           />
         </div>
       </div>
+      {mediatorDetails.mediatorEmail && (
+        <div className="mt-2 text-sm text-green-600">
+          Mediator Email: {mediatorDetails.mediatorEmail}
+        </div>
+      )}
     </div>
   );
 };

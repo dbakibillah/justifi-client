@@ -2,13 +2,13 @@ import React, { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ArbitrationForm from "../components/ArbitrationForm";
 import ArbAgreementPreview from "../components/ArbAgreementPreview";
-//import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 function Arbitration_Agreement() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(null);
   const pdfContainerRef = useRef(null);
-  //const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxiosSecure();
 
   // Get caseId from URL parameters
   const { caseId } = useParams();
@@ -16,7 +16,7 @@ function Arbitration_Agreement() {
   const handleFormSubmit = (data) => {
     setFormData(data);
     console.log("data: ", data);
-    //const response = axiosSecure.patch(`/arbitration-agreement`, { data });
+    const response = axiosSecure.patch(`/arbitration-agreement`, { data });
     setShowPreview(true);
   };
 

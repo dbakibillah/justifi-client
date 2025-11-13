@@ -43,11 +43,13 @@ const MediationForm = ({ onSubmit, caseId }) => {
     totalCost: "",
     mediatorName: "",
     mediatorQualification: "",
+    mediatorEmail: "",
   });
 
   const [justifiRep, setJustifiRep] = useState({
     name: "",
     designation: "",
+    email: "",
   });
 
   const [costPerParty, setCostPerParty] = useState(0);
@@ -108,7 +110,7 @@ const MediationForm = ({ onSubmit, caseId }) => {
   const calculateCosts = () => {
     const totalCost = parseFloat(mediatorDetails.totalCost) || 0;
     const partyCount = plaintiffs.length + defendants.length;
-    const costPerParty = totalCost / partyCount;
+    const costPerParty = partyCount > 0 ? totalCost / partyCount : 0;
     setCostPerParty(costPerParty);
   };
 
@@ -127,8 +129,10 @@ const MediationForm = ({ onSubmit, caseId }) => {
       costPerParty: costPerParty.toFixed(2),
       mediatorName: mediatorDetails.mediatorName,
       mediatorQualification: mediatorDetails.mediatorQualification,
+      mediatorEmail: mediatorDetails.mediatorEmail,
       justifiName: justifiRep.name,
       justifiDesignation: justifiRep.designation,
+      justifiEmail: justifiRep.email,
       caseId: caseId,
       caseTitle: selectedCase?.caseTitle || "",
     };
