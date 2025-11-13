@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import SessionModal from "./SessionModal";
 
 const AdminArbitrationDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [selectedArbitration, setSelectedArbitration] = useState(null);
+    const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
 
     // Get arbitration data from navigation state
     const arbitration = location.state?.arbitration;
@@ -47,6 +51,16 @@ const AdminArbitrationDetails = () => {
         );
     };
 
+    const openSessionModal = (arbitration) => {
+        setSelectedArbitration(arbitration);
+        setIsSessionModalOpen(true);
+    };
+
+    const closeSessionModal = () => {
+        setIsSessionModalOpen(false);
+        setSelectedArbitration(null);
+    };
+
     // Show loading if no arbitration data in state
     if (!arbitration) {
         return (
@@ -60,7 +74,9 @@ const AdminArbitrationDetails = () => {
                         Please navigate to this page from the arbitrations list.
                     </p>
                     <button
-                        onClick={() => navigate("/admin/arbitrations-management")}
+                        onClick={() =>
+                            navigate("/admin/arbitrations-management")
+                        }
                         className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
                         Back to Arbitrations
@@ -78,7 +94,9 @@ const AdminArbitrationDetails = () => {
                     <div className="flex items-center justify-between">
                         <div>
                             <button
-                                onClick={() => navigate("/admin/arbitrations-management")}
+                                onClick={() =>
+                                    navigate("/admin/arbitrations-management")
+                                }
                                 className="flex items-center text-blue-600 hover:text-blue-800 mb-4 transition-colors"
                             >
                                 <svg
@@ -185,12 +203,7 @@ const AdminArbitrationDetails = () => {
                         </h2>
                         <div className="space-y-3">
                             <button
-                                onClick={() =>
-                                    navigate(
-                                        `/admin/arbitrations/${arbitration._id}/session`,
-                                        { state: { arbitration } }
-                                    )
-                                }
+                                onClick={() => openSessionModal(arbitration)}
                                 className="w-full px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
                             >
                                 Create Session
@@ -391,6 +404,15 @@ const AdminArbitrationDetails = () => {
                     </div>
                 </div>
             </div>
+            {/* Create Session Modal */}
+            {isSessionModalOpen && selectedArbitration && (
+                <SessionModal
+                    arbitration={selectedArbitration}
+                    onClose={closeSessionModal}
+                    // onSessionCreated={refetch}
+                    // axiosSecure={axiosSecure}
+                />
+            )}
         </div>
     );
 };

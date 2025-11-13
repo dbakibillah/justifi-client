@@ -36,8 +36,12 @@ const SessionModal = ({
                 `${sessionForm.date}T${sessionForm.time}`
             );
 
-            console.log(sessionForm, arbitration);
+            console.log( arbitration);
 
+            const response = await axiosSecure.patch(`/create-session/${arbitration._id}`, {
+                sessionDateTime,
+                meetingLink: sessionForm.meetingLink,
+            });
             alert("Session created successfully!");
             onClose();
             onSessionCreated();
