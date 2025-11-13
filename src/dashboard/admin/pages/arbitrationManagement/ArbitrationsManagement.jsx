@@ -182,8 +182,6 @@ const ArbitrationsManagement = () => {
                 <SessionModal
                     arbitration={selectedArbitration}
                     onClose={closeSessionModal}
-                    onSessionCreated={refetch}
-                    axiosSecure={axiosSecure}
                 />
             )}
         </div>

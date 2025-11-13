@@ -1,11 +1,11 @@
 import { useState } from "react";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const SessionModal = ({
     arbitration,
     onClose,
-    onSessionCreated,
-    axiosSecure,
 }) => {
+    const axiosSecure = useAxiosSecure();
     const [sessionForm, setSessionForm] = useState({
         date: "",
         time: "",
@@ -42,13 +42,12 @@ const SessionModal = ({
                 sessionDateTime,
                 meetingLink: sessionForm.meetingLink,
             });
-            
+
             alert("Session created successfully!");
             onClose();
-            onSessionCreated();
         } catch (error) {
             console.error("Error creating session:", error);
-            alert("Failed to create session");
+            alert("Failed to create session from catch");
         }
     };
 
