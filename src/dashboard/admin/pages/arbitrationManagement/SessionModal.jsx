@@ -36,7 +36,7 @@ const SessionModal = ({
                 `${sessionForm.date}T${sessionForm.time}`
             );
 
-            console.log(sessionDateTime);
+            console.log(sessionForm, arbitration);
 
             alert("Session created successfully!");
             onClose();

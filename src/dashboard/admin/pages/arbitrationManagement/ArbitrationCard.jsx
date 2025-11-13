@@ -1,10 +1,9 @@
-const ArbitrationCard = ({ 
-    arbitration, 
-    onViewDetails, 
-    onCreateSession, 
-    formatDate 
+const ArbitrationCard = ({
+    arbitration,
+    onViewDetails,
+    onCreateSession,
+    formatDate,
 }) => {
-    
     const getStatusBadge = (status) => {
         const statusStyles = {
             Pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
