@@ -11,15 +11,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
       generatePDFContent();
     }
   }, [formData, pdfContainerRef]);
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Format a date string for display.
- * If the date string is invalid, an empty string is returned.
- * Otherwise, the date is formatted as "day month, year" where
- * day is the day of the month (1-31),
- * month is the full month name (e.g. January),
- * and year is the 4-digit year.
-/*******  0f57b0de-46ce-4962-9b66-ec9b8c87ddd2  *******/
+
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
     try {
@@ -37,6 +29,23 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
   const generatePDFContent = () => {
     if (!formData || !pdfContainerRef.current) return;
     pdfContainerRef.current.innerHTML = "<div>PDF Content Ready</div>";
+  };
+
+  // Helper function to get arbitrator name safely
+  const getArbitratorName = (arbitratorObj) => {
+    if (!arbitratorObj) return "N/A";
+    return arbitratorObj.name || "N/A";
+  };
+
+  // Helper function to get JustiFi representative data safely
+  const getJustifiName = () => {
+    if (!formData.justifiRepresentative) return "N/A";
+    return formData.justifiRepresentative.name || "N/A";
+  };
+
+  const getJustifiDesignation = () => {
+    if (!formData.justifiRepresentative) return "N/A";
+    return formData.justifiRepresentative.designation || "N/A";
   };
 
   const generatePDF = async () => {
@@ -326,7 +335,7 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
       });
 
       party2Y += addText(
-        "(Hereinafter referred to as the Second Party)",
+        "(Here in after referred to as the Second Party)",
         party2X,
         party2Y,
         partyWidth,
@@ -424,11 +433,11 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
       yPos += 4;
 
       const arbitrators = [
-        `• Arbitrator 1: ${formData.arbitrator1 || "N/A"}`,
-        `• Arbitrator 2: ${formData.arbitrator2 || "N/A"}`,
-        `• Arbitrator 3 (Presiding Arbitrator): ${
-          formData.presidingArbitrator || "N/A"
-        }`,
+        `• Arbitrator 1: ${getArbitratorName(formData.arbitrator1)}`,
+        `• Arbitrator 2: ${getArbitratorName(formData.arbitrator2)}`,
+        `• Arbitrator 3 (Presiding Arbitrator): ${getArbitratorName(
+          formData.presidingArbitrator
+        )}`,
       ];
 
       arbitrators.forEach((arbitrator) => {
@@ -814,13 +823,13 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
         { align: "center" }
       );
       pdf.text(
-        `Name: ${formData.justifiName || "N/A"}`,
+        `Name: ${getJustifiName()}`,
         margin + 2 * signatureSectionWidth + signatureSectionWidth / 2,
         signatureStartY + 15,
         { align: "center" }
       );
       pdf.text(
-        `Designation: ${formData.justifiDesignation || "N/A"}`,
+        `Designation: ${getJustifiDesignation()}`,
         margin + 2 * signatureSectionWidth + signatureSectionWidth / 2,
         signatureStartY + 22,
         { align: "center" }
@@ -1209,14 +1218,16 @@ const ArbAgreementPreview = ({ formData, onBack, pdfContainerRef, caseId }) => {
           </p>
           <ul className="list-disc pl-5 mt-2">
             <li>
-              <strong>Arbitrator 1:</strong> {formData.arbitrator1}
+              <strong>Arbitrator 1:</strong>{" "}
+              {getArbitratorName(formData.arbitrator1)}
             </li>
             <li>
-              <strong>Arbitrator 2:</strong> {formData.arbitrator2}
+              <strong>Arbitrator 2:</strong>{" "}
+              {getArbitratorName(formData.arbitrator2)}
             </li>
             <li>
               <strong>Arbitrator 3 (Presiding Arbitrator):</strong>{" "}
-              {formData.presidingArbitrator}
+              {getArbitratorName(formData.presidingArbitrator)}
             </li>
           </ul>
           <p className="mt-2">

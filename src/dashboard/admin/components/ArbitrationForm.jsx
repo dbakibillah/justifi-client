@@ -113,16 +113,49 @@ const ArbitrationForm = ({ onSubmit, caseId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Find arbitrator objects from the arbitratorsList to get emails
+    // Create simplified arbitrator objects with only name and email
     const arbitrator1Obj = arbitrators?.find(
       (arb) => arb.name === arbitratorsInfo.arbitrator1
-    );
+    )
+      ? {
+          name: arbitratorsInfo.arbitrator1,
+          email:
+            arbitrators?.find((arb) => arb.name === arbitratorsInfo.arbitrator1)
+              ?.email || "",
+        }
+      : null;
+
     const arbitrator2Obj = arbitrators?.find(
       (arb) => arb.name === arbitratorsInfo.arbitrator2
-    );
+    )
+      ? {
+          name: arbitratorsInfo.arbitrator2,
+          email:
+            arbitrators?.find((arb) => arb.name === arbitratorsInfo.arbitrator2)
+              ?.email || "",
+        }
+      : null;
+
     const presidingArbitratorObj = arbitrators?.find(
       (arb) => arb.name === arbitratorsInfo.presidingArbitrator
-    );
+    )
+      ? {
+          name: arbitratorsInfo.presidingArbitrator,
+          email:
+            arbitrators?.find(
+              (arb) => arb.name === arbitratorsInfo.presidingArbitrator
+            )?.email || "",
+        }
+      : null;
+
+    // Create simplified JustiFi representative object
+    const justifiRepresentativeObj = justifiRep.name
+      ? {
+          name: justifiRep.name,
+          designation: justifiRep.designation,
+          email: justifiRep.email,
+        }
+      : null;
 
     const formData = {
       caseId: caseId,
@@ -132,21 +165,16 @@ const ArbitrationForm = ({ onSubmit, caseId }) => {
       plaintiffs: plaintiffs,
       defendants: defendants,
       disputeNature: disputeInfo.nature,
-      arbitrator1: arbitratorsInfo.arbitrator1,
-      arbitrator2: arbitratorsInfo.arbitrator2,
-      presidingArbitrator: arbitratorsInfo.presidingArbitrator,
-      // Add arbitrator emails
-      arbitrator1Email: arbitrator1Obj?.email || "",
-      arbitrator2Email: arbitrator2Obj?.email || "",
-      presidingArbitratorEmail: presidingArbitratorObj?.email || "",
+      // Send simplified arbitrator objects with only name and email
+      arbitrator1: arbitrator1Obj,
+      arbitrator2: arbitrator2Obj,
+      presidingArbitrator: presidingArbitratorObj,
       suitValue: financialInfo.suitValue,
       sittings: financialInfo.sittings,
       totalCost: financialInfo.totalCost,
       complianceDays: financialInfo.complianceDays,
-      justifiName: justifiRep.name,
-      justifiDesignation: justifiRep.designation,
-      // Add JustiFi representative email
-      justifiEmail: justifiRep.email || "",
+      // Send simplified JustiFi representative object
+      justifiRepresentative: justifiRepresentativeObj,
     };
 
     onSubmit(formData);
