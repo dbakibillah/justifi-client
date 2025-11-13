@@ -150,7 +150,15 @@ const ArbitratorsInformation = ({
                     >
                       <div className="font-medium">{arbitrator.name}</div>
                       <div className="text-sm text-gray-600">
-                        {arbitrator.specialization?.join(", ")}
+                        {arbitrator.email && (
+                          <div>Email: {arbitrator.email}</div>
+                        )}
+                        {arbitrator.specialization?.length > 0 && (
+                          <div>
+                            Specialization:{" "}
+                            {arbitrator.specialization.join(", ")}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
@@ -210,7 +218,15 @@ const ArbitratorsInformation = ({
                     >
                       <div className="font-medium">{arbitrator.name}</div>
                       <div className="text-sm text-gray-600">
-                        {arbitrator.specialization?.join(", ")}
+                        {arbitrator.email && (
+                          <div>Email: {arbitrator.email}</div>
+                        )}
+                        {arbitrator.specialization?.length > 0 && (
+                          <div>
+                            Specialization:{" "}
+                            {arbitrator.specialization.join(", ")}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
@@ -277,7 +293,15 @@ const ArbitratorsInformation = ({
                       >
                         <div className="font-medium">{arbitrator.name}</div>
                         <div className="text-sm text-gray-600">
-                          {arbitrator.specialization?.join(", ")}
+                          {arbitrator.email && (
+                            <div>Email: {arbitrator.email}</div>
+                          )}
+                          {arbitrator.specialization?.length > 0 && (
+                            <div>
+                              Specialization:{" "}
+                              {arbitrator.specialization.join(", ")}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))

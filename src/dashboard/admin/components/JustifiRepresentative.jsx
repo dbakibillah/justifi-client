@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaTrash } from "react-icons/fa";
 
 const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
   const [showJustifiDropdown, setShowJustifiDropdown] = useState(false);
@@ -9,18 +8,22 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
     {
       name: "Jennifer Martinez",
       designation: "Senior Legal Counsel",
+      email: "jennifer.martinez@justifi.com",
     },
     {
       name: "David Kim",
       designation: "Head of Mediation Services",
+      email: "david.kim@justifi.com",
     },
     {
       name: "Amanda Wilson",
       designation: "Legal Operations Manager",
+      email: "amanda.wilson@justifi.com",
     },
     {
       name: "James Thompson",
       designation: "Director of Dispute Resolution",
+      email: "james.thompson@justifi.com",
     },
   ];
 
@@ -34,6 +37,7 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
   const selectRepresentative = (rep) => {
     handleChange("name", rep.name);
     handleChange("designation", rep.designation);
+    handleChange("email", rep.email);
     setJustifiSearch(rep.name);
     setShowJustifiDropdown(false);
   };
@@ -74,6 +78,7 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
                       <div className="text-sm text-gray-600">
                         {rep.designation}
                       </div>
+                      <div className="text-xs text-gray-500">{rep.email}</div>
                     </div>
                   ))}
                 </div>
@@ -92,6 +97,11 @@ const JustifiRepresentative = ({ justifiRep, onUpdateJustifiRep }) => {
             />
           </div>
         </div>
+        {justifiRep.email && (
+          <div className="mt-2 text-sm text-green-600">
+            Email: {justifiRep.email}
+          </div>
+        )}
       </div>
     </>
   );
