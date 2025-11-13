@@ -29,6 +29,7 @@ const ArbitrationsManagement = () => {
     const closeSessionModal = () => {
         setIsSessionModalOpen(false);
         setSelectedArbitration(null);
+        refetch();
     };
 
     const viewDetails = (arbitration) => {
