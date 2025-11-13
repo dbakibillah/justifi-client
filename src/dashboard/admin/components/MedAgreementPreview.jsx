@@ -3,6 +3,28 @@ import { FaArrowLeft, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 
 const MedAgreementPreview = ({ formData, onBack }) => {
+  // Helper function to get mediator data safely
+  const getMediatorName = () => {
+    if (!formData.mediator) return "N/A";
+    return formData.mediator.name || "N/A";
+  };
+
+  const getMediatorQualification = () => {
+    if (!formData.mediator) return "N/A";
+    return formData.mediator.qualification || "N/A";
+  };
+
+  // Helper function to get JustiFi representative data safely
+  const getJustifiName = () => {
+    if (!formData.justifiRepresentative) return "N/A";
+    return formData.justifiRepresentative.name || "N/A";
+  };
+
+  const getJustifiDesignation = () => {
+    if (!formData.justifiRepresentative) return "N/A";
+    return formData.justifiRepresentative.designation || "N/A";
+  };
+
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -183,7 +205,7 @@ const MedAgreementPreview = ({ formData, onBack }) => {
           content: [
             "1.1 Mediation Process: The Parties have agreed to resolve their dispute through mediation.",
             `1.2 Session Agreement: The Parties have agreed to ${formData.sessionsAgreed} mediation session(s).`,
-            `1.3 Assigned Mediator: ${formData.mediatorName} (${formData.mediatorQualification}) has been assigned as the mediator.`,
+            `1.3 Assigned Mediator: ${getMediatorName()} (${getMediatorQualification()}) has been assigned as the mediator.`,
           ],
         },
         {
@@ -344,12 +366,12 @@ const MedAgreementPreview = ({ formData, onBack }) => {
       yPosition += lineHeight;
 
       pdf.setFont("times", "normal");
-      pdf.text(`Name: ${formData.justifiName}`, pageWidth / 2, yPosition, {
+      pdf.text(`Name: ${getJustifiName()}`, pageWidth / 2, yPosition, {
         align: "center",
       });
       yPosition += lineHeight;
       pdf.text(
-        `Designation: ${formData.justifiDesignation}`,
+        `Designation: ${getJustifiDesignation()}`,
         pageWidth / 2,
         yPosition,
         { align: "center" }
@@ -550,9 +572,8 @@ const MedAgreementPreview = ({ formData, onBack }) => {
               <strong>{formData.sessionsAgreed} mediation session(s)</strong>.
             </p>
             <p className="mb-2">
-              <strong>1.3 Assigned Mediator:</strong> {formData.mediatorName} (
-              {formData.mediatorQualification}) has been assigned as the
-              mediator.
+              <strong>1.3 Assigned Mediator:</strong> {getMediatorName()} (
+              {getMediatorQualification()}) has been assigned as the mediator.
             </p>
           </div>
         </div>

@@ -117,6 +117,24 @@ const MediationForm = ({ onSubmit, caseId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Create mediator object with name and email
+    const mediatorObj = mediatorDetails.mediatorName
+      ? {
+          name: mediatorDetails.mediatorName,
+          qualification: mediatorDetails.mediatorQualification,
+          email: mediatorDetails.mediatorEmail,
+        }
+      : null;
+
+    // Create JustiFi representative object
+    const justifiRepresentativeObj = justifiRep.name
+      ? {
+          name: justifiRep.name,
+          designation: justifiRep.designation,
+          email: justifiRep.email,
+        }
+      : null;
+
     const formData = {
       agreementDate: new Date().toISOString().split("T")[0],
       disputeCategory: disputeInfo.category,
@@ -127,12 +145,10 @@ const MediationForm = ({ onSubmit, caseId }) => {
       sessionsAgreed: mediatorDetails.sessionsAgreed,
       totalCost: mediatorDetails.totalCost,
       costPerParty: costPerParty.toFixed(2),
-      mediatorName: mediatorDetails.mediatorName,
-      mediatorQualification: mediatorDetails.mediatorQualification,
-      mediatorEmail: mediatorDetails.mediatorEmail,
-      justifiName: justifiRep.name,
-      justifiDesignation: justifiRep.designation,
-      justifiEmail: justifiRep.email,
+      // Send complete mediator object
+      mediator: mediatorObj,
+      // Send complete JustiFi representative object
+      justifiRepresentative: justifiRepresentativeObj,
       caseId: caseId,
       caseTitle: selectedCase?.caseTitle || "",
     };
