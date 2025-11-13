@@ -42,6 +42,7 @@ const SessionModal = ({
                 sessionDateTime,
                 meetingLink: sessionForm.meetingLink,
             });
+            
             alert("Session created successfully!");
             onClose();
             onSessionCreated();
