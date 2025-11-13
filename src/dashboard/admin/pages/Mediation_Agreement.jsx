@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import MediationForm from "../components/MediationForm";
 import MedAgreementPreview from "../components/MedAgreementPreview";
 
@@ -6,6 +7,15 @@ function Mediation_Agreement() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(null);
   const pdfContainerRef = useRef(null);
+  const location = useLocation();
+
+  // Extract case ID from URL
+  const getCaseIdFromUrl = () => {
+    const pathSegments = location.pathname.split("/");
+    return pathSegments[pathSegments.length - 1];
+  };
+
+  const caseId = getCaseIdFromUrl();
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -24,7 +34,7 @@ function Mediation_Agreement() {
         </h1>
 
         {!showPreview ? (
-          <MediationForm onSubmit={handleFormSubmit} />
+          <MediationForm onSubmit={handleFormSubmit} caseId={caseId} />
         ) : (
           <MedAgreementPreview
             formData={formData}
