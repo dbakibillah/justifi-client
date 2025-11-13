@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import ArbitrationCard from "./ArbitrationCard";
 import SessionModal from "./SessionModal";
-import useAxiosSecure from "../../../../hooks/useAxiosSecure";
-import DetailsModal from "./DetailsModal";
 
 const ArbitrationsManagement = () => {
     const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
     const [selectedArbitration, setSelectedArbitration] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
     const [statusFilter, setStatusFilter] = useState("All");
     const [paymentFilter, setPaymentFilter] = useState("All");
@@ -21,16 +21,6 @@ const ArbitrationsManagement = () => {
         },
     });
 
-    const openModal = (arbitration) => {
-        setSelectedArbitration(arbitration);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedArbitration(null);
-    };
-
     const openSessionModal = (arbitration) => {
         setSelectedArbitration(arbitration);
         setIsSessionModalOpen(true);
@@ -39,6 +29,10 @@ const ArbitrationsManagement = () => {
     const closeSessionModal = () => {
         setIsSessionModalOpen(false);
         setSelectedArbitration(null);
+    };
+
+    const viewDetails = (arbitration) => {
+        navigate(`/admin/arbitrations/${arbitration._id}`, { state: { arbitration } });
     };
 
     const formatDate = (dateString) => {
@@ -161,7 +155,7 @@ const ArbitrationsManagement = () => {
                     <ArbitrationCard
                         key={arbitration._id}
                         arbitration={arbitration}
-                        onViewDetails={openModal}
+                        onViewDetails={viewDetails}
                         onCreateSession={openSessionModal}
                         formatDate={formatDate}
                     />
@@ -181,15 +175,6 @@ const ArbitrationsManagement = () => {
                             : "No cases match your current filters."}
                     </p>
                 </div>
-            )}
-
-            {/* Details Modal */}
-            {isModalOpen && selectedArbitration && (
-                <DetailsModal
-                    arbitration={selectedArbitration}
-                    onClose={closeModal}
-                    formatDate={formatDate}
-                />
             )}
 
             {/* Create Session Modal */}

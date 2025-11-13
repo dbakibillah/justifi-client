@@ -35,6 +35,7 @@ import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
 import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
 import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
 import ArbitrationsManagement from "./dashboard/admin/pages/arbitrationManagement/ArbitrationsManagement";
+import AdminArbitrationDetails from "./dashboard/admin/pages/arbitrationManagement/AdminArbitrationDetails";
 
 const queryClient = new QueryClient();
 
@@ -132,6 +133,10 @@ createRoot(document.getElementById("root")).render(
                         <Route
                             path="arbitrations-management"
                             element={<ArbitrationsManagement />}
+                        />
+                        <Route
+                            path="arbitrations/:id"
+                            element={<AdminArbitrationDetails />}
                         />
                     </Route>
                 </Routes>
