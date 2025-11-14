@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import { 
     FaArrowLeft, 
     FaGavel, 
@@ -18,19 +18,63 @@ import {
     FaEdit,
     FaVideo,
     FaCheckCircle,
-    FaCalendarTimes
+    FaCalendarTimes,
+    FaSpinner
 } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../common/loading/Loading';
-import useUserData from "../../../hooks/useUserData";
+
+// Proper Error Boundary Class Component
+class ErrorBoundary extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error('Error caught by boundary:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+                    <div className="text-center max-w-md mx-auto">
+                        <div className="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <FaExclamationTriangle className="text-3xl text-red-600" />
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            Something went wrong
+                        </h2>
+                        <p className="text-gray-600 mb-4">
+                            {this.state.error?.message || 'An unexpected error occurred.'}
+                        </p>
+                        <button 
+                            onClick={() => this.setState({ hasError: false, error: null })}
+                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return this.props.children;
+    }
+}
 
 const ArbitrationDetail = () => {
-    const { currentUser } = useUserData();
     const navigate = useNavigate();
-    const { arbitrationId } = useParams();
+    const { arbitrationId } = useParams(); // This is the MongoDB _id from URL
     const axiosSecure = useAxiosSecure();
+    const queryClient = useQueryClient();
     const [showHearingForm, setShowHearingForm] = useState(false);
     const [hearingForm, setHearingForm] = useState({
         date: '',
@@ -41,7 +85,12 @@ const ArbitrationDetail = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Fetch arbitration details from backend
-    const { data: arbitration, isLoading, error, refetch } = useQuery({
+    const { 
+        data: arbitration, 
+        isLoading, 
+        error, 
+        refetch: refetchArbitration 
+    } = useQuery({
         queryKey: ['arbitrationDetails', arbitrationId],
         queryFn: async () => {
             if (!arbitrationId) {
@@ -60,20 +109,72 @@ const ArbitrationDetail = () => {
         retry: 2,
     });
 
-    // Fetch hearings data
-    const { data: hearings = [], refetch: refetchHearings } = useQuery({
-        queryKey: ['hearings', arbitrationId],
+    // Get the correct arbitration ID for API calls - moved outside of useQuery
+    const apiArbitrationId = arbitration?.arbitrationId;
+
+    // Fetch hearings data with proper error handling
+    const { 
+        data: hearings = [], 
+        isLoading: hearingsLoading, 
+        error: hearingsError,
+        refetch: refetchHearings 
+    } = useQuery({
+        queryKey: ['hearings', apiArbitrationId],
         queryFn: async () => {
-            if (!arbitrationId) return [];
-            
-            const response = await axiosSecure.get(`/hearings/arbitration/${arbitrationId}`);
-            
-            if (response.data.success) {
-                return response.data.data;
+            if (!apiArbitrationId) {
+                console.log('No API arbitrationId available yet');
+                return [];
             }
-            return [];
+            
+            try {
+                console.log('Fetching hearings for arbitration:', apiArbitrationId);
+                const response = await axiosSecure.get(`/hearings/arbitration/${apiArbitrationId}`);
+                console.log('Hearings API response:', response.data);
+                
+                if (response.data.success) {
+                    return response.data.data;
+                } else {
+                    console.error('API returned error:', response.data.message);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error fetching hearings:', error);
+                throw error;
+            }
         },
-        enabled: !!arbitrationId,
+        enabled: !!apiArbitrationId, // Only enable when we have the API arbitration ID
+        retry: 2,
+    });
+
+    // Create hearing mutation
+    const createHearingMutation = useMutation({
+        mutationFn: async (hearingData) => {
+            const response = await axiosSecure.post('/hearings/create', hearingData);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            if (data.success) {
+                alert('Hearing scheduled successfully!');
+                setShowHearingForm(false);
+                setHearingForm({
+                    date: '',
+                    meetLink: '',
+                    hearingAgenda: '',
+                    duration: 120
+                });
+                // Refetch hearings data using the correct arbitration ID
+                queryClient.invalidateQueries(['hearings', apiArbitrationId]);
+            } else {
+                alert('Failed to schedule hearing: ' + data.message);
+            }
+        },
+        onError: (error) => {
+            console.error('Error creating hearing:', error);
+            alert('Failed to schedule hearing. Please try again.');
+        },
+        onSettled: () => {
+            setIsSubmitting(false);
+        }
     });
 
     const handleHearingFormChange = (e) => {
@@ -89,35 +190,27 @@ const ArbitrationDetail = () => {
         setIsSubmitting(true);
         
         try {
+            if (!apiArbitrationId) {
+                throw new Error('Arbitration ID not available');
+            }
+            
+            console.log('Using arbitration ID for hearing creation:', apiArbitrationId);
+            
             const hearingData = {
-                arbitrationId: arbitration?.arbitrationId || arbitrationId,
+                arbitrationId: apiArbitrationId, // Use the consistent arbitration ID
                 date: hearingForm.date,
                 meetLink: hearingForm.meetLink,
                 hearingAgenda: hearingForm.hearingAgenda,
                 duration: parseInt(hearingForm.duration),
-                createdBy:  `${currentUser.email}` // Replace with actual user ID from auth context
+                createdBy: 'current_user_id' // Replace with actual user ID from auth context
             };
-            console.log(hearingData); 
-            const response = await axiosSecure.post('/hearings/create', hearingData);
+
+            console.log('Submitting hearing data:', hearingData);
+            await createHearingMutation.mutateAsync(hearingData);
             
-            if (response.data.success) {
-                alert('Hearing scheduled successfully!');
-                setShowHearingForm(false);
-                setHearingForm({
-                    date: '',
-                    meetLink: '',
-                    hearingAgenda: '',
-                    duration: 120
-                });
-                // Refetch hearings data
-                await refetchHearings();
-            } else {
-                alert('Failed to schedule hearing: ' + response.data.message);
-            }
         } catch (error) {
-            console.error('Error scheduling hearing:', error);
+            console.error('Error in hearing submission:', error);
             alert('Failed to schedule hearing. Please try again.');
-        } finally {
             setIsSubmitting(false);
         }
     };
@@ -144,23 +237,36 @@ const ArbitrationDetail = () => {
 
     const formatDate = (dateString) => {
         if (!dateString) return 'Not specified';
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        try {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch (error) {
+            return 'Invalid date';
+        }
     };
 
     const formatDateTime = (dateString) => {
         if (!dateString) return 'Not specified';
-        return new Date(dateString).toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        try {
+            return new Date(dateString).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            return 'Invalid date';
+        }
     };
+
+    // Debug: Log arbitration data
+    console.log('Arbitration data:', arbitration);
+    console.log('URL arbitrationId:', arbitrationId);
+    console.log('API arbitrationId:', apiArbitrationId);
 
     if (isLoading) {
         return <Loading />;
@@ -181,7 +287,7 @@ const ArbitrationDetail = () => {
                     </p>
                     <div className="space-x-4">
                         <button
-                            onClick={() => refetch()}
+                            onClick={() => refetchArbitration()}
                             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
                         >
                             Try Again
@@ -299,10 +405,9 @@ const ArbitrationDetail = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {arbitration.arbitrators?.map((arbitrator, index) => (
-                            <ArbitratorCard 
-                                key={arbitrator.id || index}
-                                arbitrator={arbitrator} 
-                            />
+                            <ErrorBoundary key={arbitrator.id || index}>
+                                <ArbitratorCard arbitrator={arbitrator} />
+                            </ErrorBoundary>
                         )) || (
                             <div className="col-span-3 text-center py-8 text-gray-500">
                                 <FaGavel className="text-4xl mx-auto mb-2 text-gray-300" />
@@ -325,11 +430,9 @@ const ArbitrationDetail = () => {
                         </div>
                         <div className="space-y-6">
                             {arbitration.plaintiffs?.map((party, index) => (
-                                <PartyCard 
-                                    key={party.id || index} 
-                                    party={party} 
-                                    type="plaintiff" 
-                                />
+                                <ErrorBoundary key={party.id || index}>
+                                    <PartyCard party={party} type="plaintiff" />
+                                </ErrorBoundary>
                             )) || (
                                 <div className="text-center py-8 text-gray-500">
                                     <FaUserTie className="text-4xl mx-auto mb-2 text-gray-300" />
@@ -350,11 +453,9 @@ const ArbitrationDetail = () => {
                         </div>
                         <div className="space-y-6">
                             {arbitration.defendants?.map((party, index) => (
-                                <PartyCard 
-                                    key={party.id || index} 
-                                    party={party} 
-                                    type="defendant" 
-                                />
+                                <ErrorBoundary key={party.id || index}>
+                                    <PartyCard party={party} type="defendant" />
+                                </ErrorBoundary>
                             )) || (
                                 <div className="text-center py-8 text-gray-500">
                                     <FaUserShield className="text-4xl mx-auto mb-2 text-gray-300" />
@@ -372,13 +473,29 @@ const ArbitrationDetail = () => {
                             <div className="w-1 h-8 bg-green-600 rounded-full mr-3"></div>
                             <h2 className="text-2xl font-bold text-gray-900">Hearings & Proceedings</h2>
                         </div>
-                        <button 
-                            onClick={() => setShowHearingForm(true)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center"
-                        >
-                            <FaPlus className="mr-2" />
-                            Create Hearing
-                        </button>
+                        <div className="flex items-center space-x-4">
+                            {/* Refresh Button */}
+                            <button 
+                                onClick={() => refetchHearings()}
+                                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center"
+                                disabled={hearingsLoading}
+                            >
+                                {hearingsLoading ? (
+                                    <FaSpinner className="animate-spin mr-2" />
+                                ) : (
+                                    <FaCheckCircle className="mr-2" />
+                                )}
+                                Refresh
+                            </button>
+                            <button 
+                                onClick={() => setShowHearingForm(true)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center"
+                                disabled={!apiArbitrationId}
+                            >
+                                <FaPlus className="mr-2" />
+                                Create Hearing
+                            </button>
+                        </div>
                     </div>
 
                     {/* Add Hearing Form */}
@@ -459,11 +576,11 @@ const ArbitrationDetail = () => {
                                     <button 
                                         type="submit"
                                         className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                                        disabled={isSubmitting}
+                                        disabled={isSubmitting || !apiArbitrationId}
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                                <FaSpinner className="animate-spin mr-2" />
                                                 Scheduling...
                                             </>
                                         ) : (
@@ -478,15 +595,32 @@ const ArbitrationDetail = () => {
                         </div>
                     )}
 
+                    {/* Debug Info */}
+                    {apiArbitrationId && (
+                        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p className="text-sm text-yellow-800">
+                                <strong>Debug Info:</strong> 
+                                <br />URL Arbitration ID: {arbitrationId}
+                                <br />API Arbitration ID: {apiArbitrationId}
+                                <br />Found {hearings.length} hearings
+                            </p>
+                        </div>
+                    )}
+
                     {/* Hearings Table */}
-                    <HearingsTable hearings={hearings} />
+                    <HearingsTable 
+                        hearings={hearings} 
+                        isLoading={hearingsLoading} 
+                        error={hearingsError}
+                        onRefresh={refetchHearings}
+                    />
                 </div>
             </div>
         </div>
     );
 };
 
-// Info Card Component with Smaller Size and Black Text
+// Info Card Component
 const InfoCard = ({ icon: Icon, label, value }) => (
     <div className="bg-white bg-opacity-90 p-3 rounded-lg backdrop-blur-sm border border-white border-opacity-20">
         <div className="flex items-center mb-1">
@@ -501,6 +635,14 @@ const InfoCard = ({ icon: Icon, label, value }) => (
 const ArbitratorCard = ({ arbitrator }) => {
     const [showModal, setShowModal] = useState(false);
 
+    if (!arbitrator) {
+        return (
+            <div className="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-md">
+                <div className="text-gray-500">No arbitrator data</div>
+            </div>
+        );
+    }
+
     return (
         <>
             <div 
@@ -509,17 +651,20 @@ const ArbitratorCard = ({ arbitrator }) => {
             >
                 <div className="relative mb-4">
                     <img 
-                        src={arbitrator.picture} 
+                        src={arbitrator.picture || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'} 
                         alt={arbitrator.name}
                         className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-blue-100 shadow-md"
+                        onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+                        }}
                     />
                     <div className="absolute bottom-0 right-6 bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white">
                         <FaGavel className="text-xs" />
                     </div>
                 </div>
                 
-                <h3 className="font-bold text-gray-900 text-lg mb-1">{arbitrator.name}</h3>
-                <p className="text-blue-600 font-semibold text-sm mb-1">{arbitrator.designation}</p>
+                <h3 className="font-bold text-gray-900 text-lg mb-1">{arbitrator.name || 'Unknown Arbitrator'}</h3>
+                <p className="text-blue-600 font-semibold text-sm mb-1">{arbitrator.designation || 'Arbitrator'}</p>
                 
                 {/* Specialization as tags */}
                 {arbitrator.specialization && arbitrator.specialization.length > 0 && (
@@ -540,7 +685,7 @@ const ArbitratorCard = ({ arbitrator }) => {
                     </div>
                 )}
                 
-                <p className="text-gray-500 text-xs mb-3">{arbitrator.experience}</p>
+                <p className="text-gray-500 text-xs mb-3">{arbitrator.experience || 'Experienced Arbitrator'}</p>
                 
                 {/* Qualification Preview */}
                 {arbitrator.qualification && (
@@ -574,15 +719,18 @@ const ArbitratorCard = ({ arbitrator }) => {
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="flex-shrink-0">
                                     <img 
-                                        src={arbitrator.picture} 
+                                        src={arbitrator.picture || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'} 
                                         alt={arbitrator.name}
                                         className="w-32 h-32 rounded-full object-cover border-4 border-blue-100 mx-auto"
+                                        onError={(e) => {
+                                            e.target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+                                        }}
                                     />
                                 </div>
                                 
                                 <div className="flex-1">
-                                    <h4 className="text-xl font-bold text-gray-900 mb-2">{arbitrator.name}</h4>
-                                    <p className="text-blue-600 font-semibold mb-3">{arbitrator.designation}</p>
+                                    <h4 className="text-xl font-bold text-gray-900 mb-2">{arbitrator.name || 'Unknown Arbitrator'}</h4>
+                                    <p className="text-blue-600 font-semibold mb-3">{arbitrator.designation || 'Arbitrator'}</p>
                                     
                                     <div className="space-y-3">
                                         {arbitrator.qualification && (
@@ -641,8 +789,8 @@ const ArbitratorCard = ({ arbitrator }) => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
                                             <div>
                                                 <p className="text-sm font-medium text-gray-700">Contact</p>
-                                                <p className="text-gray-600 text-sm">{arbitrator.phone}</p>
-                                                <p className="text-gray-600 text-sm">{arbitrator.email}</p>
+                                                <p className="text-gray-600 text-sm">{arbitrator.phone || 'Not provided'}</p>
+                                                <p className="text-gray-600 text-sm">{arbitrator.email || 'Not provided'}</p>
                                             </div>
                                             {arbitrator.address && (
                                                 <div>
@@ -662,47 +810,59 @@ const ArbitratorCard = ({ arbitrator }) => {
     );
 };
 
-// Party Card Component
+// Party Card Component with Error Handling
 const PartyCard = ({ party, type }) => {
+    // Add null checks and default values
+    if (!party) {
+        return (
+            <div className="bg-white rounded-lg p-6 shadow-sm border-l-4 border-gray-400">
+                <div className="text-gray-500">No party data available</div>
+            </div>
+        );
+    }
+
     const isPlaintiff = type === 'plaintiff';
     const borderColor = isPlaintiff ? 'border-blue-600' : 'border-red-600';
     const iconColor = isPlaintiff ? 'text-blue-500' : 'text-red-500';
     const badgeColor = isPlaintiff ? 'bg-blue-600' : 'bg-red-600';
-    const icon = isPlaintiff ? FaUserTie : FaUserShield;
+    const Icon = isPlaintiff ? FaUserTie : FaUserShield;
 
     return (
         <div className={`party-card bg-white rounded-lg p-6 shadow-sm border-l-4 ${borderColor}`}>
             <div className="flex items-start mb-4">
                 <div className="relative">
                     <img 
-                        src={'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop&crop=center'} 
-                        alt={party.name}
+                        src={party.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop&crop=center'} 
+                        alt={party.name || 'Party'}
                         className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
+                        onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop&crop=center';
+                        }}
                     />
                     <div className={`absolute -top-1 -right-1 ${badgeColor} text-white rounded-full w-6 h-6 flex items-center justify-center text-xs`}>
-                        {React.createElement(icon)}
+                        <Icon />
                     </div>
                 </div>
                 <div className="ml-4 flex-1">
-                    <h3 className="font-bold text-gray-900 text-lg">{party.name}</h3>
+                    <h3 className="font-bold text-gray-900 text-lg">{party.name || 'Unknown Party'}</h3>
                     <p className="text-gray-600 text-sm mb-1">
                         <FaUserTie className={`inline mr-2 ${iconColor}`} />
                         {party.occupation || 'Legal Representative'}
                     </p>
                     <p className="text-gray-600 text-sm mb-1">
                         <FaEnvelope className={`inline mr-2 ${iconColor}`} />
-                        {party.email}
+                        {party.email || 'No email provided'}
                     </p>
                     <p className="text-gray-600 text-sm">
                         <FaPhone className={`inline mr-2 ${iconColor}`} />
-                        {party.phone}
+                        {party.phone || 'No phone provided'}
                     </p>
                 </div>
             </div>
             <div className="mb-3">
                 <p className="text-gray-700 text-sm">
                     <FaMapMarkerAlt className={`inline mr-2 ${iconColor}`} />
-                    {party.address}
+                    {party.address || 'Address not provided'}
                 </p>
                 {party.parentsName && (
                     <p className="text-gray-600 text-sm mt-1">
@@ -715,8 +875,40 @@ const PartyCard = ({ party, type }) => {
 };
 
 // Hearings Table Component
-const HearingsTable = ({ hearings }) => {
-    if (hearings.length === 0) {
+const HearingsTable = ({ hearings, isLoading, error, onRefresh }) => {
+    if (isLoading) {
+        return (
+            <div className="text-center py-12">
+                <div className="flex justify-center items-center">
+                    <FaSpinner className="animate-spin text-4xl text-blue-600 mr-4" />
+                    <div>
+                        <h3 className="text-xl font-semibold text-gray-700 mb-2">Loading Hearings</h3>
+                        <p className="text-gray-500">Please wait while we fetch the hearings data...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-12">
+                <div className="bg-red-50 rounded-2xl p-8 max-w-md mx-auto">
+                    <FaExclamationTriangle className="text-4xl text-red-600 mb-4 mx-auto" />
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Failed to Load Hearings</h3>
+                    <p className="text-gray-500 mb-4">{error.message || 'Unable to load hearings data.'}</p>
+                    <button
+                        onClick={onRefresh}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!hearings || hearings.length === 0) {
         return (
             <div className="text-center py-12">
                 <div className="bg-gray-50 rounded-2xl p-8 max-w-md mx-auto">
@@ -758,13 +950,13 @@ const HearingsTable = ({ hearings }) => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {hearings.map((hearing, index) => (
-                        <tr key={hearing.hearingId || hearing._id} className="hearing-row hover:bg-gray-50 transition-colors">
+                        <tr key={hearing.hearingId || hearing._id || index} className="hearing-row hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-bold text-gray-900">
-                                    #{hearing.hearingNumber}
+                                    #{hearing.hearingNumber || 'N/A'}
                                 </div>
                                 <div className="text-xs text-gray-500">
-                                    {hearing.hearingId}
+                                    {hearing.hearingId || 'No ID'}
                                 </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -791,11 +983,11 @@ const HearingsTable = ({ hearings }) => {
                                 </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {hearing.duration} minutes
+                                {hearing.duration || 0} minutes
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
                                 <div className="line-clamp-2">
-                                    {hearing.hearingAgenda}
+                                    {hearing.hearingAgenda || 'No agenda provided'}
                                 </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
