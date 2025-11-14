@@ -6,7 +6,6 @@ import Dashboard from "./dashboard/Dashboard";
 import LawyerAppointments from "./dashboard/lawyerDasgboard/pages/LawyerAppointments";
 import LawyerProfile from "./dashboard/lawyerDasgboard/pages/LawyerProfile";
 import UserAppointments from "./dashboard/userDashboard/pages/UserAppointments";
-import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import "./index.css";
 import Arbitration from "./pages/arbitration/Arbitration";
 import ArbitrationProcess from "./pages/arbitration/components/ArbitrationProcess";
@@ -29,11 +28,23 @@ import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
+<<<<<<< HEAD
 import AllUsers from "./dashboard/admin/pages/AllUsers";
+=======
+import ArbitrationDetails from "./dashboard/userDashboard/pages/ArbitrationDetails";
+import AllUsers from "./dashboard/admin/pages/AllUsers";
+import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
+import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
+import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
+import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
+import ArbitrationsManagement from "./dashboard/admin/pages/arbitrationManagement/ArbitrationsManagement";
+import AdminArbitrationDetails from "./dashboard/admin/pages/arbitrationManagement/AdminArbitrationDetails";
+>>>>>>> 6890256e14382c45b29baf68e0c0eb48d21fd11b
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
+<<<<<<< HEAD
   <BrowserRouter>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
@@ -84,4 +95,110 @@ createRoot(document.getElementById("root")).render(
     </AuthProvider>
     <ToastContainer />
   </BrowserRouter>
+=======
+    <BrowserRouter>
+        <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+                <Routes>
+                    <Route path="/" element={<Root />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Registration />} />
+                        <Route path="/lawyers" element={<Lawyer />} />
+                        <Route
+                            path="lawyers/:lawyerId"
+                            element={<LawyerDetails />}
+                        />
+                        <Route
+                            path="/book-lawyer/:lawyerId"
+                            element={<BookLawyer />}
+                        />
+
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:blogId" element={<BlogDetails />} />
+                        <Route path="/arbitrators" element={<Arbitrator />} />
+                        <Route
+                            path="/arbitrators/:arbitratorID"
+                            element={<ArbitratorDetails />}
+                        />
+                        <Route path="/mediators" element={<Mediator />} />
+                        <Route
+                            path="/mediators/:mediatorsobj"
+                            element={<MediatorDetails />}
+                        />
+                        <Route
+                            path="/arbitration-process"
+                            element={<ArbitrationProcess />}
+                        />
+                        <Route path="/arbitration" element={<Arbitration />} />
+                        <Route
+                            path="/mediation-process"
+                            element={<MediationProcess />}
+                        />
+                        <Route path="/mediation" element={<Mediation />} />
+                        <Route
+                            path="/payment/success/:id"
+                            element={<PaymentSuccess />}
+                        />
+                        <Route
+                            path="/payment/fail/:id"
+                            element={<PaymentFailed />}
+                        />
+                    </Route>
+
+                    <Route path="/dashboard" element={<Dashboard />}>
+                        <Route index element={<Dashboard />} />
+                        <Route
+                            path="lawyer-profile/:email"
+                            element={<LawyerProfile />}
+                        />
+                        <Route
+                            path="appointments"
+                            element={<LawyerAppointments />}
+                        />
+                        <Route path="user-profile" element={<UserProfile />} />
+                        <Route
+                            path="my-appointments"
+                            element={<UserAppointments />}
+                        />
+                        <Route
+                            path="my-arbitrations"
+                            element={<MyArbitrations />}
+                        />
+                        <Route
+                            path="my-arbitrations/:id"
+                            element={<ArbitrationDetails />}
+                        />
+                    </Route>
+
+                    {/* Admin routes */}
+                    <Route path="/admin" element={<Dashboard />}>
+                        <Route path="all-users" element={<AllUsers />} />
+                        <Route
+                            path="all-lawyers"
+                            element={<LawyerManagement />}
+                        />
+                        <Route
+                            path="all-arbitrators"
+                            element={<ArbitratorManagement />}
+                        />
+                        <Route
+                            path="all-mediators"
+                            element={<MediatorManagement />}
+                        />
+                        <Route
+                            path="arbitrations-management"
+                            element={<ArbitrationsManagement />}
+                        />
+                        <Route
+                            path="arbitrations/:id"
+                            element={<AdminArbitrationDetails />}
+                        />
+                    </Route>
+                </Routes>
+            </QueryClientProvider>
+        </AuthProvider>
+        <ToastContainer />
+    </BrowserRouter>
+>>>>>>> 6890256e14382c45b29baf68e0c0eb48d21fd11b
 );

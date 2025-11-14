@@ -28,13 +28,16 @@ const DashboardLeft = () => {
 
     // Redirect from /dashboard to appropriate profile
     useEffect(() => {
-        if (location.pathname === "/dashboard") {
+        if (
+            location.pathname === "/dashboard" ||
+            location.pathname === "/admin"
+        ) {
             const profileRoutes = {
                 user: "/dashboard/user-profile",
-                lawyer: "/dashboard/lawyer-profile",
+                lawyer: `/dashboard/lawyer-profile/${currentUser?.email}`,
                 arbitrator: "/dashboard/arbitrator-profile",
                 mediator: "/dashboard/mediator-profile",
-                admin: "/dashboard/all-users",
+                admin: "/admin/all-users",
             };
 
             const redirectPath = profileRoutes[userRole] || "/dashboard";
@@ -76,7 +79,7 @@ const DashboardLeft = () => {
     const lawyerLinks = [
         {
             name: "Profile",
-            path: "/dashboard/lawyer-profile",
+            path: `/dashboard/lawyer-profile/${currentUser?.email}`,
             icon: <FaUser className="text-lg" />,
         },
         {
@@ -125,20 +128,21 @@ const DashboardLeft = () => {
     const adminLinks = [
         {
             name: "All Users",
-            path: "/dashboard/all-users",
+            path: "/admin/all-users",
             icon: <FaUsers className="text-lg" />,
         },
         {
-            name: "All Lawyers",
-            path: "/dashboard/all-lawyers",
+            name: "Laywers Management",
+            path: "/admin/all-lawyers",
             icon: <FaGavel className="text-lg" />,
         },
         {
-            name: "All Arbitrators",
-            path: "/dashboard/all-arbitrators",
+            name: "Arbitrators Management",
+            path: "/admin/all-arbitrators",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
+<<<<<<< HEAD
             name: "All Arbitratons",
             path: "/dashboard/all-arbitrations",
             icon: <FaBalanceScale className="text-lg" />,
@@ -146,6 +150,20 @@ const DashboardLeft = () => {
         {
             name: "All Mediators",
             path: "/dashboard/all-mediators",
+=======
+            name: "Arbitrations Management",
+            path: "/admin/arbitrations-management",
+            icon: <FaBalanceScale className="text-lg" />,
+        },
+        {
+            name: "Mediator Management",
+            path: "/admin/all-mediators",
+            icon: <FaHandshake className="text-lg" />,
+        },
+        {
+            name: "All Mediatons",
+            path: "/admin/all-mediations",
+>>>>>>> 6890256e14382c45b29baf68e0c0eb48d21fd11b
             icon: <FaHandshake className="text-lg" />,
         },
         {
