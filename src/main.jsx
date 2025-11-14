@@ -33,7 +33,12 @@ import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
 import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
 import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
 import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
-
+import MyArbitrationFile from "./dashboard/ArbitratorDashboard/pages/MyArbitrationFile"; 
+import ArbitrationDetail from "./dashboard/ArbitratorDashboard/pages/ArbitrationDetail";
+ import ArbitratorProfile from "./dashboard/ArbitratorDashboard/pages/ArbitratorProfile";
+ import Notification from "./dashboard/ArbitratorDashboard/pages/Notification";
+import Finance from "./dashboard/ArbitratorDashboard/pages/Finance";
+import UpcomingHearings from './dashboard/ArbitratorDashboard/pages/UpcommingHearing';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
@@ -93,6 +98,7 @@ createRoot(document.getElementById("root")).render(
                             path="lawyer-profile/:email"
                             element={<LawyerProfile />}
                         />
+                        
                         <Route
                             path="appointments"
                             element={<LawyerAppointments />}
@@ -120,6 +126,20 @@ createRoot(document.getElementById("root")).render(
                             path="all-mediators"
                             element={<MediatorManagement />}
                         />
+                        
+                        <Route path="arbitrator-profile/:email" element={<ArbitratorProfile />} />
+                        <Route path="arb-arbitrations" element={<MyArbitrationFile />} />
+                        <Route path="arbitration-details/:arbitrationId" element={< ArbitrationDetail/>} />
+                        <Route path="notification" element={<Notification />} />
+                        <Route path="Finance" element={<Finance />} />
+                        <Route path="upcoming-hearings" element={<UpcomingHearings />} />
+
+
+                        
+
+                        
+
+                        
                     </Route>
                 </Routes>
             </QueryClientProvider>

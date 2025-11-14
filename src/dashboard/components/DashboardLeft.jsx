@@ -10,6 +10,13 @@ import {
     FaHome,
     FaUser,
     FaUsers,
+    FaCalendarAlt, 
+    FaComments, 
+    FaMoneyBillWave, 
+    FaBell,
+    FaFileContract,
+    FaChartLine,
+    FaCog
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../common/loading/Loading";
@@ -32,7 +39,7 @@ const DashboardLeft = () => {
             const profileRoutes = {
                 user: "/dashboard/user-profile",
                 lawyer: `/dashboard/lawyer-profile/${currentUser?.email}`,
-                arbitrator: "/dashboard/arbitrator-profile",
+                arbitrator: `/dashboard/arbitrator-profile/${currentUser?.email}`,
                 mediator: "/dashboard/mediator-profile",
                 admin: "/dashboard/all-users",
             };
@@ -94,18 +101,28 @@ const DashboardLeft = () => {
     const arbitratorLinks = [
         {
             name: "Profile",
-            path: "/dashboard/arbitrator-profile",
+            path: `/dashboard/arbitrator-profile/${currentUser?.email}`,
             icon: <FaUser className="text-lg" />,
         },
         {
-            name: "Cases",
-            path: "/dashboard/cases",
+            name: "Arbitrations",
+            path: "/dashboard/arb-arbitrations",
             icon: <FaBalanceScale className="text-lg" />,
         },
         {
-            name: "Arbitrations",
-            path: "/dashboard/arbitrations",
-            icon: <FaBalanceScale className="text-lg" />,
+            name: "Upcoming Hearings",
+            path: "/dashboard/upcoming-hearings",
+            icon: <FaCalendarAlt className="text-lg" />,
+        },
+        {
+            name: "Finance ",
+            path: "/dashboard/Finance",
+            icon: <FaMoneyBillWave className="text-lg" />,
+        },
+        {
+            name: "notification ",
+            path: "/dashboard/notification",
+            icon: <FaBell className="text-lg" />,
         },
     ];
 
