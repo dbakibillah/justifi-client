@@ -28,11 +28,16 @@ import Mediator from "./pages/mediator/Mediator";
 import AuthProvider from "./providers/AuthProviders";
 import Root from "./routes/Root";
 import MyArbitrations from "./dashboard/userDashboard/pages/MyArbitrations";
+import ArbitrationDetails from "./dashboard/userDashboard/pages/ArbitrationDetails";
 import AllUsers from "./dashboard/admin/pages/AllUsers";
 import UserProfile from "./dashboard/userDashboard/pages/UserProfile";
-import AllLawyers from "./dashboard/admin/pages/AllLawyers";
-import Mediation_Agreement from "./dashboard/admin/pages/Mediation_Agreement";
+import LawyerManagement from "./dashboard/admin/pages/LawyerManagement";
+import ArbitratorManagement from "./dashboard/admin/pages/ArbitratorManagement";
+import MediatorManagement from "./dashboard/admin/pages/MediatorManagement";
+import ArbitrationsManagement from "./dashboard/admin/pages/arbitrationManagement/ArbitrationsManagement";
+import AdminArbitrationDetails from "./dashboard/admin/pages/arbitrationManagement/AdminArbitrationDetails";
 import Arbitration_Agreement from "./dashboard/admin/pages/Arbitration_Agreement";
+import Mediation_Agreement from "./dashboard/admin/pages/Mediation_Agreement";
 
 const queryClient = new QueryClient();
 
@@ -74,14 +79,31 @@ createRoot(document.getElementById("root")).render(
 
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Dashboard />} />
-            <Route path="lawyer-profile" element={<LawyerProfile />} />
+            <Route path="lawyer-profile/:email" element={<LawyerProfile />} />
             <Route path="appointments" element={<LawyerAppointments />} />
-
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="my-appointments" element={<UserAppointments />} />
             <Route path="my-arbitrations" element={<MyArbitrations />} />
+            <Route
+              path="my-arbitrations/:id"
+              element={<ArbitrationDetails />}
+            />
+          </Route>
+
+          {/* Admin routes */}
+          <Route path="/admin" element={<Dashboard />}>
             <Route path="all-users" element={<AllUsers />} />
-            <Route path="all-lawyers" element={<AllLawyers />} />
+            <Route path="all-lawyers" element={<LawyerManagement />} />
+            <Route path="all-arbitrators" element={<ArbitratorManagement />} />
+            <Route path="all-mediators" element={<MediatorManagement />} />
+            <Route
+              path="arbitrations-management"
+              element={<ArbitrationsManagement />}
+            />
+            <Route
+              path="arbitrations/:id"
+              element={<AdminArbitrationDetails />}
+            />
             <Route
               path="mediation-agreement/:caseId"
               element={<Mediation_Agreement />}
