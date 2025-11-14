@@ -1,14 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
-import { useState, useMemo } from "react";
 import ArbitratorCard from "./ArbitratorCard";
-import ArbitratorModal from "../../components/ArbitratorModal";
-import PageHeader from "../../components/PageHeader";
+import ArbitratorModal from "./ArbitratorModal";
+import PageHeader from "./PageHeader";
 
 const ArbitratorManagement = () => {
     const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
     const img_hosting_api = `https://api.imgbb.com/1/upload?key=${img_hosting_key}`;
+
     const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const { data: arbitrators = [], refetch } = useQuery({
         queryKey: ["arbitrators"],
         queryFn: async () => {
@@ -74,41 +80,112 @@ const ArbitratorManagement = () => {
         }));
     };
 
+    const uploadImageToImgBB = async (imageFile) => {
+        try {
+            const formData = new FormData();
+            formData.append("image", imageFile);
+
+            const response = await fetch(img_hosting_api, {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                return data.data.url;
+            } else {
+                throw new Error(data.error?.message || "Image upload failed");
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            throw new Error("Failed to upload image. Please try again.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+
         try {
-            if (editingArbitrator) {
-                await axiosSecure.put(
-                    `/arbitrators/${editingArbitrator._id}`,
-                    formData
-                );
-            } else {
-                await axiosSecure.post("/arbitrators", formData);
+            let finalFormData = { ...formData };
+
+            // If there's an image file to upload (from file input)
+            if (formData.imageFile) {
+                try {
+                    const imageUrl = await uploadImageToImgBB(
+                        formData.imageFile
+                    );
+                    finalFormData.image = imageUrl;
+                } catch (error) {
+                    alert(error.message);
+                    setIsSubmitting(false);
+                    return;
+                }
             }
-            refetch();
-            setShowModal(false);
-            setEditingArbitrator(null);
-            resetForm();
+
+            // Clean up the data before sending
+            delete finalFormData.imageFile;
+
+            // Convert string numbers to actual numbers
+            const numericFields = [
+                "fee",
+                "experience",
+                "successRate",
+                "casesHandled",
+                "rating",
+            ];
+            numericFields.forEach((field) => {
+                if (finalFormData[field]) {
+                    finalFormData[field] = Number(finalFormData[field]);
+                }
+            });
+
+            // Ensure arrays are properly formatted
+            if (!Array.isArray(finalFormData.languages)) {
+                finalFormData.languages = finalFormData.languages
+                    ? finalFormData.languages
+                          .split(",")
+                          .map((item) => item.trim())
+                          .filter((item) => item)
+                    : [];
+            }
+
+            if (!Array.isArray(finalFormData.specialization)) {
+                finalFormData.specialization = finalFormData.specialization
+                    ? finalFormData.specialization
+                          .split(",")
+                          .map((item) => item.trim())
+                          .filter((item) => item)
+                    : [];
+            }
+
+            const response = await axiosSecure.post(
+                "/add-arbitrator",
+                finalFormData
+            );
+
+            if (response.data.insertedId) {
+                toast.success("Arbitrator added successfully!");
+                refetch();
+                closeModal();
+            } else {
+                toast.error(
+                    response.data.message ||
+                        "Failed to add the arbitrator. Please try again."
+                );
+            }
         } catch (error) {
-            console.error("Error saving arbitrator:", error);
+            console.error("Error adding the arbitrator:", error);
+            toast.error("An error occurred while adding the lawyer.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     const handleEdit = (arbitrator) => {
-        setEditingArbitrator(arbitrator);
-        setFormData({
-            name: arbitrator.name,
-            email: arbitrator.email,
-            phone: arbitrator.phone,
-            address: arbitrator.address,
-            image: arbitrator.image,
-            gender: arbitrator.gender,
-            languages: arbitrator.languages,
-            specialization: arbitrator.specialization,
-            description: arbitrator.description,
-            qualification: arbitrator.qualification,
-        });
-        setShowModal(true);
+        // Redirect to ArbitratorProfile page with lawyer email as parameter
+        navigate(`/dashboard/arbitrator-profile/${arbitrator.email}`);
     };
 
     const handleDelete = async (id) => {
@@ -116,7 +193,7 @@ const ArbitratorManagement = () => {
             window.confirm("Are you sure you want to delete this arbitrator?")
         ) {
             try {
-                await axiosSecure.delete(`/arbitrators/${id}`);
+                await axiosSecure.delete(`/remove-arbitrator/${id}`);
                 refetch();
             } catch (error) {
                 console.error("Error deleting arbitrator:", error);
@@ -161,7 +238,7 @@ const ArbitratorManagement = () => {
                 {/* Header */}
                 <PageHeader
                     title="Arbitrator Management"
-                    onAdd={openAddModal}
+                    onAddArbitrator={openAddModal}
                     onSearch={handleSearch}
                     searchTerm={searchTerm}
                     addButtonText="Add Arbitrator"
@@ -276,6 +353,7 @@ const ArbitratorManagement = () => {
                     onInputChange={handleInputChange}
                     onArrayInput={handleArrayInput}
                     isEditing={!!editingArbitrator}
+                    isSubmitting={isSubmitting}
                 />
             </div>
         </div>
