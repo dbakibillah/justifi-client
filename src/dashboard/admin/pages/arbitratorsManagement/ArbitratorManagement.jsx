@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { useState, useMemo } from "react";
-import ArbitratorCard from "../components/ArbitratorCard";
-import ArbitratorModal from "../components/ArbitratorModal";
-import PageHeader from "../components/PageHeader";
+import ArbitratorCard from "./ArbitratorCard";
+import ArbitratorModal from "../../components/ArbitratorModal";
+import PageHeader from "../../components/PageHeader";
 
 const ArbitratorManagement = () => {
     const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;

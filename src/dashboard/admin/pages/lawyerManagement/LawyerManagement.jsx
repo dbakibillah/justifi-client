@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import LawyerCard from "../components/LawyerCard";
-import LawyerModal from "../components/LawyerModal";
-import PageHeader from "../components/PageHeader";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import LawyerCard from "./LawyerCard";
+import LawyerModal from "./LawyerModal";
+import PageHeader from "../../components/PageHeader";
 
 const LawyerManagement = () => {
     const img_hosting_key = import.meta.env.VITE_IMG_HOSTING_KEY;
