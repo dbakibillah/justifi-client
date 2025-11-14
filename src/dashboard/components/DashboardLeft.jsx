@@ -86,7 +86,7 @@ const DashboardLeft = () => {
     },
     {
       name: "Arbitrations",
-      path: "/dashboard/arbitrations",
+      path: "/dashboard/lawyer-arbitrations",
       icon: <FaBalanceScale className="text-lg" />,
     },
   ];
