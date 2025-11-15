@@ -19,7 +19,8 @@ import {
     FaVideo,
     FaCheckCircle,
     FaCalendarTimes,
-    FaSpinner
+    FaSpinner,
+    FaEye
 } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -215,6 +216,21 @@ const ArbitrationDetail = () => {
         }
     };
 
+    // Function to handle row click - navigate to hearing details
+    const handleHearingRowClick = (hearing) => {
+        if (hearing.hearingId && apiArbitrationId) {
+            navigate(`/dashboard/hearing-details/${apiArbitrationId}/${hearing.hearingId}`);
+        }
+    };
+
+    // Function to handle edit button click
+    const handleEditHearing = (hearing, e) => {
+        e.stopPropagation(); // Prevent row click when editing
+        if (hearing.hearingId && apiArbitrationId) {
+            navigate(`/dashboard/edit-hearing/${apiArbitrationId}/${hearing.hearingId}`);
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status?.toLowerCase()) {
             case 'pending': return 'bg-yellow-500 text-white';
@@ -262,11 +278,6 @@ const ArbitrationDetail = () => {
             return 'Invalid date';
         }
     };
-
-    // Debug: Log arbitration data
-    console.log('Arbitration data:', arbitration);
-    console.log('URL arbitrationId:', arbitrationId);
-    console.log('API arbitrationId:', apiArbitrationId);
 
     if (isLoading) {
         return <Loading />;
@@ -595,24 +606,14 @@ const ArbitrationDetail = () => {
                         </div>
                     )}
 
-                    {/* Debug Info */}
-                    {apiArbitrationId && (
-                        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p className="text-sm text-yellow-800">
-                                <strong>Debug Info:</strong> 
-                                <br />URL Arbitration ID: {arbitrationId}
-                                <br />API Arbitration ID: {apiArbitrationId}
-                                <br />Found {hearings.length} hearings
-                            </p>
-                        </div>
-                    )}
-
                     {/* Hearings Table */}
                     <HearingsTable 
                         hearings={hearings} 
                         isLoading={hearingsLoading} 
                         error={hearingsError}
                         onRefresh={refetchHearings}
+                        onRowClick={handleHearingRowClick}
+                        onEditClick={handleEditHearing}
                     />
                 </div>
             </div>
@@ -875,7 +876,7 @@ const PartyCard = ({ party, type }) => {
 };
 
 // Hearings Table Component
-const HearingsTable = ({ hearings, isLoading, error, onRefresh }) => {
+const HearingsTable = ({ hearings, isLoading, error, onRefresh, onRowClick, onEditClick }) => {
     if (isLoading) {
         return (
             <div className="text-center py-12">
@@ -950,7 +951,11 @@ const HearingsTable = ({ hearings, isLoading, error, onRefresh }) => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {hearings.map((hearing, index) => (
-                        <tr key={hearing.hearingId || hearing._id || index} className="hearing-row hover:bg-gray-50 transition-colors">
+                        <tr 
+                            key={hearing.hearingId || hearing._id || index} 
+                            className="hearing-row hover:bg-gray-50 transition-colors cursor-pointer"
+                            onClick={() => onRowClick && onRowClick(hearing)}
+                        >
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-bold text-gray-900">
                                     #{hearing.hearingNumber || 'N/A'}
@@ -997,6 +1002,7 @@ const HearingsTable = ({ hearings, isLoading, error, onRefresh }) => {
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors text-sm"
+                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         <FaVideo className="mr-1" />
                                         Join Meeting
@@ -1007,9 +1013,12 @@ const HearingsTable = ({ hearings, isLoading, error, onRefresh }) => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex space-x-2">
-                                    <button className="inline-flex items-center text-green-600 hover:text-green-800 font-medium transition-colors text-sm">
-                                        <FaEdit className="mr-1" />
-                                        Edit
+                                    <button 
+                                        className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors text-sm"
+                                        onClick={(e) => onEditClick && onEditClick(hearing, e)}
+                                    >
+                                        <FaEye className="mr-1" />
+                                        Details
                                     </button>
                                 </div>
                             </td>

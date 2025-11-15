@@ -39,6 +39,7 @@ import ArbitrationDetail from "./dashboard/ArbitratorDashboard/pages/Arbitration
  import Notification from "./dashboard/ArbitratorDashboard/pages/Notification";
 import Finance from "./dashboard/ArbitratorDashboard/pages/Finance";
 import UpcomingHearings from './dashboard/ArbitratorDashboard/pages/UpcommingHearing';
+import HearingDetails from './dashboard/ArbitratorDashboard/pages/HearingDetails';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
@@ -133,6 +134,7 @@ createRoot(document.getElementById("root")).render(
                         <Route path="notification" element={<Notification />} />
                         <Route path="Finance" element={<Finance />} />
                         <Route path="upcoming-hearings" element={<UpcomingHearings />} />
+                        <Route path="hearing-details/:arbitrationId/:hearingId" element={<HearingDetails />} />
 
 
                         
